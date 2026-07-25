@@ -29,7 +29,7 @@ export class ValidatorService {
   async validateProjectStructure(): Promise<CheckResult[]> {
     const results: CheckResult[] = [];
 
-    const requiredDirs = ['.akoris', 'docs', 'src'];
+    const requiredDirs = ['.akoris', 'docs'];
     for (const dir of requiredDirs) {
       const { existsSync } = await import('node:fs');
       const { join } = await import('node:path');

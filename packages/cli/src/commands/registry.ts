@@ -90,31 +90,32 @@ registryCommand
 registryCommand
   .command('validate')
   .description('Valide les schémas du Registry')
-  .action(async () => {
+  .action(() => {
     try {
-      const registry = new RegistryService();
-      const validator = new ValidatorService(registry);
+      const reader = new RegistryReaderV2();
 
-      console.log('🔍 Validation du Registry...\n');
+      console.log('🔍 Validation du Registry v2...\n');
 
-      const checks = [
-        await validator.validateManifest(),
-        ...await validator.validateProjectStructure(),
-      ];
+      const validation = reader.validate();
 
-      for (const check of checks) {
-        console.log(`${check.passed ? '✅' : '❌'} ${check.name}`);
-        if (check.details) console.log(`   ${check.details}`);
+      const index = reader.getIndex();
+      if (index) {
+        console.log(`Version : ${index.version}\n`);
+        console.log('Composants :');
+        for (const [name, comp] of Object.entries(index.components)) {
+          const ok = comp.count > 0;
+          console.log(`  ${ok ? '✅' : '❌'} ${name.padEnd(15)} ${comp.count} (${comp.path})`);
+        }
+        console.log();
       }
 
-      const passed = checks.filter(c => c.passed).length;
-      const failed = checks.filter(c => !c.passed).length;
-
-      console.log(`\n📊 ${passed}/${checks.length} validations passées`);
-      if (failed === 0) {
-        console.log('✅ Registry valide');
+      if (validation.valid) {
+        console.log('✅ Registry v2 valide');
       } else {
-        console.log('⚠️  Des erreurs ont été détectées');
+        console.log('⚠️  Problèmes détectés :');
+        for (const err of validation.errors) {
+          console.log(`  ❌ ${err}`);
+        }
         process.exitCode = 1;
       }
     } catch (err: unknown) {

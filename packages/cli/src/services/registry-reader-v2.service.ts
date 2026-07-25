@@ -129,11 +129,25 @@ export class RegistryReaderV2 {
     const dirs = this.readSubdirs('agents');
     for (const dir of dirs) {
       if (dir.startsWith(agentId)) {
-        const caps = this.readJson<{ can: string[]; cannot: string[] }>(`agents/${dir}/capabilities.json`, `caps:${agentId}`);
-        if (caps) return caps;
+        const raw = this.readJson<Record<string, unknown>>(`agents/${dir}/capabilities.json`, `caps:${agentId}`);
+        if (!raw) return null;
+        const can = this.normalizeCapArray(raw['can']);
+        const cannot = this.normalizeCapArray(raw['cannot'] || raw['limitations'] || []);
+        return { can, cannot };
       }
     }
     return null;
+  }
+
+  private normalizeCapArray(arr: unknown): string[] {
+    if (!Array.isArray(arr)) return [];
+    return arr.map(item => {
+      if (typeof item === 'string') return item;
+      if (item && typeof item === 'object' && 'id' in (item as Record<string, unknown>)) {
+        return (item as Record<string, unknown>).id as string;
+      }
+      return String(item);
+    });
   }
 
   validate(): { valid: boolean; errors: string[] } {
@@ -197,5 +211,13 @@ export class RegistryReaderV2 {
       if (dir.startsWith(agentId)) return dir;
     }
     return null;
+  }
+
+  listAgentDirs(): string[] {
+    return this.readSubdirs('agents');
+  }
+
+  readAgentJson<T>(agentDir: string, filename: string = 'agent.json'): T | null {
+    return this.readJson<T>(`agents/${agentDir}/${filename}`);
   }
 }

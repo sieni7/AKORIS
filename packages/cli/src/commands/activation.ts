@@ -1,6 +1,7 @@
 import { Command } from 'commander';
 import { RegistryReaderV2 } from '../services/registry-reader-v2.service.js';
 import { ActivationEngine } from '../services/activation.service.js';
+import { CapabilityResolver } from '../services/capability.service.js';
 
 export const activationCommand = new Command('activation')
   .description('Gère l\'activation des agents par événement');
@@ -12,6 +13,7 @@ activationCommand
   .action((options: { event: string }) => {
     const reader = new RegistryReaderV2();
     const engine = new ActivationEngine(reader);
+    const resolver = new CapabilityResolver(reader);
     const agents = engine.getAgentsForEvent(options.event);
 
     if (agents.length === 0) {
@@ -29,9 +31,8 @@ activationCommand
     console.log(`\nAgents à activer (${agents.length}) :\n`);
 
     for (const agent of agents) {
-      const agentDir = reader.findAgentDir(agent);
-      const caps = agentDir ? reader.getAgentCapabilities(agent) : null;
-      const topCap = caps?.can?.slice(0, 2).join(', ') || '';
+      const caps = resolver.getCapabilities(agent);
+      const topCap = caps.slice(0, 3).join(', ');
 
       console.log(`  ${agent}`);
       if (topCap) console.log(`    Capacités : ${topCap}`);
