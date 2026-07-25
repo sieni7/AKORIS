@@ -1,0 +1,11 @@
+{
+  "id": "RULE-008",
+  "name": "Sprint Commitments Must Be Validated",
+  "description": "Product Owner (CORE-03) must validate all committed stories before sprint closure",
+  "severity": "major",
+  "if": "A sprint is closed without all committed stories being validated by Product Owner (CORE-03)",
+  "then": "Sprint report must note unfinished items, backlog is adjusted",
+  "otherwise": "",
+  "source": "",
+  "tags": ["methodology", "sprint"]
+}

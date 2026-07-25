@@ -1,0 +1,11 @@
+{
+  "id": "RULE-009",
+  "name": "Dependency Cycle Detection",
+  "description": "Circular dependencies between agents or modules are forbidden",
+  "severity": "blocker",
+  "if": "A circular dependency is detected between agents or modules",
+  "then": "The dependency graph must be refactored before proceeding",
+  "otherwise": "",
+  "source": "",
+  "tags": ["architecture", "governance"]
+}

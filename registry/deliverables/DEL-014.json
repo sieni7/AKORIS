@@ -1,0 +1,13 @@
+{
+  "id": "DEL-014",
+  "name": "Accessibiliy Report",
+  "type": "report",
+  "description": "Rapport d'audit d'accessibilité WCAG avec scores et recommandations",
+  "formats": ["markdown", "html"],
+  "producedBy": ["QA-05"],
+  "consumedBy": ["DEV-05"],
+  "qualityGates": ["QG-ID"],
+  "template": "none",
+  "mandatory": true,
+  "version": "1.0.0"
+}

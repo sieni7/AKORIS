@@ -1,0 +1,132 @@
+openapi: "3.0.3"
+info:
+  title: AKORIS Registry API
+  version: "1.0.0"
+  description: API de consultation du Registry AKORIS
+paths:
+  /registry:
+    get:
+      summary: Récupère l'index du Registry
+      responses:
+        '200':
+          description: Registry index
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegistryIndex'
+  /registry/agents:
+    get:
+      summary: Liste tous les agents
+      parameters:
+        - name: domain
+          in: query
+          schema:
+            type: string
+            enum: [CORE, DEV, QA, EXP, GOV]
+        - name: criticity
+          in: query
+          schema:
+            type: string
+            enum: [critique, haute, moyenne, standard]
+      responses:
+        '200':
+          description: Liste des agents
+  /registry/agents/{agentId}:
+    get:
+      summary: Récupère le contrat complet d'un agent
+      parameters:
+        - name: agentId
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^(CORE|DEV|QA|EXP|GOV)-\d{2}-[A-Za-z-]+$'
+      responses:
+        '200':
+          description: Contrat de l'agent
+        '404':
+          description: Agent non trouvé
+  /registry/agents/{agentId}/contract:
+    get:
+      summary: Récupère le contrat machine (contract.json)
+      parameters:
+        - name: agentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Contrat machine
+  /registry/agents/{agentId}/capabilities:
+    get:
+      summary: Récupère les capacités d'un agent
+      parameters:
+        - name: agentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Capacités de l'agent
+  /registry/dependencies:
+    get:
+      summary: Récupère le graphe des dépendances
+      responses:
+        '200':
+          description: Graphe de dépendances
+  /registry/capabilities:
+    get:
+      summary: Recherche des agents par capacité
+      parameters:
+        - name: capability
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Agents possédant cette capacité
+  /registry/rules:
+    get:
+      summary: Liste toutes les règles
+      parameters:
+        - name: severity
+          in: query
+          schema:
+            type: string
+            enum: [blocker, critical, major, minor, info]
+      responses:
+        '200':
+          description: Liste des règles
+components:
+  schemas:
+    RegistryIndex:
+      type: object
+      properties:
+        version:
+          type: string
+        components:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              count:
+                type: integer
+              path:
+                type: string
+    AgentSummary:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        domain:
+          type: string
+        criticity:
+          type: string
+        version:
+          type: string
+        status:
+          type: string

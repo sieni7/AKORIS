@@ -1,0 +1,102 @@
+openapi: "3.0.3"
+info:
+  title: AKORIS Audit API
+  version: "1.0.0"
+  description: API d'audit et de reporting
+paths:
+  /audit/reports:
+    get:
+      summary: Liste tous les rapports d'audit
+      parameters:
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [sprint, project, release, architecture, documentation, security, performance]
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [draft, final, archived]
+      responses:
+        '200':
+          description: Liste des rapports
+    post:
+      summary: Crée un nouveau rapport d'audit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuditReport'
+      responses:
+        '201':
+          description: Rapport créé
+  /audit/reports/{reportId}:
+    get:
+      summary: Détail d'un rapport d'audit
+      parameters:
+        - name: reportId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Détail du rapport
+  /audit/metrics:
+    get:
+      summary: Métriques d'audit agrégées
+      responses:
+        '200':
+          description: Métriques d'audit
+  /audit/export:
+    get:
+      summary: Export des rapports d'audit
+      parameters:
+        - name: format
+          in: query
+          schema:
+            type: string
+            enum: [pdf, html, markdown, json]
+        - name: reportIds
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: Fichier exporté
+components:
+  schemas:
+    AuditReport:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        type:
+          type: string
+        status:
+          type: string
+          enum: [draft, in_progress, final, archived]
+        agent:
+          type: string
+        findings:
+          type: array
+          items:
+            type: object
+            properties:
+              severity:
+                type: string
+              description:
+                type: string
+              recommendation:
+                type: string
+        score:
+          type: number
+          minimum: 0
+          maximum: 100
+      required: [id, title, type, agent, findings]

@@ -1,0 +1,13 @@
+{
+  "id": "DEL-013",
+  "name": "Technical Debt Register",
+  "type": "report",
+  "description": "Inventaire de la dette technique avec priorisation et plan de remboursement",
+  "formats": ["markdown", "json"],
+  "producedBy": ["QA-07"],
+  "consumedBy": ["CORE-08", "DEV-01", "DEV-02"],
+  "qualityGates": ["QG-ID"],
+  "template": "none",
+  "mandatory": false,
+  "version": "1.0.0"
+}

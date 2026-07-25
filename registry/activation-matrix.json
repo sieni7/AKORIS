@@ -1,0 +1,113 @@
+{
+  "version": "1.0.0",
+  "events": {
+    "PROJECT_INIT": {
+      "description": "Initialisation d'un nouveau projet",
+      "agents": ["CORE-01","CORE-02","GOV-01"],
+      "frequency": "once",
+      "phase": "initiation"
+    },
+    "SPRINT_START": {
+      "description": "Début d'un sprint de développement",
+      "agents": ["CORE-01","CORE-03","DEV-01","DEV-02","DEV-05","QA-01","QA-02"],
+      "frequency": "per-sprint",
+      "phase": "development"
+    },
+    "SPRINT_REVIEW": {
+      "description": "Revue de fin de sprint",
+      "agents": ["CORE-03","QA-05","QA-06"],
+      "frequency": "per-sprint",
+      "phase": "review"
+    },
+    "FEATURE_START": {
+      "description": "Début du développement d'une fonctionnalité",
+      "agents": ["CORE-02","CORE-04","DEV-02","DEV-03","DEV-04"],
+      "frequency": "per-feature",
+      "phase": "development"
+    },
+    "ARCHITECTURE_DECISION": {
+      "description": "Prise de décision architecturale",
+      "agents": ["CORE-02","CORE-04","DEV-01","DEV-02"],
+      "frequency": "as-needed",
+      "phase": "design"
+    },
+    "CODE_REVIEW": {
+      "description": "Revue de code avant merge",
+      "agents": ["QA-01"],
+      "frequency": "per-pr",
+      "phase": "quality"
+    },
+    "SECURITY_AUDIT": {
+      "description": "Audit de sécurité avant release",
+      "agents": ["QA-03"],
+      "frequency": "pre-release",
+      "phase": "quality"
+    },
+    "PERFORMANCE_AUDIT": {
+      "description": "Audit de performance",
+      "agents": ["QA-04","DEV-07"],
+      "frequency": "pre-release",
+      "phase": "quality"
+    },
+    "ACCESSIBILITY_AUDIT": {
+      "description": "Audit d'accessibilité",
+      "agents": ["QA-05"],
+      "frequency": "pre-release",
+      "phase": "quality"
+    },
+    "DOCUMENTATION_AUDIT": {
+      "description": "Audit de documentation",
+      "agents": ["QA-06","CORE-06"],
+      "frequency": "pre-release",
+      "phase": "quality"
+    },
+    "TECHNICAL_DEBT_REVIEW": {
+      "description": "Revue de dette technique",
+      "agents": ["QA-07"],
+      "frequency": "per-sprint",
+      "phase": "quality"
+    },
+    "QUALITY_GATE": {
+      "description": "Passage d'un Quality Gate",
+      "agents": ["CORE-08","GOV-02"],
+      "frequency": "per-phase",
+      "phase": "governance"
+    },
+    "RELEASE_PREP": {
+      "description": "Préparation de release",
+      "agents": ["CORE-01","CORE-07","CORE-08","QA-03","GOV-02","QA-04","QA-05"],
+      "frequency": "per-release",
+      "phase": "release"
+    },
+    "RELEASE_APPROVED": {
+      "description": "Release approuvée",
+      "agents": ["CORE-07","CORE-06"],
+      "frequency": "per-release",
+      "phase": "release"
+    },
+    "INCIDENT": {
+      "description": "Gestion d'incident",
+      "agents": ["EXP-06","CORE-07"],
+      "frequency": "as-needed",
+      "phase": "operations"
+    },
+    "PROJECT_RETRO": {
+      "description": "Rétrospective de projet",
+      "agents": ["GOV-03","CORE-06"],
+      "frequency": "per-sprint",
+      "phase": "improvement"
+    },
+    "KNOWLEDGE_CAPTURE": {
+      "description": "Capitalisation des connaissances",
+      "agents": ["GOV-03","EXP-07"],
+      "frequency": "as-needed",
+      "phase": "improvement"
+    },
+    "COMPLIANCE_AUDIT": {
+      "description": "Audit de conformité réglementaire",
+      "agents": ["EXP-05","CORE-05"],
+      "frequency": "quarterly",
+      "phase": "governance"
+    }
+  }
+}

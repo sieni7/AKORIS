@@ -1,0 +1,13 @@
+{
+  "id": "DEL-005",
+  "name": "Performance Report",
+  "type": "report",
+  "description": "Rapport de performance avec métriques, benchmarks et recommandations",
+  "formats": ["markdown", "json"],
+  "producedBy": ["QA-04"],
+  "consumedBy": ["DEV-07", "CORE-07"],
+  "qualityGates": ["QG-ID"],
+  "template": "none",
+  "mandatory": false,
+  "version": "1.0.0"
+}

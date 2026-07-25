@@ -1,0 +1,77 @@
+openapi: "3.0.3"
+info:
+  title: AKORIS Quality API
+  version: "1.0.0"
+  description: API de gestion de la qualité et des Quality Gates
+paths:
+  /quality/gates:
+    get:
+      summary: Liste tous les Quality Gates
+      responses:
+        '200':
+          description: Liste des Quality Gates
+    post:
+      summary: Définit un nouveau Quality Gate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QualityGate'
+      responses:
+        '201':
+          description: Quality Gate créé
+  /quality/gates/{gateId}:
+    get:
+      summary: Détail d'un Quality Gate
+      parameters:
+        - name: gateId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Détail du Quality Gate
+  /quality/audit:
+    post:
+      summary: Lance un audit qualité
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                  enum: [security, performance, accessibility, documentation, code]
+                scope:
+                  type: string
+      responses:
+        '200':
+          description: Audit lancé
+  /quality/compliance:
+    get:
+      summary: Rapport de conformité global
+      responses:
+        '200':
+          description: Rapport de conformité
+components:
+  schemas:
+    QualityGate:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        criteria:
+          type: string
+        severity:
+          type: string
+          enum: [blocker, critical, major, minor]
+        owner:
+          type: string

@@ -1,0 +1,11 @@
+{
+  "id": "RULE-003",
+  "name": "Quality Gates Must Be Green Before Release",
+  "description": "All Quality Gates defined by CORE-08 must pass before a release",
+  "severity": "blocker",
+  "if": "Any Quality Gate defined by CORE-08 is red",
+  "then": "Release is blocked until all Quality Gates pass",
+  "otherwise": "",
+  "source": "",
+  "tags": ["quality", "release"]
+}

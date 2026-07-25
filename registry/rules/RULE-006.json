@@ -1,0 +1,11 @@
+{
+  "id": "RULE-006",
+  "name": "Documentation Must Accompany Code",
+  "description": "Public APIs and components must include documentation",
+  "severity": "major",
+  "if": "A public API or component is added without documentation",
+  "then": "The PR is rejected and documentation is required",
+  "otherwise": "",
+  "source": "AKORIS Standard DOC-001",
+  "tags": ["documentation", "quality"]
+}

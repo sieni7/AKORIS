@@ -1,0 +1,13 @@
+{
+  "id": "DEL-010",
+  "name": "Project Manifest",
+  "type": "document",
+  "description": "Manifeste du projet AKORIS (MANIFEST.json)",
+  "formats": ["json"],
+  "producedBy": ["CORE-01"],
+  "consumedBy": ["Tous"],
+  "qualityGates": ["QG-ID"],
+  "template": "none",
+  "mandatory": true,
+  "version": "1.0.0"
+}

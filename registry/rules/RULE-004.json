@@ -1,0 +1,11 @@
+{
+  "id": "RULE-004",
+  "name": "Test Coverage Minimum Threshold",
+  "description": "Production modules must maintain at least 80% test coverage",
+  "severity": "critical",
+  "if": "Test coverage is below 80% for any production module",
+  "then": "The module is flagged as at-risk and must be improved before next release",
+  "otherwise": "",
+  "source": "",
+  "tags": ["quality", "testing"]
+}

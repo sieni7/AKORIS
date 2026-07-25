@@ -1,0 +1,13 @@
+{
+  "id": "DEL-009",
+  "name": "Knowledge Base Entry",
+  "type": "document",
+  "description": "Article de capitalisation des connaissances et retours d'expérience",
+  "formats": ["markdown"],
+  "producedBy": ["GOV-03"],
+  "consumedBy": ["Tous"],
+  "qualityGates": ["QG-ID"],
+  "template": "none",
+  "mandatory": false,
+  "version": "1.0.0"
+}

@@ -1,0 +1,13 @@
+{
+  "id": "DEL-015",
+  "name": "Post-Mortem Report",
+  "type": "document",
+  "description": "Retour d'expérience post-incident ou post-release incluant les leçons apprises",
+  "formats": ["markdown"],
+  "producedBy": ["GOV-03"],
+  "consumedBy": ["CORE-06", "EXP-07"],
+  "qualityGates": ["QG-ID"],
+  "template": "none",
+  "mandatory": true,
+  "version": "1.0.0"
+}

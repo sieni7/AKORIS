@@ -1,0 +1,13 @@
+{
+  "id": "DEL-004",
+  "name": "Security Audit Report",
+  "type": "report",
+  "description": "Rapport d'audit de sécurité incluant les vulnérabilités et recommandations",
+  "formats": ["markdown", "pdf"],
+  "producedBy": ["QA-03"],
+  "consumedBy": ["CORE-05", "CORE-01", "GOV-02"],
+  "qualityGates": ["QG-ID"],
+  "template": "none",
+  "mandatory": true,
+  "version": "1.0.0"
+}

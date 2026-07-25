@@ -1,0 +1,13 @@
+{
+  "id": "DEL-002",
+  "name": "Sprint Report",
+  "type": "document",
+  "description": "Rapport de fin de sprint incluant les réalisations, les écarts et les risques",
+  "formats": ["markdown"],
+  "producedBy": ["CORE-03"],
+  "consumedBy": ["CORE-01", "GOV-03"],
+  "qualityGates": ["QG-ID"],
+  "template": "none",
+  "mandatory": true,
+  "version": "1.0.0"
+}

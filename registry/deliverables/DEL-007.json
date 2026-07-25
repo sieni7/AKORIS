@@ -1,0 +1,13 @@
+{
+  "id": "DEL-007",
+  "name": "Test Plan",
+  "type": "document",
+  "description": "Plan de test incluant stratégie, couverture et scénarios",
+  "formats": ["markdown"],
+  "producedBy": ["QA-02"],
+  "consumedBy": ["QA-01", "DEV-01", "DEV-02"],
+  "qualityGates": ["QG-ID"],
+  "template": "none",
+  "mandatory": true,
+  "version": "1.0.0"
+}

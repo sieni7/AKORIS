@@ -1,0 +1,11 @@
+{
+  "id": "RULE-002",
+  "name": "ADR Required for Architecture Changes",
+  "description": "Any architecture decision requires an Architecture Decision Record",
+  "severity": "critical",
+  "if": "An architecture decision is made without a corresponding ADR",
+  "then": "The change is rejected until an ADR is created and reviewed",
+  "otherwise": "",
+  "source": "AKORIS Standard ARC-001",
+  "tags": ["architecture", "documentation"]
+}

@@ -1,0 +1,24 @@
+{
+  "version": "1.0.0",
+  "name": "AKORIS Project State Machine",
+  "initialState": "Draft",
+  "states": [
+    { "id": "Draft", "description": "Projet en définition, aucune décision engagée" },
+    { "id": "Planned", "description": "Architecture définie, backlog priorisé, ressources allouées" },
+    { "id": "Active", "description": "Développement en cours, sprints actifs" },
+    { "id": "Audit", "description": "Campagne d'audit qualité, sécurité, performance, documentation" },
+    { "id": "Validated", "description": "Tous les Quality Gates sont verts, release prête" },
+    { "id": "Released", "description": "Livraison en production, documentation publiée" },
+    { "id": "Archived", "description": "Projet clos, connaissances capitalisées" }
+  ],
+  "transitions": [
+    { "from": "Draft", "to": "Planned", "gates": ["ADR validés","Architecture définie","Backlog priorisé"], "authorizedBy": "GOV-02", "agents": ["CORE-01","CORE-02","CORE-03","GOV-01"] },
+    { "from": "Planned", "to": "Active", "gates": ["Ressources allouées","Environnements prêts","CI/CD configuré"], "authorizedBy": "GOV-02", "agents": ["CORE-01","CORE-07","CORE-03"] },
+    { "from": "Active", "to": "Audit", "gates": ["Feature freeze respecté","Tests rédigés","Documentation préliminaire"], "authorizedBy": "CORE-01", "agents": ["CORE-01","CORE-08"] },
+    { "from": "Audit", "to": "Validated", "gates": ["Security OK","Performance OK","Accessibility OK","Documentation OK","Code quality OK"], "authorizedBy": "GOV-02", "agents": ["QA-01","QA-03","QA-04","QA-05","QA-06","QA-07","CORE-08"] },
+    { "from": "Validated", "to": "Released", "gates": ["Release approuvée","CI/CD green","CHANGELOG mis à jour"], "authorizedBy": "GOV-02", "agents": ["CORE-01","CORE-07","CORE-06","GOV-02"] },
+    { "from": "Released", "to": "Archived", "gates": ["Post-mortem réalisé","Connaissances capitalisées","Documentation finalisée"], "authorizedBy": "CORE-01", "agents": ["GOV-03","CORE-06","EXP-07"] },
+    { "from": "Active", "to": "Planned", "gates": ["Repriorisation nécessaire"], "authorizedBy": "CORE-01", "agents": ["CORE-03"], "description": "Retour à la planification pour repriorisation" },
+    { "from": "Audit", "to": "Active", "gates": ["Correctifs appliqués","Nouvel audit planifié"], "authorizedBy": "CORE-01", "agents": ["CORE-01","DEV-01","DEV-02","QA-01"], "description": "Retour en développement pour correction" }
+  ]
+}

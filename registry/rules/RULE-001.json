@@ -1,0 +1,11 @@
+{
+  "id": "RULE-001",
+  "name": "Release Requires Security Clearance",
+  "description": "SecurityAuditor (QA-03) must approve before any release proceeds",
+  "severity": "blocker",
+  "if": "SecurityAuditor (QA-03) has not approved the release",
+  "then": "Release is forbidden",
+  "otherwise": "Release may proceed to Quality Gate validation",
+  "source": "",
+  "tags": ["security", "release", "governance"]
+}

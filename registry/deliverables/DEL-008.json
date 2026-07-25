@@ -1,0 +1,13 @@
+{
+  "id": "DEL-008",
+  "name": "API Specification (OpenAPI)",
+  "type": "document",
+  "description": "Spécification d'API au format OpenAPI 3.0",
+  "formats": ["yaml", "json"],
+  "producedBy": ["DEV-03"],
+  "consumedBy": ["DEV-02", "DEV-08", "QA-02"],
+  "qualityGates": ["QG-ID"],
+  "template": "none",
+  "mandatory": true,
+  "version": "1.0.0"
+}

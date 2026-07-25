@@ -1,0 +1,13 @@
+{
+  "id": "DEL-012",
+  "name": "Compliance Register",
+  "type": "document",
+  "description": "Registre de conformité RGPD/ISO avec traitements et DPIA",
+  "formats": ["markdown", "json"],
+  "producedBy": ["EXP-05"],
+  "consumedBy": ["CORE-05", "CORE-01"],
+  "qualityGates": ["QG-ID"],
+  "template": "none",
+  "mandatory": true,
+  "version": "1.0.0"
+}

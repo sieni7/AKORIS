@@ -1,0 +1,107 @@
+openapi: "3.0.3"
+info:
+  title: AKORIS Agent Execution API
+  version: "1.0.0"
+  description: API d'exécution et d'orchestration des agents
+paths:
+  /agents/execute:
+    post:
+      summary: Exécute un agent avec un contexte donné
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExecutionRequest'
+      responses:
+        '200':
+          description: Résultat de l'exécution
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExecutionResult'
+  /agents/validate:
+    post:
+      summary: Valide une sortie d'agent contre son contrat
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                agentId:
+                  type: string
+                output:
+                  type: object
+      responses:
+        '200':
+          description: Résultat de la validation
+  /agents/select:
+    post:
+      summary: Sélectionne les agents optimaux pour une tâche
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                task:
+                  type: string
+                context:
+                  type: object
+      responses:
+        '200':
+          description: Liste des agents sélectionnés
+components:
+  schemas:
+    ExecutionRequest:
+      type: object
+      required: [agentId, context]
+      properties:
+        agentId:
+          type: string
+        context:
+          type: object
+          properties:
+            projectContext:
+              type: string
+            inputs:
+              type: object
+            constraints:
+              type: array
+              items:
+                type: string
+    ExecutionResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+        output:
+          type: object
+        tokens:
+          type: object
+          properties:
+            prompt:
+              type: integer
+            completion:
+              type: integer
+            total:
+              type: integer
+        duration:
+          type: integer
+        qualityGates:
+          type: array
+          items:
+            $ref: '#/components/schemas/GateResult'
+    GateResult:
+      type: object
+      properties:
+        gate:
+          type: string
+        status:
+          type: string
+          enum: [passed, failed, skipped]
+        details:
+          type: string

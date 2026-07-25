@@ -1,0 +1,11 @@
+{
+  "id": "RULE-005",
+  "name": "Critical Vulnerability Zero Tolerance",
+  "description": "Critical severity vulnerabilities (CVSS >= 9.0) in production code require immediate action",
+  "severity": "blocker",
+  "if": "A critical severity vulnerability (CVSS >= 9.0) is detected in production code",
+  "then": "Immediate fix required, release is blocked, incident response activated",
+  "otherwise": "",
+  "source": "",
+  "tags": ["security", "ops"]
+}

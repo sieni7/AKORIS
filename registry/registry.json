@@ -1,0 +1,30 @@
+{
+  "name": "AKORIS Registry",
+  "version": "2.0.0",
+  "description": "Référentiel central de gouvernance AKORIS",
+  "updatedAt": "2026-07-25",
+  "maintainer": "AKORIS Core Team",
+  "components": {
+    "agents": { "count": 33, "path": "agents/" },
+    "templates": { "count": 18, "path": "templates/" },
+    "playbooks": { "count": 3, "path": "playbooks/" },
+    "policies": { "count": 12, "path": "policies/" },
+    "qualityGates": { "count": 15, "path": "quality-gates/" },
+    "contracts": { "count": 33, "path": "contracts/" },
+    "workflows": { "count": 8, "path": "workflows/" },
+    "checklists": { "count": 33, "path": "checklists/" },
+    "metrics": { "count": 10, "path": "metrics/" },
+    "conventions": { "count": 8, "path": "conventions/" },
+    "schemas": { "count": 8, "path": "schemas/" },
+    "rules": { "count": 12, "path": "rules/" },
+    "deliverables": { "count": 15, "path": "deliverables/" },
+    "events": { "count": 18, "path": "events/" }
+  },
+  "domains": [
+    { "id": "CORE", "name": "Gouvernance", "agentCount": 8, "color": "#1a237e" },
+    { "id": "DEV", "name": "Architecture & Développement", "agentCount": 8, "color": "#004d40" },
+    { "id": "QA", "name": "Qualité", "agentCount": 7, "color": "#e65100" },
+    { "id": "EXP", "name": "Expertise", "agentCount": 7, "color": "#6a1b9a" },
+    { "id": "GOV", "name": "Gouvernance transverse", "agentCount": 3, "color": "#bf360c" }
+  ]
+}

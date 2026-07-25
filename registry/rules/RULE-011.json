@@ -1,0 +1,11 @@
+{
+  "id": "RULE-011",
+  "name": "Knowledge Must Be Captured After Incidents",
+  "description": "Every incident must have a post-mortem or lessons learned document",
+  "severity": "major",
+  "if": "An incident is resolved without a post-mortem or lessons learned document",
+  "then": "Knowledge Curator (GOV-03) creates a capture task",
+  "otherwise": "",
+  "source": "",
+  "tags": ["knowledge", "ops"]
+}

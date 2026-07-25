@@ -1,0 +1,13 @@
+{
+  "id": "DEL-001",
+  "name": "Architecture Decision Record (ADR)",
+  "type": "document",
+  "description": "Décision architecturale documentée avec contexte, options et conséquences",
+  "formats": ["markdown"],
+  "producedBy": ["CORE-02"],
+  "consumedBy": ["CORE-01", "CORE-06", "QA-06"],
+  "qualityGates": ["QG-ID"],
+  "template": "none",
+  "mandatory": true,
+  "version": "1.0.0"
+}

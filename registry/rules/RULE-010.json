@@ -1,0 +1,11 @@
+{
+  "id": "RULE-010",
+  "name": "Performance Budget Must Be Respected",
+  "description": "Changes must not exceed defined Core Web Vitals or performance budget thresholds",
+  "severity": "major",
+  "if": "A change causes Core Web Vitals or performance budget to exceed defined thresholds",
+  "then": "The change is flagged for optimization before merge",
+  "otherwise": "",
+  "source": "",
+  "tags": ["performance", "quality"]
+}

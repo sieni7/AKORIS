@@ -1,0 +1,13 @@
+{
+  "id": "DEL-011",
+  "name": "Deployment Runbook",
+  "type": "document",
+  "description": "Procédure de déploiement détaillée avec rollback et debugging",
+  "formats": ["markdown"],
+  "producedBy": ["CORE-07"],
+  "consumedBy": ["EXP-06"],
+  "qualityGates": ["QG-ID"],
+  "template": "none",
+  "mandatory": true,
+  "version": "1.0.0"
+}

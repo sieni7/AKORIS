@@ -1,0 +1,13 @@
+{
+  "id": "DEL-003",
+  "name": "Architecture Diagram",
+  "type": "diagram",
+  "description": "Diagramme d'architecture globale du système (C4 ou équivalent)",
+  "formats": ["png", "svg", "mermaid"],
+  "producedBy": ["CORE-02"],
+  "consumedBy": ["DEV-01", "DEV-02", "DEV-03", "DEV-04"],
+  "qualityGates": ["QG-ID"],
+  "template": "none",
+  "mandatory": true,
+  "version": "1.0.0"
+}

@@ -1,0 +1,121 @@
+{
+  "version": "1.0.0",
+  "name": "AKORIS Ontology",
+  "description": "Définit les concepts fondamentaux d'AKORIS et leurs relations",
+  "classes": [
+    {
+      "id": "Agent",
+      "description": "Unité de gouvernance autonome responsable d'un domaine spécifique",
+      "properties": ["id","name","domain","criticity","version","status"],
+      "relationships": [
+        { "type": "dependsOn", "target": "Agent", "cardinality": "0..*" },
+        { "type": "produces", "target": "Deliverable", "cardinality": "0..*" },
+        { "type": "consumes", "target": "Input", "cardinality": "0..*" },
+        { "type": "validatedBy", "target": "QualityGate", "cardinality": "1..*" },
+        { "type": "activatedBy", "target": "Event", "cardinality": "1..*" }
+      ]
+    },
+    {
+      "id": "Deliverable",
+      "description": "Artéfact produit par un Agent",
+      "properties": ["id","name","format","description","frequency","consumer"],
+      "relationships": [
+        { "type": "producedBy", "target": "Agent", "cardinality": "1..*" },
+        { "type": "consumedBy", "target": "Agent", "cardinality": "0..*" },
+        { "type": "validatedBy", "target": "QualityGate", "cardinality": "0..*" }
+      ]
+    },
+    {
+      "id": "QualityGate",
+      "description": "Condition de qualité qui doit être satisfaite pour autoriser une transition",
+      "properties": ["id","name","description","criteria","severity"],
+      "relationships": [
+        { "type": "enforces", "target": "Agent", "cardinality": "1..*" },
+        { "type": "controls", "target": "Transition", "cardinality": "1..*" }
+      ]
+    },
+    {
+      "id": "Policy",
+      "description": "Règle de gouvernance qui s'applique à l'ensemble du projet",
+      "properties": ["id","name","domain","description","mandatory"],
+      "relationships": [
+        { "type": "appliesTo", "target": "Agent", "cardinality": "0..*" },
+        { "type": "refines", "target": "Standard", "cardinality": "0..*" }
+      ]
+    },
+    {
+      "id": "Workflow",
+      "description": "Séquence d'activités orchestrée par des Agents",
+      "properties": ["id","name","description","triggers","steps"],
+      "relationships": [
+        { "type": "triggeredBy", "target": "Event", "cardinality": "1..*" },
+        { "type": "executedBy", "target": "Agent", "cardinality": "1..*" },
+        { "type": "produces", "target": "Deliverable", "cardinality": "0..*" }
+      ]
+    },
+    {
+      "id": "Event",
+      "description": "Signal déclencheur d'activités de gouvernance",
+      "properties": ["id","name","description","phase","frequency"],
+      "relationships": [
+        { "type": "triggers", "target": "Workflow", "cardinality": "0..*" },
+        { "type": "activates", "target": "Agent", "cardinality": "0..*" }
+      ]
+    },
+    {
+      "id": "Playbook",
+      "description": "Guide d'application d'AKORIS pour une stack technologique spécifique",
+      "properties": ["id","name","stack","description","agents","phases"],
+      "relationships": [
+        { "type": "references", "target": "Agent", "cardinality": "0..*" },
+        { "type": "implements", "target": "Standard", "cardinality": "0..*" }
+      ]
+    },
+    {
+      "id": "Standard",
+      "description": "Norme transverse qui s'applique à tous les projets",
+      "properties": ["id","name","domain","description","version"],
+      "relationships": [
+        { "type": "refinedBy", "target": "Policy", "cardinality": "0..*" },
+        { "type": "appliesTo", "target": "Deliverable", "cardinality": "0..*" }
+      ]
+    },
+    {
+      "id": "Transition",
+      "description": "Passage d'un état à un autre dans le cycle de vie du projet",
+      "properties": ["id","name","from","to","gates"],
+      "relationships": [
+        { "type": "controlledBy", "target": "QualityGate", "cardinality": "1..*" },
+        { "type": "authorizedBy", "target": "Agent", "cardinality": "1..*" }
+      ]
+    },
+    {
+      "id": "ADR",
+      "description": "Architecture Decision Record — décision architecturale documentée",
+      "properties": ["id","title","status","context","decision","consequences"],
+      "relationships": [
+        { "type": "authoredBy", "target": "Agent", "cardinality": "1..*" },
+        { "type": "references", "target": "Agent", "cardinality": "0..*" }
+      ]
+    },
+    {
+      "id": "Sprint",
+      "description": "Cycle de développement itératif",
+      "properties": ["id","name","duration","goals","status"],
+      "relationships": [
+        { "type": "plannedBy", "target": "Agent", "cardinality": "1..*" },
+        { "type": "reviewedBy", "target": "Agent", "cardinality": "1..*" },
+        { "type": "produces", "target": "Deliverable", "cardinality": "0..*" }
+      ]
+    },
+    {
+      "id": "Knowledge",
+      "description": "Capitalisation des retours d'expérience et des décisions",
+      "properties": ["id","title","type","content","tags"],
+      "relationships": [
+        { "type": "capturedBy", "target": "Agent", "cardinality": "1..*" },
+        { "type": "consumedBy", "target": "Agent", "cardinality": "0..*" }
+      ]
+    }
+  ]
+}

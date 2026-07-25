@@ -1,0 +1,13 @@
+{
+  "id": "DEL-006",
+  "name": "Quality Gate Report",
+  "type": "report",
+  "description": "État des Quality Gates et décision de passage",
+  "formats": ["markdown", "json"],
+  "producedBy": ["CORE-08"],
+  "consumedBy": ["GOV-02", "CORE-01"],
+  "qualityGates": ["QG-ID"],
+  "template": "none",
+  "mandatory": true,
+  "version": "1.0.0"
+}

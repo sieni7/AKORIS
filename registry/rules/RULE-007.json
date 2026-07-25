@@ -1,0 +1,11 @@
+{
+  "id": "RULE-007",
+  "name": "Agent Must Respect Its Contract Boundaries",
+  "description": "Agents must never perform actions listed in their cannot[] capabilities",
+  "severity": "critical",
+  "if": "An agent performs an action listed in its cannot[] capabilities",
+  "then": "The action is automatically rejected, Orchestrator (CORE-01) is notified",
+  "otherwise": "",
+  "source": "",
+  "tags": ["governance", "orchestration"]
+}

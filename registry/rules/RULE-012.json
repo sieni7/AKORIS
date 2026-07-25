@@ -1,0 +1,11 @@
+{
+  "id": "RULE-012",
+  "name": "RACI Compliance",
+  "description": "Decisions must involve the agent marked as Responsible (R) in the RACI matrix",
+  "severity": "critical",
+  "if": "A decision is made without involving the agent marked as Responsible (R) in the RACI matrix",
+  "then": "The decision is invalidated and must go through the correct RACI process",
+  "otherwise": "",
+  "source": "",
+  "tags": ["governance", "methodology"]
+}
