@@ -19,3 +19,7 @@ logs/
 # Environnement
 .env
 .env.local
+
+# Build outputs
+dist/
+*.tsbuildinfo
