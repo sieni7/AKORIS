@@ -1,0 +1,11 @@
+{
+  "id": "EXP-06",
+  "name": "Ops Specialist",
+  "domain": "Expertise",
+  "criticity": "standard",
+  "version": "1.0.0",
+  "dependencies": ["CORE-01", "CORE-07"],
+  "interactions": ["CORE-07", "QA-04"],
+  "activation": "Phase de déploiement, continu",
+  "qualityGates": ["Couverture monitoring > 90%", "Alertes sans faux positifs"]
+}

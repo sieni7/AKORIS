@@ -1,0 +1,11 @@
+{
+  "id": "EXP-01",
+  "name": "AI Orchestration Expert",
+  "domain": "Expertise",
+  "criticity": "haute",
+  "version": "1.0.0",
+  "dependencies": ["CORE-01", "GOV-01"],
+  "interactions": ["*"],
+  "activation": ["conception", "nouvel-agent-ia"],
+  "tags": ["prompt-engineering", "orchestration", "tokens", "cost-optimization", "model-selection"]
+}

@@ -1,0 +1,10 @@
+{
+  "id": "QA-04",
+  "name": "Performance Auditor",
+  "version": "1.0.0",
+  "domain": "Qualité",
+  "criticity": "moyenne",
+  "status": "active",
+  "dependencies": ["CORE-01"],
+  "maintainer": "AKORIS Core Team"
+}

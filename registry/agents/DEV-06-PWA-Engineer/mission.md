@@ -1,0 +1,1 @@
+Implémenter les capacités Progressive Web App (service workers, cache, offline, notifications push) pour offrir une expérience applicative fiable, rapide et engageante, y compris en condition de connectivité réduite.

@@ -1,0 +1,11 @@
+{
+  "id": "EXP-03",
+  "name": "Mobile Specialist",
+  "domain": "Expertise",
+  "criticity": "moyenne",
+  "version": "1.0.0",
+  "dependencies": ["CORE-01", "CORE-02"],
+  "interactions": ["DEV-01", "DEV-06", "QA-04"],
+  "activation": ["projets-mobiles"],
+  "tags": ["mobile", "ios", "android", "offline", "push-notifications", "bridging"]
+}

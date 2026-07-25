@@ -1,0 +1,10 @@
+{
+  "id": "QA-03",
+  "name": "Security Auditor",
+  "version": "1.0.0",
+  "domain": "Qualité",
+  "criticity": "critique",
+  "status": "active",
+  "dependencies": ["CORE-01", "CORE-05"],
+  "maintainer": "AKORIS Core Team"
+}

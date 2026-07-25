@@ -1,0 +1,10 @@
+{
+  "id": "QA-01",
+  "name": "Code Reviewer",
+  "version": "1.0.0",
+  "domain": "Qualité",
+  "criticity": "haute",
+  "status": "active",
+  "dependencies": ["CORE-01"],
+  "maintainer": "AKORIS Core Team"
+}

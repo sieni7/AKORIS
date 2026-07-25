@@ -1,0 +1,10 @@
+{
+  "id": "DEV-05",
+  "name": "UI/UX Engineer",
+  "version": "1.0.0",
+  "domain": "Architecture & Développement",
+  "criticity": "haute",
+  "status": "active",
+  "dependencies": ["CORE-01", "CORE-03", "DEV-01"],
+  "maintainer": "AKORIS Core Team"
+}

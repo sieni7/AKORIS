@@ -1,0 +1,15 @@
+{
+  "id": "GOV-03",
+  "name": "Knowledge Curator",
+  "domain": "Gouvernance transverse",
+  "criticity": "haute",
+  "version": "1.0.0",
+  "dependencies": ["GOV-01"],
+  "interactions": [
+    "GOV-01",
+    "CORE-06",
+    "Tous les agents"
+  ],
+  "activation": "Continu, après chaque incident, après chaque release",
+  "qualityGates": ["Knowledge base mise à jour après chaque sprint"]
+}

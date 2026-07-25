@@ -1,0 +1,1 @@
+Optimiser le rendu, le chargement, le cache et les performances globales de l'application en définissant des budgets de performance, en implémentant des stratégies d'optimisation et en garantissant la conformité aux Core Web Vitals.

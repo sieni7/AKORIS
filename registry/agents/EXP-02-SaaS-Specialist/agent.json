@@ -1,0 +1,11 @@
+{
+  "id": "EXP-02",
+  "name": "SaaS Specialist",
+  "domain": "Expertise",
+  "criticity": "moyenne",
+  "version": "1.0.0",
+  "dependencies": ["CORE-01", "CORE-02", "CORE-03"],
+  "interactions": ["CORE-03", "CORE-07", "CORE-05"],
+  "activation": ["projets-saas"],
+  "tags": ["multi-tenant", "billing", "onboarding", "subscriptions", "saas-metrics"]
+}

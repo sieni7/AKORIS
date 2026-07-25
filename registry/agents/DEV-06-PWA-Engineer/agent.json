@@ -1,0 +1,10 @@
+{
+  "id": "DEV-06",
+  "name": "PWA Engineer",
+  "version": "1.0.0",
+  "domain": "Architecture & Développement",
+  "criticity": "standard",
+  "status": "active",
+  "dependencies": ["CORE-01", "DEV-01"],
+  "maintainer": "AKORIS Core Team"
+}

@@ -1,0 +1,10 @@
+{
+  "id": "DEV-03",
+  "name": "API Designer",
+  "version": "1.0.0",
+  "domain": "Architecture & Développement",
+  "criticity": "haute",
+  "status": "active",
+  "dependencies": ["CORE-01", "DEV-02"],
+  "maintainer": "AKORIS Core Team"
+}

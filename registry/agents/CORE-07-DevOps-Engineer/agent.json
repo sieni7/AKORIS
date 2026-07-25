@@ -1,0 +1,10 @@
+{
+  "id": "CORE-07",
+  "name": "DevOps Engineer",
+  "version": "1.0.0",
+  "domain": "Gouvernance",
+  "criticity": "haute",
+  "status": "active",
+  "dependencies": ["CORE-01", "CORE-02"],
+  "maintainer": "AKORIS Core Team"
+}

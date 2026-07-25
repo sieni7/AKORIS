@@ -1,0 +1,10 @@
+{
+  "id": "CORE-04",
+  "name": "Database Architect",
+  "version": "1.0.0",
+  "domain": "Gouvernance",
+  "criticity": "haute",
+  "status": "active",
+  "dependencies": ["CORE-02"],
+  "maintainer": "AKORIS Core Team"
+}

@@ -1,0 +1,11 @@
+{
+  "id": "EXP-07",
+  "name": "Replication Specialist",
+  "domain": "Expertise",
+  "criticity": "standard",
+  "version": "1.0.0",
+  "dependencies": ["CORE-01", "GOV-01"],
+  "interactions": ["GOV-01", "GOV-03"],
+  "activation": "Phase d'initiation de projet, amélioration continue",
+  "qualityGates": ["Template testé sur au moins 3 projets pilotes"]
+}

@@ -1,0 +1,11 @@
+{
+  "id": "EXP-04",
+  "name": "Data Engineer",
+  "domain": "Expertise",
+  "criticity": "moyenne",
+  "version": "1.0.0",
+  "dependencies": ["CORE-01", "CORE-02", "CORE-04"],
+  "interactions": ["CORE-04", "CORE-07", "QA-02"],
+  "activation": ["projets-data", "projets-analytics"],
+  "tags": ["etl", "data-pipeline", "data-warehouse", "analytics", "data-quality", "data-governance"]
+}

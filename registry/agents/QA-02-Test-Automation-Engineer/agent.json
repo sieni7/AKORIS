@@ -1,0 +1,10 @@
+{
+  "id": "QA-02",
+  "name": "Test Automation Engineer",
+  "version": "1.0.0",
+  "domain": "Qualité",
+  "criticity": "haute",
+  "status": "active",
+  "dependencies": ["CORE-01", "CORE-08"],
+  "maintainer": "AKORIS Core Team"
+}

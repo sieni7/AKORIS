@@ -1,0 +1,10 @@
+{
+  "id": "DEV-08",
+  "name": "Integration Engineer",
+  "version": "1.0.0",
+  "domain": "Architecture & Développement",
+  "criticity": "moyenne",
+  "status": "active",
+  "dependencies": ["CORE-01", "DEV-02", "DEV-03"],
+  "maintainer": "AKORIS Core Team"
+}

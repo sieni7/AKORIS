@@ -1,0 +1,10 @@
+{
+  "id": "CORE-03",
+  "name": "Product Owner",
+  "version": "1.0.0",
+  "domain": "Gouvernance",
+  "criticity": "haute",
+  "status": "active",
+  "dependencies": ["CORE-01"],
+  "maintainer": "AKORIS Core Team"
+}

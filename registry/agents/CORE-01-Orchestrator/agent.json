@@ -1,0 +1,10 @@
+{
+  "id": "CORE-01",
+  "name": "Orchestrator",
+  "version": "1.0.0",
+  "domain": "Gouvernance",
+  "criticity": "critique",
+  "status": "active",
+  "dependencies": ["CORE-02", "CORE-03", "CORE-04", "CORE-05", "CORE-06", "CORE-07", "CORE-08"],
+  "maintainer": "AKORIS Core Team"
+}

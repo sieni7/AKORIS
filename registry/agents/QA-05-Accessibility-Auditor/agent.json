@@ -1,0 +1,10 @@
+{
+  "id": "QA-05",
+  "name": "Accessibility Auditor",
+  "version": "1.0.0",
+  "domain": "Qualité",
+  "criticity": "standard",
+  "status": "active",
+  "dependencies": ["CORE-01"],
+  "maintainer": "AKORIS Core Team"
+}

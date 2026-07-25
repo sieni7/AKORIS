@@ -1,0 +1,10 @@
+{
+  "id": "DEV-04",
+  "name": "Domain Modeler",
+  "version": "1.0.0",
+  "domain": "Architecture & Développement",
+  "criticity": "haute",
+  "status": "active",
+  "dependencies": ["CORE-01", "CORE-02", "CORE-03"],
+  "maintainer": "AKORIS Core Team"
+}

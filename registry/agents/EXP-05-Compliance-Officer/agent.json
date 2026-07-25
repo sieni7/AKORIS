@@ -1,0 +1,11 @@
+{
+  "id": "EXP-05",
+  "name": "Compliance Officer",
+  "domain": "Expertise",
+  "criticity": "haute",
+  "version": "1.0.0",
+  "dependencies": ["CORE-01", "CORE-05"],
+  "interactions": ["CORE-05", "GOV-01"],
+  "activation": "Phase de conception, avant chaque mise en production",
+  "qualityGates": ["Conformité RGPD obligatoire", "Documentation réglementaire à jour"]
+}

@@ -1,0 +1,11 @@
+{
+  "id": "GOV-02",
+  "name": "Quality Gate Keeper",
+  "domain": "Gouvernance transverse",
+  "criticity": "critique",
+  "version": "1.0.0",
+  "dependencies": ["CORE-01", "CORE-08", "GOV-01"],
+  "interactions": ["CORE-08", "GOV-01", "CORE-01"],
+  "activation": "Avant chaque transition de phase, avant chaque release",
+  "qualityGates": ["Processus lui-même audité trimestriellement"]
+}

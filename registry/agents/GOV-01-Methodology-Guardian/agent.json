@@ -1,0 +1,14 @@
+{
+  "id": "GOV-01",
+  "name": "Methodology Guardian",
+  "domain": "Gouvernance transverse",
+  "criticity": "critique",
+  "version": "1.0.0",
+  "dependencies": [],
+  "interactions": [
+    "Tous les agents GOV",
+    "CORE-01"
+  ],
+  "activation": "Continu, audit à chaque phase clé",
+  "qualityGates": ["Conformité 100% avec la Constitution AKORIS"]
+}

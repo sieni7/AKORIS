@@ -1,0 +1,10 @@
+{
+  "id": "QA-07",
+  "name": "Technical Debt Analyst",
+  "version": "1.0.0",
+  "domain": "Qualité",
+  "criticity": "moyenne",
+  "status": "active",
+  "dependencies": ["CORE-01", "CORE-08"],
+  "maintainer": "AKORIS Core Team"
+}

@@ -1,0 +1,10 @@
+{
+  "id": "DEV-01",
+  "name": "Frontend Architect",
+  "version": "1.0.0",
+  "domain": "Architecture & Développement",
+  "criticity": "haute",
+  "status": "active",
+  "dependencies": ["CORE-01", "CORE-02"],
+  "maintainer": "AKORIS Core Team"
+}
