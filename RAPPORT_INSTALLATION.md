@@ -1,7 +1,8 @@
 # Rapport d'Installation — AKORIS v1.0.0
 
-**Date :** 25/07/2026  
-**Machine :** PC MARKET CI  
+**Date :** 25/07/2026
+**Machine :** PC MARKET CI
+**Dépôt :** https://github.com/sieni7/AKORIS
 **Auteur :** OULAÏ SIÉNI
 
 ---
@@ -9,152 +10,165 @@
 ## 1. Environnement
 
 | Technologie | Version |
-|-------------|---------|
+|-------------|--------|
 | Node.js | 24.4.1 |
 | pnpm | 9.15.0 |
-| TypeScript | 5.5+ |
+| TypeScript | 5.9 |
 | OS | Windows |
 
 ---
 
-## 2. Structure du projet
+## 2. Structure finale du projet
 
 ```
 C:\Users\PC MARKET CI\AKORIS\
 │
-├── package.json              # Monorepo root (pnpm workspaces)
-├── pnpm-workspace.yaml       # Configuration workspaces
-├── tsconfig.base.json        # Base TypeScript config
-├── MANIFEST.json             # Identité AKORIS
-├── .gitignore
-├── .prettierrc
-├── README.md
+├── constitution/               # Documents fondateurs (8 fichiers)
+│   ├── CONSTITUTION.md         → Pourquoi AKORIS existe, mission, vision
+│   ├── PHILOSOPHY.md           → Philosophie (Gouvernance First, Documentation First...)
+│   ├── VALUES.md               → Valeurs (Transparence, Qualité, Pérennité...)
+│   ├── PRINCIPLES.md           → 10 principes fondateurs
+│   ├── GOVERNANCE.md           → Cycle de vie, validation, responsabilités
+│   ├── LICENSING.md            → Licence, propriété intellectuelle, contribution
+│   ├── CODE_OF_ETHICS.md       → Neutralité, zéro hallucination, comportement
+│   └── TERMINOLOGY.md          → Définitions officielles des termes
 │
-├── registry/                 # ❖ Cœur du système
-│   ├── agents/               #   3 agents (architect, developer, tester)
-│   ├── contracts/            #   3 contrats (implementation, adr, code-review)
-│   ├── policies/             #   5 policies (zero-hallucination, zero-spaghetti,
-│   │                         #     documentation-first, audit-first, architecture-first)
-│   ├── workflows/            #   2 workflows (saas, mvp)
-│   ├── quality-gates/        #   8 quality gates
-│   ├── metrics/              #   7 métriques
-│   ├── checklists/           #   2 checklists (sprint-review, deployment)
-│   ├── glossary/             #   15 termes définis
-│   ├── templates/            #   1 template (ADR)
-│   └── schemas/              #   2 schémas (manifest, contract)
+├── docs/                       # Documentation officielle
+│   ├── presentation/           → 3 documents de présentation
+│   ├── specifications/         → Spécifications (vide, à remplir)
+│   ├── roadmap/                → Roadmap (vide, à remplir)
+│   ├── decisions/              → ADRs (vide, à remplir)
+│   └── releases/               → Notes de version (vide, à remplir)
 │
-├── packages/
-│   ├── cli/                  # ◆ CLI (8 commandes)
-│   ├── sdk/                  # ◆ SDK (RegistryReader, ManifestManager, Validator, AuditEngine)
-│   ├── adapters/             # ◆ Adapters (OpenCode, Cursor, Claude Code, Codex)
-│   └── connectors/           # ◆ Connectors (GitHub, GitLab, Supabase, Netlify)
+├── registry/                   # ❖ Référentiel de gouvernance (cœur)
+│   ├── agents/                 → 3 agents (architect, developer, tester)
+│   ├── contracts/              → 8 contrats (implementation, adr, code-review,
+│   │                             agent, audit, quality, playbook, workflow)
+│   ├── policies/               → 9 policies
+│   ├── workflows/              → 7 workflows (saas, mvp, institutional,
+│   │                             mobile, api, library, cli)
+│   ├── quality-gates/          → 8 quality gates
+│   ├── templates/              → 9 templates (ADR, AUDIT, SPRINT_PLAN, ...)
+│   ├── conventions/            → 6 conventions (naming, git, commits, branches,
+│   │                             folders, typescript, markdown)
+│   ├── schemas/                → 6 schémas JSON (manifest, agent, policy,
+│   │                             workflow, audit, contract)
+│   ├── metrics/                → 7 métriques
+│   ├── checklists/             → 2 checklists (sprint-review, deployment)
+│   └── glossary/               → 15 termes définis
 │
-├── playbooks/                # ● Playbooks (react-vite-supabase, nextjs, laravel)
-├── docs/                     # ■ Documentation (architecture, guides, user)
-├── scripts/                  # Scripts (bootstrap.ps1)
-├── .github/workflows/         # CI/CD (test, lint, release)
-├── examples/                 # Exemples de projet
-└── tests/                    # Tests
+├── standards/                  # Normes transverses (15 documents)
+│   ├── coding/                 → naming-conventions, clean-code, typescript
+│   ├── documentation/          → adr-standard, markdown-style, api-documentation
+│   ├── architecture/           → layering, dependency-rules, modularity
+│   ├── security/               → authentication, secrets-management, secure-dev
+│   └── quality/                → testing, review-process, quality-gates
+│
+├── packages/                   # ◆ Implémentations techniques (4 packages)
+│   ├── cli/                    → CLI (8 commandes: init, install, doctor,
+│   │                             audit, quality, status, sync, metrics)
+│   ├── sdk/                    → SDK (RegistryReader, ManifestManager,
+│   │                             Validator, AuditEngine)
+│   ├── adapters/               → 4 adapteurs IA (OpenCode, Cursor,
+│   │                             Claude Code, Codex)
+│   └── connectors/             → 4 connecteurs (GitHub, GitLab,
+│                               Supabase, Netlify)
+│
+├── playbooks/                  → 3 playbooks (react-vite-supabase, nextjs, laravel)
+├── examples/                   → Exemples de projet
+├── tests/                      → Tests
+├── scripts/                    → Scripts (bootstrap.ps1)
+├── .github/workflows/          → CI/CD (test, lint, release)
+│
+├── MANIFEST.json               → Identité du projet AKORIS
+├── CHANGELOG.md                → Historique des versions
+├── RAPPORT_INSTALLATION.md     → Ce document
+├── LICENSE                     → MIT
+└── README.md                   → Présentation générale
 ```
 
 ---
 
-## 3. Packages installés
+## 3. Fichiers créés
 
-### Dépendances racine
-- `typescript`
-- `prettier`
+**Total : 141 fichiers** (10342 lignes)
 
-### @akoris/cli
-- `commander` — parsing des commandes
-- `chalk` — couleurs console
-- `fs-extra` — opérations fichiers avancées
-- `inquirer` — prompts interactifs
-- `ora` — spinners
-- `semver` — validation sémantique
-
-### @akoris/sdk
-- `semver` — validation sémantique
-
-### @akoris/adapters, @akoris/connectors
-- Dépendent de `@akoris/sdk` (workspace)
+| Catégorie | Nombre |
+|-----------|--------|
+| Constitution | 8 |
+| Docs | 3 |
+| Registry | 50+ |
+| Standards | 15 |
+| Packages (TS) | 40+ |
+| Playbooks | 3 |
+| Config | 8 |
+| CI/CD | 3 |
+| Autres | 5 |
 
 ---
 
-## 4. Commandes CLI disponibles
+## 4. Packages compilés
 
-| Commande | Description | Statut |
-|----------|-------------|--------|
-| `akoris init [name]` | Initialise un projet AKORIS | ✅ |
-| `akoris install <type> <name>` | Installe un playbook ou expert | ✅ |
-| `akoris doctor` | Diagnostic complet du projet | ✅ |
-| `akoris audit [scope]` | Lance un audit (sprint) | ✅ |
-| `akoris quality <action>` | Vérifie les Quality Gates | ✅ |
-| `akoris status` | État global du projet | ✅ |
-| `akoris sync` | Synchronise le Registry | ✅ |
-| `akoris metrics` | Affiche les métriques | ✅ |
+| Package | Description | Statut |
+|---------|-------------|--------|
+| `@akoris/cli` | CLI (commander, chalk, fs-extra, inquirer, ora, semver) | ✅ Build OK |
+| `@akoris/sdk` | SDK (registry-reader, manifest-manager, validator, audit-engine) | ✅ Build OK |
+| `@akoris/adapters` | Adapters (OpenCode, Cursor, Claude Code, Codex) | ✅ Build OK |
+| `@akoris/connectors` | Connectors (GitHub, GitLab, Supabase, Netlify) | ✅ Build OK |
 
 ---
 
-## 5. Registry — Contenu
+## 5. Commandes CLI testées
 
-### Policies (5)
-1. **Zéro Hallucination** — blocker — aucune décision sans source vérifiable
-2. **Zéro Code Spaghetti** — critical — architecture SOLID, pas de cycles
-3. **Documentation First** — major — doc avant le code
-4. **Audit First** — major — audit indépendant avant validation
-5. **Architecture First** — critical — ADR avant implémentation
-
-### Agents (3)
-1. **Architecte Logiciel** — conception architecture, ADR, revue technique
-2. **Développeur** — génération code, refactoring, tests
-3. **Testeur** — tests unitaires, intégration, performance
-
-### Contrats (3)
-1. **Contrat d'Implémentation** — pour le développeur
-2. **Contrat ADR** — pour l'architecte
-3. **Contrat de Revue de Code** — pour le reviewer
-
-### Workflows (2)
-1. **SaaS** — 6 phases (vision → capitalisation)
-2. **MVP** — 4 phases (concept → iterate)
-
-### Quality Gates (8)
-- Lint Pass 🔴, Tests Pass 🔴, Couverture 80% 🟡
-- Format ADR 🟡, Aucun Bloquant 🔴, Revue Complète 🔴
-- Déploiement Réussi 🔴, Pas de dépendances circulaires 🔴
+| Commande | Résultat |
+|----------|----------|
+| `node packages/cli/dist/index.js status` | ✅ Projet AKORIS v1.0.0, Registry v1.0.0 |
+| `node packages/cli/dist/index.js doctor` | ✅ Diagnostic OK |
+| `node packages/cli/dist/index.js quality gates` | ✅ 8 quality gates listés |
+| `node packages/cli/dist/index.js init` | ✅ Initialisation |
+| `node packages/cli/dist/index.js audit` | ✅ Audit |
+| `node packages/cli/dist/index.js metrics` | ✅ 7 métriques |
 
 ---
 
-## 6. Build & Tests
+## 6. Git & GitHub
 
 ```
-pnpm install     → ✅ 200+ packages installés
-pnpm build       → ✅ 4 packages compilés (cli, sdk, adapters, connectors)
-CLI status       → ✅ Projet AKORIS v1.0.0, Registry v1.0.0
-CLI doctor       → ✅ Diagnostic OK (MANIFEST, Registry)
-CLI quality gates → ✅ 8 quality gates listés
+141 fichiers commités
+Commit : 6434adb - "AKORIS v1.0.0 - Initial release"
+Push   : ✅ https://github.com/sieni7/AKORIS
 ```
 
 ---
 
-## 7. Prochaines étapes (Roadmap)
+## 7. Architecture logique
 
-- [ ] **v1.0** — Registry, CLI, Playbook React, Adapter OpenCode ✅ *(fait)*
-- [ ] **v1.1** — Adapters Cursor et Claude Code, SDK Node.js ✅ *(implémenté)*
-- [ ] **v1.2** — Connecteurs GitHub, Supabase, Netlify ✅ *(implémenté)*
-- [ ] **v1.3** — Tests unitaires (vitest)
-- [ ] **v2.0** — Marketplace de Playbooks, plugins, Registry versionné
+```
+                    AKORIS
+            ┌────────────────────┐
+            │    Registry Core   │
+            └────────────────────┘
+                     │
+        ┌────────────┼────────────┐
+        │            │            │
+        ▼            ▼            ▼
+     CLI Engine   Adapters   Connectors
+        │            │            │
+        └────────────┼────────────┘
+                     │
+               Projet utilisateur
+                 (.akoris/)
+```
 
 ---
 
-## 8. Notes
+## 8. Prochaines étapes
 
-- Le projet est structuré en **monorepo pnpm** avec 4 workspaces
-- Le Registry est la **source de vérité unique** — le CLI ne fait que lire et exécuter
-- Les adaptateurs IA sont conçus pour être **interchangeables** via une interface commune
-- Les connecteurs externes suivent le **même pattern** que les adaptateurs
-- La **documentation technique** est dans `docs/`, la **gouvernance** dans `registry/`
+- [ ] Tests unitaires (vitest)
+- [ ] Publication npm des packages
+- [ ] Ajout des playbooks Flutter, Spring Boot
+- [ ] Création du site de documentation
+- [ ] Marketplace de playbooks (v2.0)
 
 ---
 
