@@ -91,7 +91,7 @@ C:\Users\PC MARKET CI\AKORIS\
 
 ## 3. Fichiers créés
 
-**Total : 141 fichiers** (10342 lignes)
+**Total : 160+ fichiers** (11996+ lignes)
 
 | Catégorie | Nombre |
 |-----------|--------|
@@ -122,26 +122,130 @@ C:\Users\PC MARKET CI\AKORIS\
 
 | Commande | Résultat |
 |----------|----------|
-| `node packages/cli/dist/index.js status` | ✅ Projet AKORIS v1.0.0, Registry v1.0.0 |
-| `node packages/cli/dist/index.js doctor` | ✅ Diagnostic OK |
-| `node packages/cli/dist/index.js quality gates` | ✅ 8 quality gates listés |
-| `node packages/cli/dist/index.js init` | ✅ Initialisation |
-| `node packages/cli/dist/index.js audit` | ✅ Audit |
-| `node packages/cli/dist/index.js metrics` | ✅ 7 métriques |
+| `akoris` (sans args) | ✅ Message de bienvenue ASCII complet |
+| `akoris about` | ✅ Vision, 3 engagements, 10 principes, versions |
+| `akoris status` | ✅ Projet AKORIS v1.0.0, Registry v1.0.0 |
+| `akoris doctor` | ✅ Diagnostic OK |
+| `akoris info` | ✅ Infos projet complètes |
+| `akoris registry list` | ✅ 9 policies, 3 agents, 3 contrats... |
+| `akoris playbook list` | ✅ 3 playbooks listés |
+| `akoris quality gates` | ✅ 8 quality gates listés |
+| `akoris init` | ✅ Initialisation |
+| `akoris audit sprint` | ✅ Audit |
+| `akoris metrics` | ✅ 7 métriques |
+
+## 6. Arbre des commandes
+
+```
+akoris
+│
+├── init              Initialiser un projet
+├── doctor            Diagnostic complet
+├── info              Informations sur le projet courant
+├── status            Etat de sante du projet
+├── about             Manifeste AKORIS (vision, principes, engagements)
+│
+├── registry          Gestion du Registry
+│   ├── list          Liste les composants
+│   ├── info          Infos sur un domaine
+│   ├── update        Mise a jour
+│   ├── sync          Synchronisation
+│   └── validate      Validation des schemas
+│
+├── playbook          Gestion des playbooks
+│   ├── list          Liste les playbooks
+│   ├── install       Installe un playbook
+│   ├── remove        Supprime un playbook
+│   └── current       Playbook actif
+│
+├── agent             Gestion des agents
+│   ├── list          Liste les agents
+│   ├── info          Infos sur un agent
+│   ├── activate      Active un agent
+│   ├── deactivate    Desactive un agent
+│   ├── contract      Contrat d'un agent
+│   └── audit         Audit d'un agent
+│
+├── sprint            Gestion des sprints
+│   ├── start         Demarre un sprint
+│   ├── report        Rapport de sprint
+│   ├── close         Cloture un sprint
+│   └── history       Historique des sprints
+│
+├── adr               Gestion des ADRs
+│   ├── new           Nouvel ADR
+│   ├── list          Liste des ADRs
+│   ├── show          Affiche un ADR
+│   └── export        Export des ADRs
+│
+├── audit             Lancement d'audits
+│   ├── sprint        Audit de sprint
+│   ├── project       Audit de projet
+│   ├── release       Audit de release
+│   ├── architecture  Audit d'architecture
+│   └── documentation Audit de documentation
+│
+├── quality           Gestion de la qualite
+│   ├── check         Verification Quality Gates
+│   ├── gates         Liste des gates
+│   ├── validate      Validation complete
+│   └── metrics       Metriques qualite
+│
+├── docs              Gestion de la documentation
+│   ├── generate      Generation
+│   ├── validate      Validation
+│   └── export        Export (pdf, html, markdown)
+│
+├── metrics           Gestion des metriques
+│   ├── run           Metriques courantes
+│   ├── history       Historique
+│   └── export        Export JSON
+│
+├── knowledge         Gestion de la connaissance
+│   ├── search        Recherche
+│   ├── export        Export
+│   └── import        Import
+│
+├── manifest          Gestion du MANIFEST
+│   ├── show          Affichage
+│   ├── update        Mise a jour
+│   └── validate      Validation
+│
+├── validate          Validations
+│   ├── architecture  Architecture
+│   ├── documentation Documentation
+│   ├── security      Securite
+│   └── registry      Registry
+│
+├── install           Installation de composants
+│   ├── playbook      Playbook
+│   ├── expert        Expert IA
+│   ├── connector     Connecteur
+│   └── adapter       Adaptateur IA
+│
+├── export            Export de donnees
+│   ├── registry      Registry
+│   ├── audit         Rapport d'audit
+│   └── project       Resume projet
+│
+└── upgrade           Mise a jour du CLI
+```
 
 ---
 
-## 6. Git & GitHub
+## 7. Git & GitHub
 
 ```
-141 fichiers commités
-Commit : 6434adb - "AKORIS v1.0.0 - Initial release"
+Commits : 3
+  6434adb - AKORIS v1.0.0 - Initial release (141 fichiers)
+  73c4d9e - Mise a jour du rapport d'installation
+  747b5bf - CLI redesign: 20 command groups (18 fichiers, +1654 lignes)
 Push   : ✅ https://github.com/sieni7/AKORIS
 ```
 
 ---
 
-## 7. Architecture logique
+## 8. Architecture logique
 
 ```
                     AKORIS
@@ -162,7 +266,7 @@ Push   : ✅ https://github.com/sieni7/AKORIS
 
 ---
 
-## 8. Prochaines étapes
+## 9. Prochaines étapes
 
 - [ ] Tests unitaires (vitest)
 - [ ] Publication npm des packages
