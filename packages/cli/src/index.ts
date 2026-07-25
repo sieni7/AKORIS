@@ -24,6 +24,9 @@ import { validateCommand } from './commands/validate.js';
 import { installCommand } from './commands/install.js';
 import { exportCommand } from './commands/export.js';
 import { upgradeCommand } from './commands/upgrade.js';
+import { stateCommand } from './commands/state.js';
+import { activationCommand } from './commands/activation.js';
+import { capabilityCommand } from './commands/capability.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const pkg = JSON.parse(
@@ -76,7 +79,10 @@ const WELCOME = `
    akoris audit sprint   Lancer un audit
    akoris quality check  Verifier les Quality Gates
    akoris registry sync  Synchroniser le Registry
-   akoris --help         Aide complete
+    akoris state          Machine a etats du projet
+    akoris activation     Activation des agents
+    akoris capability     Recherche de capacites
+    akoris --help         Aide complete
 
 \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
 
@@ -119,6 +125,9 @@ program.addCommand(validateCommand);
 program.addCommand(installCommand);
 program.addCommand(exportCommand);
 program.addCommand(upgradeCommand);
+program.addCommand(stateCommand);
+program.addCommand(activationCommand);
+program.addCommand(capabilityCommand);
 
 if (process.argv.length <= 2) {
   console.log(WELCOME);

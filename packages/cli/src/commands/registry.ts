@@ -1,5 +1,6 @@
 import { Command } from 'commander';
 import { RegistryService } from '../services/registry.service.js';
+import { RegistryReaderV2 } from '../services/registry-reader-v2.service.js';
 import { SyncService } from '../services/sync.service.js';
 import { ValidatorService } from '../services/validator.service.js';
 
@@ -121,4 +122,76 @@ registryCommand
       console.error(`❌ Erreur : ${message}`);
       process.exit(1);
     }
+  });
+
+registryCommand
+  .command('index')
+  .description('Affiche l\'index complet du Registry v2')
+  .option('--json', 'Sortie au format JSON')
+  .action((options: { json?: boolean }) => {
+    const reader = new RegistryReaderV2();
+    const index = reader.getIndex();
+
+    if (!index) {
+      console.log('⚠️  Index du Registry non trouvé (registry.json)');
+      return;
+    }
+
+    if (options.json) {
+      console.log(JSON.stringify(index, null, 2));
+      return;
+    }
+
+    console.log('Index du Registry AKORIS\n');
+    console.log(`  Version : ${index.version}\n`);
+
+    console.log('  Composants :');
+    for (const [name, comp] of Object.entries(index.components)) {
+      console.log(`    ${name.padEnd(15)} ${comp.count} (${comp.path})`);
+    }
+
+    console.log('\n  Domaines :');
+    for (const d of index.domains) {
+      console.log(`    ${d.id.padEnd(7)} ${d.name.padEnd(30)} ${d.agentCount} agents`);
+    }
+
+    const validation = reader.validate();
+    if (!validation.valid) {
+      console.log('\n  ⚠️  Problèmes détectés :');
+      for (const err of validation.errors) {
+        console.log(`    ❌ ${err}`);
+      }
+    } else {
+      console.log('\n  ✅ Registry valide');
+    }
+  });
+
+registryCommand
+  .command('watch')
+  .description('Surveille les changements dans le Registry')
+  .action(() => {
+    const reader = new RegistryReaderV2();
+
+    console.log('👀 Surveillance du Registry...');
+    console.log('   Appuyez sur Ctrl+C pour arrêter\n');
+
+    const unwatch = reader.watch((changed) => {
+      console.log(`\n🔄 Fichier(s) modifié(s) : ${changed.join(', ')}`);
+      const validation = reader.validate();
+      if (validation.valid) {
+        console.log('✅ Registry toujours valide');
+      } else {
+        console.log('⚠️  Problème(s) détecté(s) :');
+        for (const err of validation.errors) {
+          console.log(`   ❌ ${err}`);
+        }
+      }
+      console.log('');
+    });
+
+    process.on('SIGINT', () => {
+      unwatch();
+      console.log('\n👋 Surveillance arrêtée');
+      process.exit(0);
+    });
   });

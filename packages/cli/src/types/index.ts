@@ -100,3 +100,77 @@ export interface CheckResult {
   passed: boolean;
   details?: string;
 }
+
+// === Registry v2 types ===
+
+export interface RegistryIndex {
+  version: string;
+  components: Record<string, { count: number; path: string }>;
+  domains: Array<{ id: string; name: string; agentCount: number; color: string }>;
+}
+
+export interface DependencyGraph {
+  version: string;
+  agents: Record<string, {
+    dependsOn: string[];
+    dependedBy: string[];
+  }>;
+}
+
+export interface ActivationMatrix {
+  version: string;
+  events: Record<string, {
+    description: string;
+    agents: string[];
+    frequency: string;
+    phase: string;
+  }>;
+}
+
+export interface CapabilityRegistry {
+  version: string;
+  capabilities: Record<string, string[]>;
+}
+
+export interface StateMachine {
+  version: string;
+  name: string;
+  initialState: string;
+  states: Array<{ id: string; description: string }>;
+  transitions: Array<{
+    from: string;
+    to: string;
+    gates: string[];
+    authorizedBy: string;
+    agents: string[];
+    description?: string;
+  }>;
+}
+
+export interface Rule {
+  id: string;
+  name: string;
+  severity: 'blocker' | 'critical' | 'major' | 'minor' | 'info';
+  if: string;
+  then: string;
+  otherwise?: string;
+}
+
+export interface Deliverable {
+  id: string;
+  name: string;
+  type: 'document' | 'code' | 'report' | 'config' | 'diagram';
+  producedBy: string[];
+  consumedBy: string[];
+  mandatory: boolean;
+}
+
+export interface Event {
+  id: string;
+  name: string;
+  phase: string;
+  description: string;
+  triggers: string[];
+  producedBy: string[];
+  consumedBy: string[];
+}
