@@ -1,5 +1,5 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import { RegistryReaderV2 } from './registry-reader-v2.service.js';
 import type { StateMachine } from '../types/index.js';
 
@@ -20,7 +20,7 @@ export class StateMachineEngine {
 
   constructor(reader: RegistryReaderV2, projectPath?: string) {
     this.reader = reader;
-    this.projectPath = projectPath || process.cwd();
+    this.projectPath = projectPath || resolve(reader['basePath'] || process.cwd(), '..');
   }
 
   getMachine(): StateMachine | null {

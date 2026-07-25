@@ -1,5 +1,5 @@
 import { readFileSync, readdirSync, existsSync, watch, statSync } from 'node:fs';
-import { join, resolve } from 'node:path';
+import { join, resolve, dirname } from 'node:path';
 import type {
   RegistryIndex,
   DependencyGraph,
@@ -22,7 +22,19 @@ export class RegistryReaderV2 {
   private cacheTTL: number = 300000;
 
   constructor(basePath?: string) {
-    this.basePath = basePath || resolve(process.cwd(), 'registry');
+    this.basePath = basePath || this.findRegistryPath();
+  }
+
+  private findRegistryPath(): string {
+    let dir = process.cwd();
+    for (let i = 0; i < 10; i++) {
+      const candidate = join(dir, 'registry');
+      if (existsSync(join(candidate, 'registry.json'))) return candidate;
+      const parent = resolve(dir, '..');
+      if (parent === dir) break;
+      dir = parent;
+    }
+    return resolve(process.cwd(), 'registry');
   }
 
   setCacheTTL(ms: number): void {
