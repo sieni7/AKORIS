@@ -1,0 +1,58 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://akoris.dev/schemas/agent.schema.json",
+  "title": "Agent",
+  "description": "Schema de validation pour les fichiers de configuration d'agent",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Nom unique de l'agent"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Version semantique de l'agent"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description du role et des capacites de l'agent"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["code", "audit", "quality", "workflow", "playbook"],
+      "description": "Type d'agent"
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" }
+        },
+        "required": ["name"]
+      },
+      "description": "Liste des capacites de l'agent"
+    },
+    "policies": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Politiques applicables a cet agent"
+    },
+    "constraints": {
+      "type": "object",
+      "properties": {
+        "timeout": { "type": "integer", "minimum": 0 },
+        "memory": { "type": "string" },
+        "permissions": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "contract": {
+      "type": "string",
+      "description": "Chemin vers le fichier de contrat associe"
+    }
+  },
+  "required": ["name", "version", "type"],
+  "additionalProperties": false
+}

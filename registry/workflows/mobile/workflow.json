@@ -1,0 +1,108 @@
+{
+  "name": "Workflow Mobile",
+  "version": "1.0.0",
+  "description": "Workflow pour les projets d'applications mobiles",
+  "type": "mobile",
+  "phases": [
+    {
+      "id": "ideation",
+      "name": "Ideation",
+      "description": "Definition du concept, cible et proposition de valeur",
+      "order": 0,
+      "tasks": [
+        { "id": "MOB-01", "name": "Definition du concept", "description": "Definition de l'idee et proposition de valeur" },
+        { "id": "MOB-02", "name": "Analyse de la cible", "description": "Analyse des utilisateurs cibles et personas" },
+        { "id": "MOB-03", "name": "Benchmark concurrentiel", "description": "Analyse des applications concurrentes" }
+      ],
+      "validation": { "criteria": ["Concept valide", "Cible definie"], "human_required": true },
+      "artifacts": [
+        { "name": "Concept note", "type": "document" },
+        { "name": "Personas", "type": "document" }
+      ]
+    },
+    {
+      "id": "design",
+      "name": "Design",
+      "description": "Conception UX/UI de l'application mobile",
+      "order": 1,
+      "tasks": [
+        { "id": "MOB-04", "name": "Wireframes", "description": "Creation des wireframes et user flows" },
+        { "id": "MOB-05", "name": "Maquettes graphiques", "description": "Design des ecrans et composants" },
+        { "id": "MOB-06", "name": "Prototype interactif", "description": "Realisation du prototype cliquable" },
+        { "id": "MOB-07", "name": "Tests utilisateurs", "description": "Tests du prototype avec des utilisateurs" }
+      ],
+      "validation": { "criteria": ["Prototype valide", "Tests utilisateurs ok"], "human_required": true },
+      "artifacts": [
+        { "name": "Maquettes", "type": "document" },
+        { "name": "Design system", "type": "document" }
+      ]
+    },
+    {
+      "id": "development",
+      "name": "Development",
+      "description": "Developpement de l'application mobile",
+      "order": 2,
+      "tasks": [
+        { "id": "MOB-08", "name": "Setup projet", "description": "Initialisation du projet et tooling" },
+        { "id": "MOB-09", "name": "Developpement des ecrans", "description": "Implementation des ecrans et navigation" },
+        { "id": "MOB-10", "name": "Integration API", "description": "Connexion aux services backend" },
+        { "id": "MOB-11", "name": "Tests sur appareils", "description": "Tests sur simulateurs et appareils reels" }
+      ],
+      "validation": { "criteria": ["Build stable", "Tests passes"], "human_required": false },
+      "artifacts": [
+        { "name": "Code source", "type": "code" },
+        { "name": "APK/IPA", "type": "other" }
+      ]
+    },
+    {
+      "id": "validation",
+      "name": "Validation",
+      "description": "Validation avant soumission aux stores",
+      "order": 3,
+      "tasks": [
+        { "id": "MOB-12", "name": "Tests d'acceptance", "description": "Validation fonctionnelle complete" },
+        { "id": "MOB-13", "name": "Tests de performance", "description": "Tests de performance, batterie, memoire" },
+        { "id": "MOB-14", "name": "Revue de securite", "description": "Analyse de securite mobile" },
+        { "id": "MOB-15", "name": "Beta testing", "description": "Deploiement en beta via TestFlight ou equivalent" }
+      ],
+      "validation": { "criteria": ["Beta validee", "Revue securite ok"], "human_required": true },
+      "artifacts": [
+        { "name": "Rapport de tests", "type": "report" },
+        { "name": "Rapport de securite", "type": "report" }
+      ]
+    },
+    {
+      "id": "submission",
+      "name": "Submission",
+      "description": "Soumission aux stores (App Store, Play Store)",
+      "order": 4,
+      "tasks": [
+        { "id": "MOB-16", "name": "Preparation des assets", "description": "Icônes, captures d'ecran, descriptions" },
+        { "id": "MOB-17", "name": "Soumission App Store", "description": "Soumission a l'App Store Apple" },
+        { "id": "MOB-18", "name": "Soumission Play Store", "description": "Soumission au Google Play Store" },
+        { "id": "MOB-19", "name": "Suivi du review", "description": "Suivi du processus de review" }
+      ],
+      "validation": { "criteria": ["Application approuvee", "Disponible en store"], "human_required": true },
+      "artifacts": [
+        { "name": "Store listings", "type": "config" },
+        { "name": "Build final", "type": "other" }
+      ]
+    },
+    {
+      "id": "monitoring",
+      "name": "Monitoring",
+      "description": "Suivi post-lancement et maintenance",
+      "order": 5,
+      "tasks": [
+        { "id": "MOB-20", "name": "Monitoring des crashes", "description": "Mise en place du suivi des crashes" },
+        { "id": "MOB-21", "name": "Analyse des retours", "description": "Analyse des avis et retours utilisateurs" },
+        { "id": "MOB-22", "name": "Mises a jour correctives", "description": "Corrections et mises a jour" }
+      ],
+      "validation": { "criteria": ["Stabilite en production", "Retours positifs"], "human_required": false },
+      "artifacts": [
+        { "name": "Rapport de monitoring", "type": "report" }
+      ]
+    }
+  ],
+  "contracts": ["agent-contract", "quality-contract", "playbook-contract"]
+}

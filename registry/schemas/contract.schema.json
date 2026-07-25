@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://akoris.dev/schemas/contract.schema.json",
+  "title": "Contract",
+  "description": "Schema de validation pour les fichiers de contrat",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Nom du contrat"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Version semantique du contrat"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["agent", "audit", "quality", "playbook", "workflow"],
+      "description": "Type de contrat"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description du contrat"
+    },
+    "responsibilities": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "description": "Liste des responsabilites"
+    },
+    "inputs": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Liste des entrees attendues"
+    },
+    "outputs": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Liste des sorties produites"
+    },
+    "constraints": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Liste des contraintes applicables"
+    },
+    "validation_criteria": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "description": "Criteres de validation"
+    },
+    "applies_to": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Types d'entites auxquelles ce contrat s'applique"
+    }
+  },
+  "required": ["name", "version", "type", "description", "responsibilities", "validation_criteria"],
+  "additionalProperties": false
+}

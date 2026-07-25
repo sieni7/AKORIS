@@ -1,0 +1,33 @@
+{
+  "id": "playbook-react-vite-supabase",
+  "name": "React + Vite + Supabase",
+  "version": "1.0.0",
+  "description": "Playbook pour applications React avec Vite et Supabase",
+  "stack": {
+    "frontend": "react",
+    "bundler": "vite",
+    "backend": "supabase",
+    "language": "typescript",
+    "deploy": "netlify"
+  },
+  "structure": {
+    "src": {
+      "components": "Composants React réutilisables",
+      "pages": "Pages de l'application",
+      "hooks": "Hooks personnalisés",
+      "services": "Services (API, Supabase)",
+      "lib": "Bibliothèques et configurations",
+      "types": "Types TypeScript",
+      "utils": "Fonctions utilitaires"
+    }
+  },
+  "policies": ["policy-zero-spaghetti", "policy-documentation-first"],
+  "contracts": ["contract-implementation", "contract-code-review"],
+  "templates": {
+    "component": "templates/react-component.tsx",
+    "page": "templates/react-page.tsx",
+    "hook": "templates/react-hook.ts"
+  },
+  "qualityGates": ["qg-lint-pass", "qg-tests-pass", "qg-coverage-80"],
+  "workflow": "workflow-saas"
+}

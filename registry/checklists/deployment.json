@@ -1,0 +1,14 @@
+{
+  "id": "checklist-deployment",
+  "name": "Checklist Déploiement",
+  "version": "1.0.0",
+  "items": [
+    { "id": "dep-1", "description": "Le build est vert", "required": true },
+    { "id": "dep-2", "description": "Les tests d'intégration passent", "required": true },
+    { "id": "dep-3", "description": "Les migrations de base de données sont appliquées", "required": false },
+    { "id": "dep-4", "description": "Les variables d'environnement sont configurées", "required": true },
+    { "id": "dep-5", "description": "Le déploiement staging est validé", "required": true },
+    { "id": "dep-6", "description": "Le rollback est planifié", "required": true },
+    { "id": "dep-7", "description": "Les logs sont activés", "required": true }
+  ]
+}

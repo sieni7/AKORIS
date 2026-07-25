@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AKORIS Manifest Schema",
+  "type": "object",
+  "required": ["akoris", "name", "version", "registry"],
+  "properties": {
+    "akoris": { "type": "string", "description": "Version de la méthode AKORIS" },
+    "name": { "type": "string", "description": "Nom du projet" },
+    "version": { "type": "string", "description": "Version du projet" },
+    "description": { "type": "string" },
+    "author": { "type": "string" },
+    "registry": {
+      "type": "object",
+      "required": ["version"],
+      "properties": {
+        "version": { "type": "string" },
+        "url": { "type": "string", "format": "uri" }
+      }
+    },
+    "playbook": { "type": "string" },
+    "projectType": {
+      "type": "string",
+      "enum": ["monorepo", "app", "library", "api", "saas"]
+    },
+    "components": {
+      "type": "object",
+      "properties": {
+        "cli": { "type": "boolean" },
+        "sdk": { "type": "boolean" },
+        "adapters": { "type": "boolean" },
+        "connectors": { "type": "boolean" }
+      }
+    },
+    "tools": {
+      "type": "object",
+      "properties": {
+        "packageManager": { "type": "string" },
+        "language": { "type": "string" }
+      }
+    }
+  }
+}

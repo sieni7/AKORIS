@@ -1,0 +1,86 @@
+{
+  "name": "Workflow Library",
+  "version": "1.0.0",
+  "description": "Workflow pour les projets de bibliotheques et packages",
+  "type": "library",
+  "phases": [
+    {
+      "id": "conception",
+      "name": "Conception",
+      "description": "Conception de la bibliotheque",
+      "order": 0,
+      "tasks": [
+        { "id": "LIB-01", "name": "Definition du perimetre", "description": "Definition de l'API publique et du perimetre" },
+        { "id": "LIB-02", "name": "Design de l'API", "description": "Conception de l'interface publique" },
+        { "id": "LIB-03", "name": "Benchmark des alternatives", "description": "Analyse des bibliotheques existantes" }
+      ],
+      "validation": { "criteria": ["API publique definie", "Perimetre valide"], "human_required": true },
+      "artifacts": [
+        { "name": "API design", "type": "document" }
+      ]
+    },
+    {
+      "id": "implementation",
+      "name": "Implementation",
+      "description": "Developpement de la bibliotheque",
+      "order": 1,
+      "tasks": [
+        { "id": "LIB-04", "name": "Scaffolding du projet", "description": "Initialisation avec le tooling standard" },
+        { "id": "LIB-05", "name": "Implementation du noyau", "description": "Implementation des fonctionnalites principales" },
+        { "id": "LIB-06", "name": "Gestion des erreurs", "description": "Implementation des erreurs et exceptions" },
+        { "id": "LIB-07", "name": "Documentation inline", "description": "Documentation du code (JSDoc, docstrings)" }
+      ],
+      "validation": { "criteria": ["API stable", "Documentation generee"], "human_required": false },
+      "artifacts": [
+        { "name": "Code source", "type": "code" }
+      ]
+    },
+    {
+      "id": "testing",
+      "name": "Testing",
+      "description": "Tests de la bibliotheque",
+      "order": 2,
+      "tasks": [
+        { "id": "LIB-08", "name": "Tests unitaires", "description": "Tests unitaires avec couverture maximale" },
+        { "id": "LIB-09", "name": "Tests de regression", "description": "Tests de non-regression automatises" },
+        { "id": "LIB-10", "name": "Tests sur plusieurs environnements", "description": "Tests sur differentes versions du runtime" }
+      ],
+      "validation": { "criteria": ["Couverture > 90%", "Tests multi-environnements ok"], "human_required": false },
+      "artifacts": [
+        { "name": "Rapport de couverture", "type": "report" }
+      ]
+    },
+    {
+      "id": "packaging",
+      "name": "Packaging",
+      "description": "Packaging et distribution",
+      "order": 3,
+      "tasks": [
+        { "id": "LIB-11", "name": "Configuration du build", "description": "Configuration de la compilation et du bundling" },
+        { "id": "LIB-12", "name": "Generation des types", "description": "Generation des declarations de types" },
+        { "id": "LIB-13", "name": "Publication en registre", "description": "Publication sur npm, PyPI, etc." }
+      ],
+      "validation": { "criteria": ["Package publie", "Types generes"], "human_required": true },
+      "artifacts": [
+        { "name": "Package publie", "type": "other" }
+      ]
+    },
+    {
+      "id": "maintenance",
+      "name": "Maintenance",
+      "description": "Maintenance et evolution",
+      "order": 4,
+      "tasks": [
+        { "id": "LIB-14", "name": "Suivi des issues", "description": "Triage et suivi des issues GitHub" },
+        { "id": "LIB-15", "name": "Gestion des versions", "description": "Gestion du versionning semantique" },
+        { "id": "LIB-16", "name": "Deprecation et migration", "description": "Gestion des deprecations et guides de migration" }
+      ],
+      "validation": { "criteria": ["Issus traitees", "Documentation a jour"], "human_required": false },
+      "artifacts": [
+        { "name": "CHANGELOG", "type": "document" },
+        { "name": "Guide de migration", "type": "document" }
+      ]
+    }
+  ],
+  "contracts": ["agent-contract", "quality-contract", "playbook-contract"]
+}

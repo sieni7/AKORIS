@@ -1,0 +1,25 @@
+{
+  "id": "playbook-laravel",
+  "name": "Laravel",
+  "version": "1.0.0",
+  "description": "Playbook pour applications Laravel",
+  "stack": {
+    "backend": "laravel",
+    "language": "php",
+    "database": "mysql",
+    "deploy": "forge"
+  },
+  "structure": {
+    "app": {
+      "Http/Controllers": "Contrôleurs",
+      "Models": "Modèles Eloquent",
+      "Services": "Logique métier"
+    },
+    "resources/views": "Vues Blade",
+    "routes": "Définitions de routes"
+  },
+  "policies": ["policy-zero-spaghetti"],
+  "contracts": ["contract-implementation"],
+  "qualityGates": ["qg-lint-pass", "qg-tests-pass"],
+  "workflow": "workflow-saas"
+}

@@ -1,0 +1,94 @@
+{
+  "name": "Workflow API",
+  "version": "1.0.0",
+  "description": "Workflow pour les projets d'API REST ou GraphQL",
+  "type": "api",
+  "phases": [
+    {
+      "id": "specification",
+      "name": "Specification",
+      "description": "Definition du contrat d'API",
+      "order": 0,
+      "tasks": [
+        { "id": "API-01", "name": "Definition des endpoints", "description": "Identification des ressources et endpoints" },
+        { "id": "API-02", "name": "Schema OpenAPI / GraphQL", "description": "Redaction du schema de l'API" },
+        { "id": "API-03", "name": "Validation du contrat", "description": "Revue et validation du contrat d'API" },
+        { "id": "API-04", "name": "Simulation des reponses", "description": "Mise en place de mocks et stubs" }
+      ],
+      "validation": { "criteria": ["Contrat valide", "Mocks disponibles"], "human_required": true },
+      "artifacts": [
+        { "name": "Specification OpenAPI", "type": "document" },
+        { "name": "Mocks API", "type": "config" }
+      ]
+    },
+    {
+      "id": "implementation",
+      "name": "Implementation",
+      "description": "Developpement de l'API",
+      "order": 1,
+      "tasks": [
+        { "id": "API-05", "name": "Setup du projet", "description": "Initialisation du projet et dependances" },
+        { "id": "API-06", "name": "Modeles et validateurs", "description": "Creation des modeles de donnees et validateurs" },
+        { "id": "API-07", "name": "Endpoints et logique metier", "description": "Implementation des endpoints et services" },
+        { "id": "API-08", "name": "Authentification et autorisation", "description": "Mise en place de l'auth et des permissions" },
+        { "id": "API-09", "name": "Gestion des erreurs", "description": "Implementation de la gestion d'erreurs unifiee" }
+      ],
+      "validation": { "criteria": ["Tests passes", "Contrat respecte"], "human_required": false },
+      "artifacts": [
+        { "name": "Code source", "type": "code" },
+        { "name": "Tests API", "type": "code" }
+      ]
+    },
+    {
+      "id": "testing",
+      "name": "Testing",
+      "description": "Tests approfondis de l'API",
+      "order": 2,
+      "tasks": [
+        { "id": "API-10", "name": "Tests unitaires", "description": "Tests unitaires des services" },
+        { "id": "API-11", "name": "Tests d'integration", "description": "Tests d'integration de bout en bout" },
+        { "id": "API-12", "name": "Tests de charge", "description": "Tests de performance et charge" },
+        { "id": "API-13", "name": "Tests de securite", "description": "Tests d'intrusion et OWASP" }
+      ],
+      "validation": { "criteria": ["Couverture > 80%", "Tests de charge ok"], "human_required": false },
+      "artifacts": [
+        { "name": "Rapport de tests", "type": "report" },
+        { "name": "Rapport de securite", "type": "report" }
+      ]
+    },
+    {
+      "id": "documentation",
+      "name": "Documentation",
+      "description": "Documentation de l'API",
+      "order": 3,
+      "tasks": [
+        { "id": "API-14", "name": "Documentation interactive", "description": "Generation de la doc interactive (Swagger UI)" },
+        { "id": "API-15", "name": "Guide d'integration", "description": "Redaction du guide d'integration" },
+        { "id": "API-16", "name": "Exemples de code", "description": "Fourniture d'exemples dans plusieurs langages" }
+      ],
+      "validation": { "criteria": ["Documentation publique", "Exemples fonctionnels"], "human_required": true },
+      "artifacts": [
+        { "name": "Documentation API", "type": "document" },
+        { "name": "Guide d'integration", "type": "document" }
+      ]
+    },
+    {
+      "id": "deployment",
+      "name": "Deployment",
+      "description": "Mise en production de l'API",
+      "order": 4,
+      "tasks": [
+        { "id": "API-17", "name": "Configuration CI/CD", "description": "Mise en place du pipeline de deploiement" },
+        { "id": "API-18", "name": "Deploiement staging", "description": "Deploiement sur l'environnement de staging" },
+        { "id": "API-19", "name": "Validation pre-prod", "description": "Tests de non-regression en pre-prod" },
+        { "id": "API-20", "name": "Deploiement production", "description": "Deploiement en production" }
+      ],
+      "validation": { "criteria": ["Validation humaine obtenue", "Monitoring operationnel"], "human_required": true },
+      "artifacts": [
+        { "name": "Pipeline CI/CD", "type": "config" },
+        { "name": "Rapport de deploiement", "type": "report" }
+      ]
+    }
+  ],
+  "contracts": ["agent-contract", "quality-contract", "audit-contract"]
+}

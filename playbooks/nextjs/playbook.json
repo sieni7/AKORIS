@@ -1,0 +1,26 @@
+{
+  "id": "playbook-nextjs",
+  "name": "Next.js",
+  "version": "1.0.0",
+  "description": "Playbook pour applications Next.js",
+  "stack": {
+    "frontend": "react",
+    "framework": "nextjs",
+    "language": "typescript",
+    "deploy": "vercel"
+  },
+  "structure": {
+    "app": {
+      "(auth)": "Routes d'authentification",
+      "(dashboard)": "Routes du dashboard",
+      "api": "API routes"
+    },
+    "components": "Composants React",
+    "lib": "Bibliothèques",
+    "styles": "Styles globaux"
+  },
+  "policies": ["policy-architecture-first", "policy-documentation-first"],
+  "contracts": ["contract-implementation"],
+  "qualityGates": ["qg-lint-pass", "qg-tests-pass"],
+  "workflow": "workflow-saas"
+}

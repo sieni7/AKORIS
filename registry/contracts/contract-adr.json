@@ -1,0 +1,17 @@
+{
+  "id": "contract-adr",
+  "name": "Contrat ADR",
+  "version": "1.0.0",
+  "role": "architect",
+  "description": "Contrat pour la rédaction d'un Architecture Decision Record",
+  "inputs": [
+    { "name": "context", "type": "markdown", "description": "Contexte et problématique", "required": true },
+    { "name": "options", "type": "list", "description": "Options envisagées", "required": true },
+    { "name": "constraints", "type": "list", "description": "Contraintes techniques ou métier", "required": false }
+  ],
+  "outputs": [
+    { "name": "adr", "type": "markdown", "description": "ADR complet", "validationCriteria": ["format_adr", "consequences_listed", "status_defined"] }
+  ],
+  "constraints": ["format_adr_standard", "options_min_2"],
+  "qualityGates": ["qg-adr-format", "qg-adr-reviewed"]
+}

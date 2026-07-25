@@ -1,0 +1,25 @@
+{
+  "id": "policy-architecture-first",
+  "name": "Architecture First",
+  "version": "1.0.0",
+  "category": "architecture",
+  "severity": "critical",
+  "description": "Toute implémentation doit être précédée d'une décision d'architecture documentée et validée.",
+  "rules": [
+    {
+      "id": "arch-before-code",
+      "description": "Tout changement significatif doit être précédé d'un ADR ou d'un schéma d'architecture",
+      "check": "check_arch_before_impl"
+    },
+    {
+      "id": "arch-review",
+      "description": "Les décisions d'architecture doivent être revues par au moins un pair",
+      "check": "check_arch_review"
+    },
+    {
+      "id": "arch-evolution",
+      "description": "L'architecture doit être revue périodiquement pour détecter la dérive",
+      "check": "check_arch_fitness"
+    }
+  ]
+}

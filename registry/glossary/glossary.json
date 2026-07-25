@@ -1,0 +1,22 @@
+{
+  "id": "glossary-akoris",
+  "name": "Glossaire AKORIS",
+  "version": "1.0.0",
+  "entries": [
+    { "term": "ADR", "definition": "Architecture Decision Record. Document qui capture une décision d'architecture, son contexte et ses conséquences." },
+    { "term": "Agent", "definition": "Domaine de compétence pouvant être assuré par un humain, une IA ou une équipe." },
+    { "term": "Artifact", "definition": "Livrable produit par un agent dans le cadre d'un contrat." },
+    { "term": "Audit", "definition": "Évaluation indépendante de la conformité d'un livrable aux règles de gouvernance." },
+    { "term": "CLI", "definition": "Command Line Interface. Outil d'orchestration d'AKORIS." },
+    { "term": "Connector", "definition": "Module d'intégration avec des services externes (GitHub, Supabase, Netlify)." },
+    { "term": "Contract", "definition": "Description formelle des responsabilités, entrées, sorties et contraintes d'un agent." },
+    { "term": "Governance", "definition": "Ensemble des règles, policies et processus qui encadrent le projet." },
+    { "term": "Manifest", "definition": "Fichier MANIFEST.json décrivant l'identité et la configuration d'un projet AKORIS." },
+    { "term": "Playbook", "definition": "Personnalisation d'AKORIS pour une stack technique spécifique (React, Next.js, Laravel)." },
+    { "term": "Policy", "definition": "Règle normative obligatoire (ex: Zéro Hallucination, Documentation First)." },
+    { "term": "Quality Gate", "definition": "Seuil de qualité à atteindre pour valider une étape du cycle de vie." },
+    { "term": "Registry", "definition": "Référentiel officiel contenant tous les composants de gouvernance d'AKORIS." },
+    { "term": "Template", "definition": "Modèle réutilisable pour générer des artefacts (ADRs, documentation, code)." },
+    { "term": "Workflow", "definition": "Séquence d'activités adaptée à un type de projet (SaaS, MVP, institutionnel)." }
+  ]
+}

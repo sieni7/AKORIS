@@ -1,0 +1,15 @@
+{
+  "id": "checklist-sprint-review",
+  "name": "Checklist Revue de Sprint",
+  "version": "1.0.0",
+  "items": [
+    { "id": "sr-1", "description": "Tous les user stories du sprint sont terminés", "required": true },
+    { "id": "sr-2", "description": "Les tests passent pour chaque livrable", "required": true },
+    { "id": "sr-3", "description": "La documentation est à jour", "required": true },
+    { "id": "sr-4", "description": "Les ADRs des décisions du sprint sont rédigés", "required": false },
+    { "id": "sr-5", "description": "Les métriques du sprint sont collectées", "required": true },
+    { "id": "sr-6", "description": "Les Quality Gates sont passés", "required": true },
+    { "id": "sr-7", "description": "Le rapport d'audit est disponible", "required": true },
+    { "id": "sr-8", "description": "Les dettes techniques sont identifiées et documentées", "required": true }
+  ]
+}

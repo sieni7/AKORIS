@@ -1,0 +1,24 @@
+{
+  "$schema": "registry/schemas/manifest.schema.json",
+  "akoris": "1.0.0",
+  "name": "AKORIS",
+  "version": "1.0.0",
+  "description": "Standard de gouvernance pour le développement logiciel assisté par intelligence artificielle",
+  "author": "OULAÏ SIÉNI",
+  "registry": {
+    "version": "1.0.0",
+    "url": "https://github.com/sieni7/AKORIS"
+  },
+  "playbook": "core",
+  "projectType": "monorepo",
+  "components": {
+    "cli": true,
+    "sdk": true,
+    "adapters": true,
+    "connectors": true
+  },
+  "tools": {
+    "packageManager": "pnpm",
+    "language": "typescript"
+  }
+}

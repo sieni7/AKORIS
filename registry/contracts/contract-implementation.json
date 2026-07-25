@@ -1,0 +1,19 @@
+{
+  "id": "contract-implementation",
+  "name": "Contrat d'Implémentation",
+  "version": "1.0.0",
+  "role": "developer",
+  "description": "Contrat définissant les responsabilités du développeur pour l'implémentation d'une fonctionnalité",
+  "inputs": [
+    { "name": "specification", "type": "markdown", "description": "Spécification fonctionnelle et technique", "required": true },
+    { "name": "architecture", "type": "adr", "description": "ADR ou schéma d'architecture associé", "required": false },
+    { "name": "existing_codebase", "type": "directory", "description": "Code existant du projet", "required": true }
+  ],
+  "outputs": [
+    { "name": "code", "type": "source", "description": "Code implémenté", "validationCriteria": ["lint_ok", "tests_pass", "coverage_80"] },
+    { "name": "tests", "type": "source", "description": "Tests unitaires et d'intégration", "validationCriteria": ["tests_pass", "coverage_min_80"] },
+    { "name": "documentation", "type": "markdown", "description": "Documentation technique", "validationCriteria": ["doc_exists", "api_doc_updated"] }
+  ],
+  "constraints": ["zero_hallucination", "zero_spaghetti", "single_responsibility"],
+  "qualityGates": ["qg-lint-pass", "qg-tests-pass", "qg-coverage-80"]
+}

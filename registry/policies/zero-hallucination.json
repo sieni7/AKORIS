@@ -1,0 +1,25 @@
+{
+  "id": "policy-zero-hallucination",
+  "name": "Zéro Hallucination",
+  "version": "1.0.0",
+  "category": "quality",
+  "severity": "blocker",
+  "description": "Aucune décision sans élément vérifiable. Toute affirmation générée doit être traçable vers une source.",
+  "rules": [
+    {
+      "id": "no-unguessable-code",
+      "description": "Le code généré ne doit pas contenir de fonctions, API ou bibliothèques qui n'existent pas",
+      "check": "verify_imports_exist"
+    },
+    {
+      "id": "verifyable-claims",
+      "description": "Toute décision technique doit être associée à une source (doc, ADR, issue)",
+      "check": "check_adr_reference"
+    },
+    {
+      "id": "no-fake-config",
+      "description": "Les configurations générées doivent correspondre à des formats réels et validés",
+      "check": "validate_config_format"
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "name": "Knowledge First",
+  "version": "1.0.0",
+  "description": "Regles favorisant le partage de connaissance, la documentation et les commentaires de code",
+  "rules": [
+    {
+      "id": "KNW-001",
+      "title": "Documentation obligatoire",
+      "description": "Tout module, service ou fonction publique doit etre documente avec son objectif, ses entrees/sorties et ses exceptions.",
+      "severity": "haute",
+      "category": "documentation"
+    },
+    {
+      "id": "KNW-002",
+      "title": "Commentaires de code pertinents",
+      "description": "Les commentaires doivent expliquer le pourquoi, pas le comment. Eviter les commentaires redondants avec le code.",
+      "severity": "moyenne",
+      "category": "commentaires"
+    },
+    {
+      "id": "KNW-003",
+      "title": "README par composant",
+      "description": "Chaque composant, bibliotheque ou service doit avoir un README expliquant son role, installation, utilisation et maintenance.",
+      "severity": "moyenne",
+      "category": "documentation"
+    },
+    {
+      "id": "KNW-004",
+      "title": "Architecture Decision Record",
+      "description": "Toute decision architecturale significative doit etre documentee dans un ADR.",
+      "severity": "haute",
+      "category": "architecture"
+    },
+    {
+      "id": "KNW-005",
+      "title": "Partage en equipe",
+      "description": "Les apprentissages, astuces et solutions a des problemes complexes doivent etre partages lors de sessions dediees ou dans un wiki.",
+      "severity": "basse",
+      "category": "culture"
+    },
+    {
+      "id": "KNW-006",
+      "title": "Mise a jour de la documentation",
+      "description": "Tout changement de comportement doit etre accompagne de la mise a jour de la documentation associee.",
+      "severity": "haute",
+      "category": "maintenance"
+    },
+    {
+      "id": "KNW-007",
+      "title": "Auto-documentation du code",
+      "description": "Privilégier un code expressif et des noms de variables/fonctions explicites pour reduire le besoin de commentaires.",
+      "severity": "moyenne",
+      "category": "qualite"
+    },
+    {
+      "id": "KNW-008",
+      "title": "Wiki ou base de connaissance",
+      "description": "Le projet doit maintenir une base de connaissance centralisee accessible a tous les membres de l'equipe.",
+      "severity": "moyenne",
+      "category": "organisation"
+    },
+    {
+      "id": "KNW-009",
+      "title": "Onboarding documente",
+      "description": "Un guide d'onboarding doit exister pour permettre a tout nouveau membre de contribuer rapidement.",
+      "severity": "moyenne",
+      "category": "equipe"
+    },
+    {
+      "id": "KNW-010",
+      "title": "Revue de documentation",
+      "description": "La documentation est sujette a revue au meme titre que le code lors des pull requests.",
+      "severity": "basse",
+      "category": "processus"
+    }
+  ]
+}

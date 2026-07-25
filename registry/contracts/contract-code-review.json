@@ -1,0 +1,16 @@
+{
+  "id": "contract-code-review",
+  "name": "Contrat de Revue de Code",
+  "version": "1.0.0",
+  "role": "reviewer",
+  "description": "Contrat pour la revue de code par un pair ou une IA",
+  "inputs": [
+    { "name": "pull_request", "type": "diff", "description": "Code à reviewer", "required": true },
+    { "name": "policies", "type": "list", "description": "Policies AKORIS applicables", "required": true }
+  ],
+  "outputs": [
+    { "name": "review_report", "type": "markdown", "description": "Rapport de revue", "validationCriteria": ["issues_listed", "severity_rated", "suggestions_provided"] }
+  ],
+  "constraints": ["reviewer_independent", "feedback_actionnable", "no_personal_criticism"],
+  "qualityGates": ["qg-review-complete", "qg-no-blockers"]
+}

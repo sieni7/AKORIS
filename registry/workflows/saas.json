@@ -1,0 +1,39 @@
+{
+  "id": "workflow-saas",
+  "name": "Workflow SaaS",
+  "version": "1.0.0",
+  "description": "Workflow adapté aux projets SaaS",
+  "phases": [
+    {
+      "name": "vision",
+      "tasks": ["definir_objectifs", "valider_marche", "rediger_product_roadmap"],
+      "qualityGate": "qg-vision-validated"
+    },
+    {
+      "name": "planification",
+      "tasks": ["decouper_epics", "prioriser_backlog", "definir_sprint"],
+      "qualityGate": "qg-planning-approved"
+    },
+    {
+      "name": "developpement",
+      "tasks": ["implementer_user_story", "ecrire_tests", "documenter"],
+      "qualityGate": "qg-dev-complete"
+    },
+    {
+      "name": "revue",
+      "tasks": ["review_code", "audit_qualite", "valider_non_regression"],
+      "qualityGate": "qg-review-passed"
+    },
+    {
+      "name": "deploiement",
+      "tasks": ["build", "deploy_staging", "tests_integration", "deploy_production"],
+      "qualityGate": "qg-deploy-success"
+    },
+    {
+      "name": "capitalisation",
+      "tasks": ["rediger_retour_experience", "mettre_a_jour_metrics", "archiver_artefacts"],
+      "qualityGate": "qg-capitalization-done"
+    }
+  ],
+  "policies": ["policy-documentation-first", "policy-audit-first"]
+}

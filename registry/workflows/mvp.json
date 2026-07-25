@@ -1,0 +1,29 @@
+{
+  "id": "workflow-mvp",
+  "name": "Workflow MVP",
+  "version": "1.0.0",
+  "description": "Workflow allégé pour itérations rapides (MVP, prototype)",
+  "phases": [
+    {
+      "name": "concept",
+      "tasks": ["definir_perimetre_minimum", "valider_hypotheses"],
+      "qualityGate": "qg-concept-approved"
+    },
+    {
+      "name": "build",
+      "tasks": ["implementer_core_features", "tester_fonctionnalites_cles"],
+      "qualityGate": "qg-core-works"
+    },
+    {
+      "name": "ship",
+      "tasks": ["deployer", "recueillir_feedback"],
+      "qualityGate": "qg-ship-ready"
+    },
+    {
+      "name": "iterate",
+      "tasks": ["analyser_usage", "prioriser_ameliorations", "implementer"],
+      "qualityGate": "qg-iteration-planned"
+    }
+  ],
+  "policies": ["policy-zero-spaghetti"]
+}

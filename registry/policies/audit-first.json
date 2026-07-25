@@ -1,0 +1,25 @@
+{
+  "id": "policy-audit-first",
+  "name": "Audit First",
+  "version": "1.0.0",
+  "category": "process",
+  "severity": "major",
+  "description": "Tout livrable doit être audité avant d'être validé. Les auditeurs sont indépendants des producteurs.",
+  "rules": [
+    {
+      "id": "independent-audit",
+      "description": "L'auditeur ne peut pas être l'auteur du livrable audité",
+      "check": "check_auditor_independence"
+    },
+    {
+      "id": "audit-before-merge",
+      "description": "Aucun code ne peut être fusionné sans audit préalable",
+      "check": "check_audit_before_merge"
+    },
+    {
+      "id": "audit-trail",
+      "description": "Chaque audit doit produire un rapport traçable",
+      "check": "check_audit_report"
+    }
+  ]
+}

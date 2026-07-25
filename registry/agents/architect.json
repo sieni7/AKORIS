@@ -1,0 +1,19 @@
+{
+  "id": "agent-architect",
+  "name": "Architecte Logiciel",
+  "version": "1.0.0",
+  "domain": "architecture",
+  "capabilities": [
+    "conception_architecture",
+    "analyse_impact",
+    "redaction_adr",
+    "revue_technique",
+    "strategie_dette_technique"
+  ],
+  "contracts": ["contract-adr", "contract-arch-review"],
+  "policies": ["policy-architecture-first"],
+  "prompts": {
+    "adr": "Tu rédiges un Architecture Decision Record (ADR) au format suivant: titre, contexte, décision, conséquences.",
+    "review": "Tu analyses la cohérence architecturale d'un projet à partir de sa structure et de ses dépendances."
+  }
+}

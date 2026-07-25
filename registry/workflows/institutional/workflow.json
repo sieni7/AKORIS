@@ -1,0 +1,131 @@
+{
+  "name": "Workflow Institutionnel",
+  "version": "1.0.0",
+  "description": "Workflow pour les projets institutionnels et enterprise",
+  "type": "institutional",
+  "phases": [
+    {
+      "id": "vision",
+      "name": "Vision",
+      "description": "Definition de la vision, des objectifs strategiques et du cadrage du projet",
+      "order": 0,
+      "tasks": [
+        { "id": "VIS-01", "name": "Definition de la vision", "description": "Atelier de cadrage et definition de la vision projet" },
+        { "id": "VIS-02", "name": "Analyse des besoins", "description": "Recueil et analyse des besoins fonctionnels" },
+        { "id": "VIS-03", "name": "Etude de faisabilite", "description": "Evaluation technico-economique de la faisabilite" },
+        { "id": "VIS-04", "name": "Charte projet", "description": "Redaction et validation de la charte projet" }
+      ],
+      "validation": { "criteria": ["Charte projet validee", "Budget approuve"], "human_required": true },
+      "artifacts": [
+        { "name": "Charte projet", "type": "document" },
+        { "name": "Etude de faisabilite", "type": "document" }
+      ]
+    },
+    {
+      "id": "study",
+      "name": "Study",
+      "description": "Etude detaillee et specification du projet",
+      "order": 1,
+      "tasks": [
+        { "id": "STU-01", "name": "Specifications fonctionnelles", "description": "Redaction du cahier des charges fonctionnel" },
+        { "id": "STU-02", "name": "Architecture technique", "description": "Conception de l'architecture technique" },
+        { "id": "STU-03", "name": "Plan de test", "description": "Elaboration de la strategie de test" },
+        { "id": "STU-04", "name": "Analyse des risques", "description": "Identification et evaluation des risques" }
+      ],
+      "validation": { "criteria": ["Specifications validees", "Architecture approuvee"], "human_required": true },
+      "artifacts": [
+        { "name": "Cahier des charges", "type": "document" },
+        { "name": "Architecture", "type": "document" },
+        { "name": "Analyse des risques", "type": "document" }
+      ]
+    },
+    {
+      "id": "planning",
+      "name": "Planning",
+      "description": "Planification du projet et allocation des ressources",
+      "order": 2,
+      "tasks": [
+        { "id": "PLN-01", "name": "Decoupage en phases", "description": "Decoupage du projet en phases et sprints" },
+        { "id": "PLN-02", "name": "Estimation des charges", "description": "Estimation des charges par phase" },
+        { "id": "PLN-03", "name": "Planning detaille", "description": "Etablissement du planning" },
+        { "id": "PLN-04", "name": "Allocation des ressources", "description": "Affectation des equipes et ressources" }
+      ],
+      "validation": { "criteria": ["Planning valide", "Ressources allouees"], "human_required": true },
+      "artifacts": [
+        { "name": "Planning projet", "type": "document" },
+        { "name": "Budget detaille", "type": "document" }
+      ]
+    },
+    {
+      "id": "development",
+      "name": "Development",
+      "description": "Developpement iteratif et incremental",
+      "order": 3,
+      "tasks": [
+        { "id": "DEV-01", "name": "Sprint 0 - Setup", "description": "Mise en place de l'environnement de developpement" },
+        { "id": "DEV-02", "name": "Developpement des fonctionnalites", "description": "Implementation des fonctionnalites par sprint" },
+        { "id": "DEV-03", "name": "Tests unitaires et integration", "description": "Execution et validation des tests" },
+        { "id": "DEV-04", "name": "Revues de code", "description": "Revue systematique du code produit" },
+        { "id": "DEV-05", "name": "Documentation technique", "description": "Redaction de la documentation technique" }
+      ],
+      "validation": { "criteria": ["Tests passes", "Revue de code effectuee", "Documentation mise a jour"], "human_required": false },
+      "artifacts": [
+        { "name": "Code source", "type": "code" },
+        { "name": "Documentation technique", "type": "document" }
+      ]
+    },
+    {
+      "id": "validation",
+      "name": "Validation",
+      "description": "Validation fonctionnelle et technique",
+      "order": 4,
+      "tasks": [
+        { "id": "VAL-01", "name": "Tests d'acceptance", "description": "Tests d'acceptance avec le metier" },
+        { "id": "VAL-02", "name": "Tests de performance", "description": "Tests de charge et performance" },
+        { "id": "VAL-03", "name": "Audit de securite", "description": "Audit de securite et penetration testing" },
+        { "id": "VAL-04", "name": "Validation utilisateur", "description": "Recette utilisateur et validation" }
+      ],
+      "validation": { "criteria": ["Acceptance signee", "Audit securite ok"], "human_required": true },
+      "artifacts": [
+        { "name": "Rapport de tests", "type": "report" },
+        { "name": "Rapport d'audit", "type": "report" },
+        { "name": "PV de recette", "type": "document" }
+      ]
+    },
+    {
+      "id": "deployment",
+      "name": "Deployment",
+      "description": "Deploiement en production",
+      "order": 5,
+      "tasks": [
+        { "id": "DEP-01", "name": "Preparation du deploiement", "description": "Preparation des environnements et procedures" },
+        { "id": "DEP-02", "name": "Deploiement pilote", "description": "Deploiement sur un perimetre restreint" },
+        { "id": "DEP-03", "name": "Deploiement general", "description": "Deploiement sur l'ensemble du perimetre" },
+        { "id": "DEP-04", "name": "Validation post-deploiement", "description": "Verification du bon fonctionnement en production" }
+      ],
+      "validation": { "criteria": ["Validation humaine obtenue", "Tests post-deploiement passes"], "human_required": true },
+      "artifacts": [
+        { "name": "Procedure de deploiement", "type": "document" },
+        { "name": "Rapport de deploiement", "type": "report" }
+      ]
+    },
+    {
+      "id": "support",
+      "name": "Support",
+      "description": "Mise en production et support continu",
+      "order": 6,
+      "tasks": [
+        { "id": "SUP-01", "name": "Mise en place du support", "description": "Configuration des canaux de support" },
+        { "id": "SUP-02", "name": "Formation utilisateur", "description": "Formation des utilisateurs finaux" },
+        { "id": "SUP-03", "name": "Suivi et maintenance", "description": "Suivi des incidents et maintenance evolutive" },
+        { "id": "SUP-04", "name": "Bilan projet", "description": "Realisation du bilan de fin de projet" }
+      ],
+      "validation": { "criteria": ["Support operationnel", "Bilan realise"], "human_required": false },
+      "artifacts": [
+        { "name": "Guide utilisateur", "type": "document" },
+        { "name": "Bilan projet", "type": "document" }
+      ]
+    }
+  ],
+  "contracts": ["agent-contract", "quality-contract", "audit-contract"]
+}

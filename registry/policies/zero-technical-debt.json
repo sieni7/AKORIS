@@ -1,0 +1,77 @@
+{
+  "name": "Zero Dette Technique",
+  "version": "1.0.0",
+  "description": "Regles pour suivre, documenter et gerer la dette technique",
+  "rules": [
+    {
+      "id": "DEBT-001",
+      "title": "Identification de la dette",
+      "description": "Tout defaut d'implementation, contournement ou solution temporaire doit etre identifie comme dette technique et documente.",
+      "severity": "haute",
+      "category": "identification"
+    },
+    {
+      "id": "DEBT-002",
+      "title": "Enregistrement obligatoire",
+      "description": "Chaque element de dette technique doit etre enregistre dans un registre dedie avec description, impact, priorite et date.",
+      "severity": "haute",
+      "category": "traçabilite"
+    },
+    {
+      "id": "DEBT-003",
+      "title": "Priorisation",
+      "description": "La dette technique doit etre priorisee dans le backlog produit et traitee comme du travail fonctionnel.",
+      "severity": "haute",
+      "category": "gestion"
+    },
+    {
+      "id": "DEBT-004",
+      "title": "Budget dedie",
+      "description": "Au moins 20% de chaque sprint doit etre consacre a la reduction de la dette technique.",
+      "severity": "moyenne",
+      "category": "planification"
+    },
+    {
+      "id": "DEBT-005",
+      "title": "Dette zero en production",
+      "description": "Aucune dette technique bloquante ou critique ne doit exister en production. Elle doit etre resolue avant deploiement.",
+      "severity": "critique",
+      "category": "production"
+    },
+    {
+      "id": "DEBT-006",
+      "title": "Revue de dette",
+      "description": "Une revue de la dette technique doit etre effectuee a chaque fin de sprint.",
+      "severity": "moyenne",
+      "category": "revue"
+    },
+    {
+      "id": "DEBT-007",
+      "title": "Seuil d'alerte",
+      "description": "Si le ratio de dette technique depasse 15% du code total, une alarme est declenchee et un plan de remediation est lance.",
+      "severity": "haute",
+      "category": "metriques"
+    },
+    {
+      "id": "DEBT-008",
+      "title": "Interdiction des TODO en prod",
+      "description": "Les marqueurs TODO, FIXME, HACK ne doivent pas exister dans le code en production.",
+      "severity": "moyenne",
+      "category": "qualite"
+    },
+    {
+      "id": "DEBT-009",
+      "title": "Analyse statique automatisee",
+      "description": "Des outils d'analyse statique (SonarQube, ESLint, etc.) doivent detecter et quantifier la dette technique automatiquement.",
+      "severity": "moyenne",
+      "category": "automatisation"
+    },
+    {
+      "id": "DEBT-010",
+      "title": "Remboursement systematique",
+      "description": "Tout correctif ou evolution doit inclure le remboursement de la dette technique associee au perimetre modifie.",
+      "severity": "haute",
+      "category": "bonnes-pratiques"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "id": "agent-developer",
+  "name": "Développeur",
+  "version": "1.0.0",
+  "domain": "implementation",
+  "capabilities": [
+    "generation_code",
+    "refactoring",
+    "tests_unitaires",
+    "documentation_code",
+    "revue_code"
+  ],
+  "contracts": ["contract-implementation", "contract-code-review"],
+  "policies": ["policy-zero-spaghetti", "policy-zero-hallucination"],
+  "prompts": {
+    "implement": "Tu implémentes une fonctionnalité en respectant les principes SOLID et la séparation des responsabilités définie dans le contrat.",
+    "refactor": "Tu refactorises le code suivant en respectant les policies AKORIS."
+  }
+}

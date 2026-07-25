@@ -1,0 +1,38 @@
+{
+  "name": "@akoris/cli",
+  "version": "1.0.0",
+  "description": "AKORIS CLI - Orchestrator for AI-assisted software governance",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "akoris": "dist/index.js"
+  },
+  "exports": {
+    ".": "./dist/index.js",
+    "./*": "./dist/*.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest run",
+    "lint": "eslint src --ext .ts",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "commander": "^12.0.0",
+    "chalk": "^5.3.0",
+    "fs-extra": "^11.2.0",
+    "inquirer": "^9.3.0",
+    "ora": "^8.0.0",
+    "semver": "^7.6.0",
+    "typescript": "^5.5.0"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^20.14.0",
+    "@types/inquirer": "^9.0.7",
+    "@types/semver": "^7.5.8",
+    "vitest": "^2.0.0",
+    "eslint": "^9.0.0"
+  }
+}

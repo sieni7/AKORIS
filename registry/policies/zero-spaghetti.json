@@ -1,0 +1,30 @@
+{
+  "id": "policy-zero-spaghetti",
+  "name": "Zéro Code Spaghetti",
+  "version": "1.0.0",
+  "category": "architecture",
+  "severity": "critical",
+  "description": "Architecture et responsabilités contrôlées en continu. Le code doit respecter les principes SOLID et la séparation des responsabilités.",
+  "rules": [
+    {
+      "id": "single-responsibility",
+      "description": "Chaque module/fichier doit avoir une responsabilité unique et claire",
+      "check": "check_module_cohesion"
+    },
+    {
+      "id": "no-circular-deps",
+      "description": "Les dépendances entre modules doivent être acycliques",
+      "check": "detect_cycles"
+    },
+    {
+      "id": "bounded-contexts",
+      "description": "Les contexts doivent être délimités et ne pas fuir entre eux",
+      "check": "check_context_boundaries"
+    },
+    {
+      "id": "clean-layering",
+      "description": "Les couches architecturales doivent être respectées (presentation → domaine → infrastructure)",
+      "check": "validate_layer_violations"
+    }
+  ]
+}

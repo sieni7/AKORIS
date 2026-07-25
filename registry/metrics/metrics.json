@@ -1,0 +1,49 @@
+{
+  "id": "metrics-registry",
+  "name": "Métriques AKORIS",
+  "version": "1.0.0",
+  "metrics": [
+    {
+      "id": "coverage",
+      "name": "Couverture de tests",
+      "type": "percentage",
+      "description": "Pourcentage de code couvert par les tests"
+    },
+    {
+      "id": "debt_ratio",
+      "name": "Ratio de dette technique",
+      "type": "percentage",
+      "description": "Ratio du coût de remédiation sur le coût de développement"
+    },
+    {
+      "id": "cycle_time",
+      "name": "Temps de cycle",
+      "type": "duration",
+      "description": "Temps moyen entre le début et la fin d'une tâche"
+    },
+    {
+      "id": "lead_time",
+      "name": "Délai de livraison",
+      "type": "duration",
+      "description": "Temps entre la demande et la mise en production"
+    },
+    {
+      "id": "defect_rate",
+      "name": "Taux de défauts",
+      "type": "ratio",
+      "description": "Nombre de bugs par fonctionnalité livrée"
+    },
+    {
+      "id": "audit_compliance",
+      "name": "Conformité aux audits",
+      "type": "percentage",
+      "description": "Pourcentage d'audits passés avec succès"
+    },
+    {
+      "id": "policy_violations",
+      "name": "Violations de policies",
+      "type": "count",
+      "description": "Nombre de violations détectées par les Quality Gates"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "id": "policy-documentation-first",
+  "name": "Documentation First",
+  "version": "1.0.0",
+  "category": "process",
+  "severity": "major",
+  "description": "Toute fonctionnalité doit être documentée avant ou pendant son implémentation, jamais après.",
+  "rules": [
+    {
+      "id": "doc-before-code",
+      "description": "Toute PR doit inclure une documentation associée (tech ou utilisateur)",
+      "check": "check_pr_has_docs"
+    },
+    {
+      "id": "adr-for-decisions",
+      "description": "Toute décision d'architecture doit être documentée par un ADR",
+      "check": "check_adr_exists"
+    },
+    {
+      "id": "api-docs-generated",
+      "description": "Les API doivent être documentées (OpenAPI, JSDoc, etc.) avant mise en production",
+      "check": "check_api_docs"
+    }
+  ]
+}

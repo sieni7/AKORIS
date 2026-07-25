@@ -1,0 +1,72 @@
+{
+  "id": "quality-gates-registry",
+  "name": "Quality Gates AKORIS",
+  "version": "1.0.0",
+  "gates": [
+    {
+      "id": "qg-lint-pass",
+      "name": "Lint Pass",
+      "description": "Le linting doit passer sans erreur",
+      "type": "automated",
+      "critical": true,
+      "check": "run_lint"
+    },
+    {
+      "id": "qg-tests-pass",
+      "name": "Tests Pass",
+      "description": "Tous les tests unitaires doivent passer",
+      "type": "automated",
+      "critical": true,
+      "check": "run_tests"
+    },
+    {
+      "id": "qg-coverage-80",
+      "name": "Couverture 80%",
+      "description": "La couverture de tests doit être d'au moins 80%",
+      "type": "automated",
+      "critical": false,
+      "check": "check_coverage",
+      "threshold": 80
+    },
+    {
+      "id": "qg-adr-format",
+      "name": "Format ADR",
+      "description": "L'ADR doit respecter le format standard",
+      "type": "automated",
+      "critical": false,
+      "check": "validate_adr_format"
+    },
+    {
+      "id": "qg-no-blockers",
+      "name": "Aucun Bloquant",
+      "description": "Aucune issue de sévérité blocker dans le rapport",
+      "type": "automated",
+      "critical": true,
+      "check": "check_no_blockers"
+    },
+    {
+      "id": "qg-review-complete",
+      "name": "Revue Complète",
+      "description": "La revue a couvert l'ensemble du périmètre",
+      "type": "automated",
+      "critical": true,
+      "check": "check_review_coverage"
+    },
+    {
+      "id": "qg-deploy-success",
+      "name": "Déploiement Réussi",
+      "description": "Le déploiement s'est terminé sans erreur",
+      "type": "automated",
+      "critical": true,
+      "check": "check_deploy_status"
+    },
+    {
+      "id": "qg-no-circular-deps",
+      "name": "Pas de dépendances circulaires",
+      "description": "L'architecture ne doit pas contenir de cycles de dépendances",
+      "type": "automated",
+      "critical": true,
+      "check": "detect_cycles"
+    }
+  ]
+}

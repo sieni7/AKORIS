@@ -1,0 +1,77 @@
+{
+  "name": "Security First",
+  "version": "1.0.0",
+  "description": "Regles de securite fondamentales pour tout projet",
+  "rules": [
+    {
+      "id": "SEC-001",
+      "title": "Authentification obligatoire",
+      "description": "Tout point d'acces doit necessiter une authentification, sauf endpoints publics explicitement declares.",
+      "severity": "critique",
+      "category": "authentification"
+    },
+    {
+      "id": "SEC-002",
+      "title": "Gestion des secrets",
+      "description": "Aucun secret, cle, mot de passe ou jeton ne doit etre committe dans le code source. Utiliser des variables d'environnement ou un gestionnaire de secrets.",
+      "severity": "critique",
+      "category": "secrets"
+    },
+    {
+      "id": "SEC-003",
+      "title": "Validation des entrees",
+      "description": "Toute entree utilisateur doit etre validee cote serveur : type, longueur, format, plage. Interdire les caracteres dangereux.",
+      "severity": "haute",
+      "category": "validation"
+    },
+    {
+      "id": "SEC-004",
+      "title": "Protection XSS",
+      "description": "Toute sortie HTML doit etre encodee. Utiliser Content-Security-Policy. Interdire innerHTML et injection directe.",
+      "severity": "haute",
+      "category": "xss"
+    },
+    {
+      "id": "SEC-005",
+      "title": "Protection CSRF",
+      "description": "Toute mutation d'etat doit etre protegee par un jeton CSRF ou un mecanisme equivalent (SameSite, origin header).",
+      "severity": "haute",
+      "category": "csrf"
+    },
+    {
+      "id": "SEC-006",
+      "title": "Chiffrement des donnees sensibles",
+      "description": "Les donnees sensibles au repos et en transit doivent etre chiffrees (TLS, AES-256).",
+      "severity": "critique",
+      "category": "cryptographie"
+    },
+    {
+      "id": "SEC-007",
+      "title": "Gestion des sessions",
+      "description": "Les sessions doivent expirer apres inactivite. Renouveler les jetons periodiquement. Stocker les sessions de maniere securisee.",
+      "severity": "haute",
+      "category": "sessions"
+    },
+    {
+      "id": "SEC-008",
+      "title": "Dependences securisees",
+      "description": "Auditer les dependances avant ajout. Interdire les versions presentant des CVEs connues. Utiliser un SBOM.",
+      "severity": "haute",
+      "category": "dependances"
+    },
+    {
+      "id": "SEC-009",
+      "title": "Journalisation des acces",
+      "description": "Toute tentative d'acces, succes ou echec, doit etre journalisee avec horodatage, IP et identifiant utilisateur.",
+      "severity": "moyenne",
+      "category": "journalisation"
+    },
+    {
+      "id": "SEC-010",
+      "title": "Revue de securite obligatoire",
+      "description": "Tout changement affectant la securite doit passer par une revue de securite avant mise en production.",
+      "severity": "critique",
+      "category": "processus"
+    }
+  ]
+}

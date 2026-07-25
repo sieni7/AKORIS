@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://akoris.dev/schemas/policy.schema.json",
+  "title": "Policy",
+  "description": "Schema de validation pour les fichiers de politique",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Nom de la politique"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Version semantique de la politique"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description de la politique"
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Z]+-\\d{3}$",
+            "description": "Identifiant unique de la regle"
+          },
+          "title": {
+            "type": "string",
+            "description": "Titre court de la regle"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description detaillee de la regle"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["critique", "haute", "moyenne", "basse"],
+            "description": "Niveau de gravite de la regle"
+          },
+          "category": {
+            "type": "string",
+            "description": "Categorie de la regle"
+          }
+        },
+        "required": ["id", "title", "description", "severity", "category"]
+      },
+      "minItems": 1,
+      "description": "Liste des regles de la politique"
+    }
+  },
+  "required": ["name", "version", "description", "rules"],
+  "additionalProperties": false
+}

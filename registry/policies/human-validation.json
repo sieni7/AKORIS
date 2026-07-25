@@ -1,0 +1,63 @@
+{
+  "name": "Validation Humaine",
+  "version": "1.0.0",
+  "description": "Regles imposant une validation humaine obligatoire avant tout deploiement en production",
+  "rules": [
+    {
+      "id": "VAL-001",
+      "title": "Validation humaine avant production",
+      "description": "Aucun code ne peut etre deploye en production sans validation humaine explicite par une personne autre que l'auteur.",
+      "severity": "critique",
+      "category": "deploiement"
+    },
+    {
+      "id": "VAL-002",
+      "title": "Revue de code obligatoire",
+      "description": "Toute pull request doit etre revue par au moins un pair avant merge sur la branche principale.",
+      "severity": "critique",
+      "category": "revue"
+    },
+    {
+      "id": "VAL-003",
+      "title": "Checklist de validation",
+      "description": "Chaque deploiement doit s'accompagner d'une checklist de validation signee par un responsable.",
+      "severity": "haute",
+      "category": "processus"
+    },
+    {
+      "id": "VAL-004",
+      "title": "Tests passes obligatoires",
+      "description": "La validation humaine ne peut etre donnee que si l'ensemble des tests automatises est vert.",
+      "severity": "haute",
+      "category": "tests"
+    },
+    {
+      "id": "VAL-005",
+      "title": "Approbation par un senior",
+      "description": "Les changements impactant le schema de base de donnees ou l'architecture necessitent l'approbation d'un developpeur senior.",
+      "severity": "haute",
+      "category": "architecture"
+    },
+    {
+      "id": "VAL-006",
+      "title": "Non-contournablite",
+      "description": "Aucun contournement de la validation humaine n'est autorise, meme en situation d'urgence. Les hotfix suivent le meme processus accelere mais valide.",
+      "severity": "critique",
+      "category": "gouvernance"
+    },
+    {
+      "id": "VAL-007",
+      "title": "Traçabilite de la validation",
+      "description": "Chaque validation humaine doit etre traçable : nom du validateur, date, version validee.",
+      "severity": "moyenne",
+      "category": "traçabilite"
+    },
+    {
+      "id": "VAL-008",
+      "title": "Validation fonctionnelle",
+      "description": "Une validation fonctionnelle par le metier ou le produit est requise avant mise en production.",
+      "severity": "haute",
+      "category": "fonctionnel"
+    }
+  ]
+}

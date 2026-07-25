@@ -1,0 +1,93 @@
+{
+  "name": "Workflow CLI",
+  "version": "1.0.0",
+  "description": "Workflow pour les projets d'outils en ligne de commande",
+  "type": "cli",
+  "phases": [
+    {
+      "id": "spec",
+      "name": "Specification",
+      "description": "Specification de l'outil CLI",
+      "order": 0,
+      "tasks": [
+        { "id": "CLI-01", "name": "Definition des commandes", "description": "Specification de l'arborescence des commandes" },
+        { "id": "CLI-02", "name": "Design des flags et arguments", "description": "Definition des drapeaux, options et arguments" },
+        { "id": "CLI-03", "name": "Specification des formats de sortie", "description": "Definition des formats (JSON, YAML, table, etc.)" },
+        { "id": "CLI-04", "name": "Gestion des erreurs", "description": "Specification des codes de sortie et messages d'erreur" }
+      ],
+      "validation": { "criteria": ["Specification validee", "Commandes definies"], "human_required": true },
+      "artifacts": [
+        { "name": "Spec CLI", "type": "document" },
+        { "name": "Help text", "type": "document" }
+      ]
+    },
+    {
+      "id": "implementation",
+      "name": "Implementation",
+      "description": "Developpement de l'outil CLI",
+      "order": 1,
+      "tasks": [
+        { "id": "CLI-05", "name": "Scaffolding du projet", "description": "Initialisation du projet avec le framework CLI" },
+        { "id": "CLI-06", "name": "Parsing des arguments", "description": "Implementation du parsing des entrees" },
+        { "id": "CLI-07", "name": "Logique des commandes", "description": "Implementation du comportement de chaque commande" },
+        { "id": "CLI-08", "name": "Gestion des erreurs et exit codes", "description": "Implementation des codes de retour" },
+        { "id": "CLI-09", "name": "Sortie formattee", "description": "Implementation des formats de sortie" }
+      ],
+      "validation": { "criteria": ["Commandes fonctionnelles", "Exit codes conformes"], "human_required": false },
+      "artifacts": [
+        { "name": "Code source", "type": "code" },
+        { "name": "Binaire executable", "type": "other" }
+      ]
+    },
+    {
+      "id": "testing",
+      "name": "Testing",
+      "description": "Tests de l'outil CLI",
+      "order": 2,
+      "tasks": [
+        { "id": "CLI-10", "name": "Tests unitaires", "description": "Tests unitaires des modules internes" },
+        { "id": "CLI-11", "name": "Tests d'integration", "description": "Tests de bout en bout des commandes" },
+        { "id": "CLI-12", "name": "Tests de cas limites", "description": "Tests des cas d'erreur et limites" },
+        { "id": "CLI-13", "name": "Tests multi-plateformes", "description": "Tests sur Windows, Linux, macOS" }
+      ],
+      "validation": { "criteria": ["Tests multi-plateformes ok", "Cas limites couverts"], "human_required": false },
+      "artifacts": [
+        { "name": "Rapport de tests", "type": "report" }
+      ]
+    },
+    {
+      "id": "documentation",
+      "name": "Documentation",
+      "description": "Documentation de l'outil CLI",
+      "order": 3,
+      "tasks": [
+        { "id": "CLI-14", "name": "README et quickstart", "description": "Guide de demarrage rapide" },
+        { "id": "CLI-15", "name": "Pages de manuel", "description": "Generation des pages de manuel" },
+        { "id": "CLI-16", "name": "Completion shell", "description": "Generation des scripts de completion (bash, zsh, fish)" },
+        { "id": "CLI-17", "name": "Exemples et tutoriels", "description": "Redaction d'exemples d'utilisation" }
+      ],
+      "validation": { "criteria": ["Documentation complete", "Completion active"], "human_required": true },
+      "artifacts": [
+        { "name": "Documentation", "type": "document" },
+        { "name": "Completion scripts", "type": "other" }
+      ]
+    },
+    {
+      "id": "distribution",
+      "name": "Distribution",
+      "description": "Distribution de l'outil CLI",
+      "order": 4,
+      "tasks": [
+        { "id": "CLI-18", "name": "Packaging binaire", "description": "Creation des binaires pour chaque plateforme" },
+        { "id": "CLI-19", "name": "Publication gestionnaire de paquets", "description": "Publication via Homebrew, npm, pip, etc." },
+        { "id": "CLI-20", "name": "Signature et checksums", "description": "Signature des artefacts et generation des sommes de controle" }
+      ],
+      "validation": { "criteria": ["Binaires signes", "Publication reussie"], "human_required": true },
+      "artifacts": [
+        { "name": "Binaires distribues", "type": "other" },
+        { "name": "Checksums", "type": "other" }
+      ]
+    }
+  ],
+  "contracts": ["agent-contract", "quality-contract", "playbook-contract"]
+}
