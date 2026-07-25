@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync, existsSync, watch } from 'node:fs';
+import { readFileSync, readdirSync, existsSync, watch, statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import type {
   RegistryIndex,
@@ -61,6 +61,12 @@ export class RegistryReaderV2 {
     return readdirSync(fullPath).filter(f => f.endsWith('.json'));
   }
 
+  private readSubdirs(relativePath: string): string[] {
+    const fullPath = join(this.basePath, relativePath);
+    if (!existsSync(fullPath)) return [];
+    return readdirSync(fullPath).filter(f => statSync(join(fullPath, f)).isDirectory());
+  }
+
   getIndex(): RegistryIndex | null {
     return this.readJson<RegistryIndex>('registry.json', 'index');
   }
@@ -97,7 +103,7 @@ export class RegistryReaderV2 {
   }
 
   getAgentContract(agentId: string): Record<string, unknown> | null {
-    const dirs = this.readDir('agents');
+    const dirs = this.readSubdirs('agents');
     for (const dir of dirs) {
       if (dir.startsWith(agentId)) {
         const contract = this.readJson<Record<string, unknown>>(`agents/${dir}/contract.json`, `agent:${agentId}`);
@@ -108,7 +114,7 @@ export class RegistryReaderV2 {
   }
 
   getAgentCapabilities(agentId: string): { can: string[]; cannot: string[] } | null {
-    const dirs = this.readDir('agents');
+    const dirs = this.readSubdirs('agents');
     for (const dir of dirs) {
       if (dir.startsWith(agentId)) {
         const caps = this.readJson<{ can: string[]; cannot: string[] }>(`agents/${dir}/capabilities.json`, `caps:${agentId}`);
@@ -174,7 +180,7 @@ export class RegistryReaderV2 {
   }
 
   findAgentDir(agentId: string): string | null {
-    const dirs = this.readDir('agents');
+    const dirs = this.readSubdirs('agents');
     for (const dir of dirs) {
       if (dir.startsWith(agentId)) return dir;
     }
