@@ -7,5 +7,17 @@
   "dependencies": ["CORE-01", "CORE-02"],
   "interactions": ["DEV-01", "DEV-06", "QA-04"],
   "activation": ["projets-mobiles"],
-  "tags": ["mobile", "ios", "android", "offline", "push-notifications", "bridging"]
+  "tags": ["expert", "mobile", "frontend", "ios", "android", "offline", "push-notifications", "bridging"],
+  "tokenEstimate": {
+    "context": 8192,
+    "prompt": 2560,
+    "output": 2048,
+    "average": 4608,
+    "max": 9216
+  },
+  "kpis": {
+    "offline_reliability": ">95%",
+    "store_compliance": "100%",
+    "crash_rate": "<0.1%"
+  }
 }

@@ -51,5 +51,14 @@ Concevoir et garantir l'expérience utilisateur, l'accessibilité, l'ergonomie e
 - DEV-01 — Frontend Architect
 - QA-05 — Accessibility Auditor
 
+## RACI
+
+| Tâche                   | Rôle       |
+| ----------------------- | ---------- |
+| Parcours utilisateur    | R          |
+| Design system           | R          |
+| Conformité WCAG         | R          |
+| Tests utilisateur       | C          |
+
 ## Prompt de référence
 Voir prompt.md

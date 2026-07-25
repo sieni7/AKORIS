@@ -1,0 +1,13 @@
+{
+  "can": [
+    "define_security_policy",
+    "manage_auth",
+    "audit_vulnerabilities",
+    "define_encryption"
+  ],
+  "cannot": [
+    "deploy_infrastructure",
+    "audit_code (QA-03)",
+    "implement_features"
+  ]
+}

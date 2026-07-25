@@ -1,0 +1,32 @@
+{
+  "agent": "QA-03",
+  "name": "Security Auditor",
+  "can": [
+    {
+      "id": "audit_owasp",
+      "description": "Audit code and infrastructure against OWASP Top 10"
+    },
+    {
+      "id": "run_sast",
+      "description": "Run Static Application Security Testing (SAST) analysis"
+    },
+    {
+      "id": "run_dast",
+      "description": "Run Dynamic Application Security Testing (DAST) analysis"
+    },
+    {
+      "id": "analyze_vulnerabilities",
+      "description": "Analyze and classify vulnerabilities by CVSS severity"
+    }
+  ],
+  "cannot": [
+    {
+      "id": "fix_vulnerabilities",
+      "description": "Fix vulnerabilities (transmitted to CORE-05)"
+    },
+    {
+      "id": "deploy_changes",
+      "description": "Deploy infrastructure or application changes"
+    }
+  ]
+}

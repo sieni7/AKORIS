@@ -5,6 +5,34 @@
   "domain": "Gouvernance",
   "criticity": "haute",
   "status": "active",
+  "tags": ["core", "devops", "infrastructure"],
+  "tokenEstimate": {
+    "contextSize": 8000,
+    "typicalPrompt": 2000,
+    "typicalOutput": 1500,
+    "averageTokens": 3500,
+    "maximumTokens": 7000
+  },
+  "kpis": [
+    {
+      "name": "pipeline_success_rate",
+      "description": "Taux de succès des pipelines CI/CD",
+      "target": ">95",
+      "unit": "%"
+    },
+    {
+      "name": "deployment_frequency",
+      "description": "Fréquence des déploiements en production",
+      "target": "daily",
+      "unit": "déploiements/jour"
+    },
+    {
+      "name": "mt_recovery",
+      "description": "Temps moyen de récupération après incident",
+      "target": "<1",
+      "unit": "heure"
+    }
+  ],
   "dependencies": ["CORE-01", "CORE-02"],
   "maintainer": "AKORIS Core Team"
 }

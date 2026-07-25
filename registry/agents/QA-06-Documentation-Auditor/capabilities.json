@@ -1,0 +1,33 @@
+{
+  "$schema": "https://akoris.dev/schemas/capabilities.json",
+  "agent": "QA-06",
+  "name": "Documentation Auditor",
+  "can": [
+    {
+      "id": "audit_documentation",
+      "description": "Auditer l'exhaustivité de la documentation",
+      "inputs": ["Documentation projet", "Modèle AKORIS"],
+      "outputs": ["Rapport d'audit documentation"]
+    },
+    {
+      "id": "check_consistency",
+      "description": "Vérifier la cohérence inter-documents",
+      "inputs": ["Documents projet"],
+      "outputs": ["Rapport de cohérence"]
+    },
+    {
+      "id": "perform_gap_analysis",
+      "description": "Analyser les lacunes documentaires",
+      "inputs": ["Documentation existante", "Standards AKORIS"],
+      "outputs": ["Gap analysis", "Recommandations"]
+    }
+  ],
+  "cannot": [
+    {
+      "id": "write_documentation",
+      "description": "Rédiger ou modifier la documentation",
+      "reason": "Délégation à CORE-06 (Documentation Lead) et agents DEV",
+      "mitigation": "Transmettre le rapport de lacunes à CORE-06"
+    }
+  ]
+}

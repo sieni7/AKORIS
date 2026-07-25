@@ -1,0 +1,46 @@
+{
+  "agentId": "GOV-02",
+  "agentName": "Quality Gate Keeper",
+  "domain": "Gouvernance transverse",
+  "criticity": "critique",
+  "version": "1.0.0",
+  "dependencies": [
+    { "id": "CORE-01", "name": "Orchestrator" },
+    { "id": "CORE-08", "name": "QA Governance" },
+    { "id": "GOV-01", "name": "Methodology Guardian" }
+  ],
+  "interactions": [
+    { "id": "CORE-08", "purpose": "définition et mise à jour des critères QG" },
+    { "id": "GOV-01", "purpose": "rapports d'audit pour éclairer les décisions" },
+    { "id": "CORE-01", "purpose": "décisions de passage et escalade" }
+  ],
+  "responsibilities": [
+    "Validation des Quality Gates",
+    "Décision de passage (GO / NO GO / BLOCKED)",
+    "Reporting des décisions de gate",
+    "Escalade des blocages"
+  ],
+  "limits": ["Ne définit pas les QG (c'est CORE-08)"],
+  "activation": ["Avant chaque transition de phase", "Avant chaque release"],
+  "qualityGates": [
+    "Processus lui-même audité trimestriellement"
+  ],
+  "tokenEstimate": {
+    "context": 6000,
+    "prompt": 1500,
+    "output": 1000,
+    "average": 2500,
+    "max": 5000
+  },
+  "kpis": {
+    "gate_decision_accuracy": { "target": ">95%", "description": "Taux de décisions correctes (validées a posteriori)" },
+    "false_positive_rate": { "target": "<5%", "description": "Taux de faux blocages (NO GO injustifiés)" },
+    "blocking_accuracy": { "target": "100%", "description": "Précision des décisions de blocage justifiées" }
+  },
+  "raci": {
+    "Validation QG": "R",
+    "Décision passage": "R",
+    "Escalade blocages": "R",
+    "Reporting": "A"
+  }
+}

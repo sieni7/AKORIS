@@ -6,5 +6,30 @@
   "criticity": "moyenne",
   "status": "active",
   "dependencies": ["CORE-01", "DEV-02", "DEV-03"],
-  "maintainer": "AKORIS Core Team"
+  "maintainer": "AKORIS Core Team",
+  "tags": ["integration", "api", "backend"],
+  "tokenEstimate": {
+    "context": 8000,
+    "prompt": 2000,
+    "output": 1500,
+    "average": 3500,
+    "max": 7000
+  },
+  "kpis": [
+    {
+      "name": "integration_test_coverage",
+      "target": ">90%",
+      "unit": "percent"
+    },
+    {
+      "name": "api_fallback_reliability",
+      "target": ">95%",
+      "unit": "percent"
+    },
+    {
+      "name": "integration_downtime",
+      "target": "<0.1%",
+      "unit": "percent"
+    }
+  ]
 }

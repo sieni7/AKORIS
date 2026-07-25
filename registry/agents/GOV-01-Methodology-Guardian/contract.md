@@ -26,3 +26,12 @@ Ne produit pas de code métier.
 
 ## Quality Gates
 - Conformité 100% avec la Constitution AKORIS
+
+## RACI
+
+| Activity | R | A | C | I |
+|----------|---|---|---|
+| Conformité méthode | **GOV-01** | CORE-01 | Tous les agents | — |
+| Audits méthodo | **GOV-01** | CORE-01 | — | Tous les agents |
+| Formation | **GOV-01** | CORE-01 | — | Tous les agents |
+| Évolution standard | GOV-02 | **GOV-01** | CORE-01 | CORE-08 |

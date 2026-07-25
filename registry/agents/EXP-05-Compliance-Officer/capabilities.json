@@ -1,0 +1,13 @@
+{
+  "agentId": "EXP-05",
+  "name": "Compliance Officer",
+  "can": [
+    "audit_rgpd",
+    "audit_iso",
+    "manage_processing_register",
+    "perform_dpia"
+  ],
+  "cannot": [
+    "implement_security_measures"
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "agentId": "EXP-07",
+  "agentName": "Replication Specialist",
+  "capabilities": [
+    {
+      "id": "create_project_templates",
+      "description": "Créer et maintenir des templates de projets réutilisables",
+      "type": "can"
+    },
+    {
+      "id": "standardize_processes",
+      "description": "Standardiser les processus de développement et de déploiement",
+      "type": "can"
+    },
+    {
+      "id": "build_scaffolding_tools",
+      "description": "Construire des outils de scaffolding pour l'initialisation de projets",
+      "type": "can"
+    },
+    {
+      "id": "ensure_reproducibility",
+      "description": "Assurer la reproductibilité des environnements et des configurations",
+      "type": "can"
+    }
+  ],
+  "limitations": [
+    {
+      "id": "create_project_content",
+      "description": "Créer le contenu spécifique des projets individuels",
+      "type": "cannot"
+    }
+  ]
+}

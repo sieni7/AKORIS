@@ -55,3 +55,14 @@ Définit les exigences de sécurité, contrôle l'authentification, les autorisa
 
 ## Prompt de référence
 Voir [prompt.md](./prompt.md).
+
+## Matrice RACI
+
+| Activité | Responsable | Approbateur | Consulté | Informé |
+|----------|-------------|-------------|----------|---------|
+| Définir la politique de sécurité | CORE-05 | CORE-01 | CORE-02, CORE-07 | Tous |
+| Spécifier authN/authZ | CORE-05 | CORE-01 | CORE-02 | DEV-02 |
+| Définir les règles de chiffrement | CORE-05 | CORE-01 | CORE-02, CORE-07 | Tous |
+| Établir le plan de test sécurité | CORE-05 | CORE-01 | QA-03 | QA-02 |
+| Valider la conformité pré-release | CORE-05 | CORE-01 | QA-03, GOV-02 | CORE-07 |
+| Analyser les vulnérabilités | QA-03 | CORE-05 | CORE-05 | CORE-01 |

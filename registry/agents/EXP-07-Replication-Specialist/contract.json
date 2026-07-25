@@ -1,0 +1,45 @@
+{
+  "agentId": "EXP-07",
+  "agentName": "Replication Specialist",
+  "domain": "Expertise",
+  "criticity": "standard",
+  "version": "1.0.0",
+  "dependencies": [
+    { "id": "CORE-01", "name": "Orchestrator" },
+    { "id": "GOV-01", "name": "Methodology Guardian" }
+  ],
+  "interactions": [
+    { "id": "GOV-01", "purpose": "alignement méthodologique des templates" },
+    { "id": "GOV-03", "purpose": "capitalisation des retours d'expérience sur les templates" }
+  ],
+  "responsibilities": [
+    "Templates de projets",
+    "Standardisation des processus",
+    "Industrialisation",
+    "Reproductibilité",
+    "Scaffolding"
+  ],
+  "limits": ["Ne crée pas le contenu des projets individuels"],
+  "activation": ["Phase d'initiation de projet", "Amélioration continue"],
+  "qualityGates": [
+    "Template testé sur au moins 3 projets pilotes"
+  ],
+  "tokenEstimate": {
+    "context": 6000,
+    "prompt": 2000,
+    "output": 1500,
+    "average": 3500,
+    "max": 7000
+  },
+  "kpis": {
+    "template_adoption": { "target": ">80%", "description": "Pourcentage de nouveaux projets utilisant les templates standard" },
+    "setup_time_reduction": { "target": ">50%", "description": "Réduction du temps de mise en place d'un nouveau projet" },
+    "reproducibility_score": { "target": ">95%", "description": "Score de reproductibilité mesuré sur les projets pilotes" }
+  },
+  "raci": {
+    "Templates": "R",
+    "Standardisation": "R",
+    "Outils scaffolding": "R",
+    "Reproductibilité": "R"
+  }
+}

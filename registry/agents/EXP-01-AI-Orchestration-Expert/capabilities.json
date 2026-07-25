@@ -1,0 +1,51 @@
+{
+  "$schema": "https://akoris.dev/schemas/capabilities.json",
+  "agent": "EXP-01",
+  "name": "AI Orchestration Expert",
+  "can": [
+    {
+      "id": "optimize_prompts",
+      "description": "Optimiser les prompts pour minimiser les tokens et maximiser la qualité",
+      "inputs": ["Brouillon de prompt", "Contraintes de coût"],
+      "outputs": ["Prompt optimisé", "Métriques de compression"]
+    },
+    {
+      "id": "orchestrate_multi_agent",
+      "description": "Orchestrer des appels multi-agents complexes",
+      "inputs": ["Besoins métier", "Topologie des agents"],
+      "outputs": ["Plan d'orchestration", "Séquence d'appels"]
+    },
+    {
+      "id": "manage_tokens",
+      "description": "Gérer les tokens et fenêtres de contexte",
+      "inputs": ["Session IA", "Limites de contexte"],
+      "outputs": ["Budget tokens", "Stratégie de fenêtrage"]
+    },
+    {
+      "id": "select_models",
+      "description": "Sélectionner le modèle LLM le plus adapté",
+      "inputs": ["Besoins de la tâche", "Catalogues modèles"],
+      "outputs": ["Recommandation modèle", "Justification"]
+    },
+    {
+      "id": "minimize_costs",
+      "description": "Minimiser les coûts par session d'appel",
+      "inputs": ["Logs de coûts", "Patterns d'utilisation"],
+      "outputs": ["Stratégie d'optimisation", "Rapport d'économies"]
+    }
+  ],
+  "cannot": [
+    {
+      "id": "develop_metier_features",
+      "description": "Développer des fonctionnalités métier",
+      "reason": "Rôle limité à l'orchestration et l'optimisation",
+      "mitigation": "Déléguer aux agents DEV compétents"
+    },
+    {
+      "id": "write_application_code",
+      "description": "Écrire du code d'application",
+      "reason": "Ne remplace pas les équipes de développement",
+      "mitigation": "Transmettre les spécifications aux agents DEV"
+    }
+  ]
+}

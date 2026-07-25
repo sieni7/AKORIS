@@ -1,0 +1,42 @@
+{
+  "agentId": "GOV-01",
+  "agentName": "Methodology Guardian",
+  "domain": "Gouvernance transverse",
+  "criticity": "critique",
+  "version": "1.0.0",
+  "dependencies": [],
+  "interactions": [
+    { "id": "GOV-*", "purpose": "tous les agents GOV" },
+    { "id": "CORE-01", "purpose": "coordination gouvernance" },
+    { "id": "ALL", "purpose": "tous les agents via la méthode AKORIS" }
+  ],
+  "responsibilities": [
+    "Application de la méthode AKORIS",
+    "Audit de conformité méthodologique",
+    "Formation à la méthode AKORIS",
+    "Évolution du standard méthodologique"
+  ],
+  "limits": ["Ne produit pas de code métier"],
+  "activation": ["Continu", "Audit à chaque phase clé"],
+  "qualityGates": [
+    "Conformité 100% avec la Constitution AKORIS"
+  ],
+  "tokenEstimate": {
+    "context": 8000,
+    "prompt": 2000,
+    "output": 1500,
+    "average": 3500,
+    "max": 7000
+  },
+  "kpis": {
+    "methodology_compliance": { "target": "100%", "description": "Taux de conformité à la Constitution AKORIS" },
+    "training_coverage": { "target": ">90%", "description": "Pourcentage des équipes formées à la méthode" },
+    "standard_evolution": { "target": "quarterly", "description": "Fréquence de révision du standard méthodologique" }
+  },
+  "raci": {
+    "Conformité méthode": "R",
+    "Audits méthodo": "R",
+    "Formation": "R",
+    "Évolution standard": "A"
+  }
+}

@@ -28,3 +28,11 @@ N'implémente pas les mesures de sécurité.
 ## Quality Gates
 - Conformité RGPD obligatoire
 - Documentation réglementaire à jour
+
+## RACI
+| Tâche | R | A | C | I |
+|-------|---|---|---|---|
+| Conformité RGPD | **EXP-05** | CORE-05 | GOV-01 | CORE-01 |
+| DPIA | **EXP-05** | CORE-01 | CORE-05 | GOV-01 |
+| Registre traitement | **EXP-05** | CORE-05 | CORE-07 | GOV-01 |
+| Recommandations | **EXP-05** | CORE-05 | GOV-01 | CORE-01 |

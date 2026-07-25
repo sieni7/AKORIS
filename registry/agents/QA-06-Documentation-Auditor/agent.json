@@ -5,6 +5,19 @@
   "domain": "Qualité",
   "criticity": "standard",
   "status": "active",
+  "tags": ["quality", "documentation", "audit"],
+  "tokenEstimate": {
+    "context": 6000,
+    "prompt": 1500,
+    "output": 1000,
+    "average": 2500,
+    "max": 5000
+  },
+  "kpis": {
+    "doc_completeness": ">90%",
+    "doc_consistency": ">85%",
+    "gap_closure_rate": ">80%"
+  },
   "dependencies": ["CORE-01", "CORE-06"],
   "maintainer": "AKORIS Core Team"
 }

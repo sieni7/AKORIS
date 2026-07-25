@@ -6,5 +6,18 @@
   "criticity": "moyenne",
   "status": "active",
   "dependencies": ["CORE-01"],
-  "maintainer": "AKORIS Core Team"
+  "maintainer": "AKORIS Core Team",
+  "tags": ["quality", "performance", "testing"],
+  "tokenEstimate": {
+    "ctx": 8000,
+    "prompt": 2000,
+    "output": 1500,
+    "avg": 3500,
+    "max": 7000
+  },
+  "kpis": {
+    "response_time_P95": "<500ms",
+    "throughput_target": "100%",
+    "load_test_coverage": ">80%"
+  }
 }

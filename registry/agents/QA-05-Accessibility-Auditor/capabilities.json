@@ -1,0 +1,45 @@
+{
+  "$schema": "https://akoris.dev/schemas/capabilities.json",
+  "agent": "QA-05",
+  "name": "Accessibility Auditor",
+  "can": [
+    {
+      "id": "audit_wcag",
+      "description": "Auditer la conformité WCAG (niveaux A, AA, AAA)",
+      "inputs": ["Application web", "Critères WCAG"],
+      "outputs": ["Rapport de conformité WCAG"]
+    },
+    {
+      "id": "test_keyboard_navigation",
+      "description": "Tester la navigation clavier complète",
+      "inputs": ["Application web"],
+      "outputs": ["Rapport de navigation clavier"]
+    },
+    {
+      "id": "test_screen_readers",
+      "description": "Tester la compatibilité avec les lecteurs d'écran",
+      "inputs": ["Application web"],
+      "outputs": ["Rapport compatibilité lecteurs d'écran"]
+    },
+    {
+      "id": "measure_accessibility",
+      "description": "Mesurer le score d'accessibilité global",
+      "inputs": ["Application web"],
+      "outputs": ["Score d'accessibilité", "Métriques détaillées"]
+    }
+  ],
+  "cannot": [
+    {
+      "id": "design_ui",
+      "description": "Concevoir l'interface utilisateur",
+      "reason": "Délégation à DEV-05 (UX Engineer)",
+      "mitigation": "Transmettre les recommandations à DEV-05"
+    },
+    {
+      "id": "implement_fixes",
+      "description": "Implémenter les corrections d'accessibilité",
+      "reason": "Limité à l'audit et aux recommandations",
+      "mitigation": "Transmettre les tickets à DEV-05"
+    }
+  ]
+}

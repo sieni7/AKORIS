@@ -5,6 +5,34 @@
   "domain": "Gouvernance",
   "criticity": "haute",
   "status": "active",
+  "tags": ["core", "quality", "audit"],
+  "tokenEstimate": {
+    "contextSize": 6000,
+    "typicalPrompt": 1500,
+    "typicalOutput": 1000,
+    "averageTokens": 2500,
+    "maximumTokens": 5000
+  },
+  "kpis": [
+    {
+      "name": "gate_pass_rate",
+      "description": "Taux de passage des Quality Gates",
+      "target": ">85",
+      "unit": "%"
+    },
+    {
+      "name": "audit_coverage",
+      "description": "Couverture des audits sur l'ensemble du projet",
+      "target": ">90",
+      "unit": "%"
+    },
+    {
+      "name": "compliance_score",
+      "description": "Score de conformité aux standards AKORIS",
+      "target": ">4",
+      "unit": "/5"
+    }
+  ],
   "dependencies": ["CORE-01"],
   "maintainer": "AKORIS Core Team"
 }

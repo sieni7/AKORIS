@@ -5,6 +5,19 @@
   "domain": "Qualité",
   "criticity": "moyenne",
   "status": "active",
+  "tags": ["quality", "audit", "methodology"],
+  "tokenEstimate": {
+    "context": 8000,
+    "prompt": 2000,
+    "output": 1500,
+    "average": 3500,
+    "max": 7000
+  },
+  "kpis": {
+    "debt_ratio": "<5%",
+    "debt_trend": "decreasing",
+    "critical_items": 0
+  },
   "dependencies": ["CORE-01", "CORE-08"],
   "maintainer": "AKORIS Core Team"
 }

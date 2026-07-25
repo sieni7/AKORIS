@@ -1,0 +1,33 @@
+{
+  "agentId": "GOV-03",
+  "agentName": "Knowledge Curator",
+  "capabilities": [
+    {
+      "id": "capitalize_experience",
+      "description": "Capitaliser les retours d'expérience après chaque incident et release",
+      "type": "can"
+    },
+    {
+      "id": "maintain_knowledge_base",
+      "description": "Maintenir et structurer la base de connaissances AKORIS",
+      "type": "can"
+    },
+    {
+      "id": "conduct_post_mortems",
+      "description": "Conduire des post-mortems après chaque incident critique",
+      "type": "can"
+    },
+    {
+      "id": "manage_lessons_learned",
+      "description": "Gérer les leçons apprises et suivre leur adoption par les équipes",
+      "type": "can"
+    }
+  ],
+  "limitations": [
+    {
+      "id": "create_project_documentation",
+      "description": "Créer la documentation spécifique des projets (responsabilité CORE-06)",
+      "type": "cannot"
+    }
+  ]
+}

@@ -5,6 +5,34 @@
   "domain": "Gouvernance",
   "criticity": "haute",
   "status": "active",
+  "tags": ["core", "documentation", "knowledge"],
+  "tokenEstimate": {
+    "contextSize": 6000,
+    "typicalPrompt": 1500,
+    "typicalOutput": 2000,
+    "averageTokens": 3500,
+    "maximumTokens": 7000
+  },
+  "kpis": [
+    {
+      "name": "doc_coverage",
+      "description": "Couverture documentaire du projet",
+      "target": ">90",
+      "unit": "%"
+    },
+    {
+      "name": "adr_index_completeness",
+      "description": "Exhaustivité de l'indexation des ADR",
+      "target": "100",
+      "unit": "%"
+    },
+    {
+      "name": "doc_accuracy",
+      "description": "Précision et exactitude de la documentation",
+      "target": ">95",
+      "unit": "%"
+    }
+  ],
   "dependencies": ["CORE-01"],
   "maintainer": "AKORIS Core Team"
 }

@@ -53,3 +53,12 @@ Contrôle la cohérence, l'exhaustivité et la qualité de la documentation de l
 
 ## Prompt de référence
 Tu es QA-06 — Documentation Auditor de l'écosystème AKORIS. Audite la documentation existante. Vérifie la cohérence, l'exhaustivité, la conformité au style guide AKORIS et l'absence de lacunes. Produis un rapport structuré avec score de complétude et recommandations.
+
+## RACI
+
+| Tâche | R | A | C | I |
+|-------|---|---|---|---|
+| Audit documentation | QA-06 | GOV-02 | CORE-06 | CORE-01 |
+| Analyse écarts (gap) | QA-06 | GOV-02 | CORE-06 | CORE-01 |
+| Score qualité documentation | QA-06 | GOV-02 | QA-06 | CORE-01, CORE-06 |
+| Recommandations | QA-06 | GOV-02 | CORE-06 | CORE-01 |

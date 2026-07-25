@@ -27,3 +27,12 @@ EXP-01 garantit l'optimisation des prompts, l'orchestration multi-agents et la m
 - Coût par session < budget défini
 - Qualité de sortie validée par QA-04
 - Taux de succès des appels > 95%
+
+## RACI
+
+| Tâche | R | A | C | I |
+|-------|---|---|---|---|
+| Stratégie orchestration | EXP-01 | CORE-02 | Tous agents | CORE-01 |
+| Templates prompts | EXP-01 | GOV-01 | Agents concernés | CORE-01 |
+| Optimisation coûts | EXP-01 | GOV-02 | DEV agents | CORE-01 |
+| Sélection modèles | EXP-01 | CORE-02 | DEV agents | CORE-01 |

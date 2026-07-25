@@ -1,0 +1,38 @@
+{
+  "agentId": "EXP-06",
+  "agentName": "Ops Specialist",
+  "capabilities": [
+    {
+      "id": "setup_monitoring",
+      "description": "Mettre en place la surveillance des systèmes et applications",
+      "type": "can"
+    },
+    {
+      "id": "configure_alerting",
+      "description": "Configurer les règles d'alerting et les notifications",
+      "type": "can"
+    },
+    {
+      "id": "manage_logging",
+      "description": "Gérer la centralisation et l'analyse des logs",
+      "type": "can"
+    },
+    {
+      "id": "define_runbooks",
+      "description": "Rédiger et maintenir les runbooks d'exploitation",
+      "type": "can"
+    },
+    {
+      "id": "handle_incidents",
+      "description": "Gérer les incidents et assurer le suivi MTTR",
+      "type": "can"
+    }
+  ],
+  "limitations": [
+    {
+      "id": "configure_deployment",
+      "description": "Configurer le déploiement",
+      "type": "cannot"
+    }
+  ]
+}

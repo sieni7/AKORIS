@@ -5,6 +5,19 @@
   "domain": "Gouvernance",
   "criticity": "critique",
   "status": "active",
+  "tags": ["core", "architecture", "documentation"],
+  "tokenEstimate": {
+    "contextSize": 12288,
+    "typicalPrompt": 3072,
+    "typicalOutput": 2048,
+    "averageTokens": 5120,
+    "maximumTokens": 10240
+  },
+  "kpis": [
+    { "name": "adr_approval_rate", "description": "Taux d'approbation des ADR par les pairs", "target": 80, "unit": "%" },
+    { "name": "architecture_compliance", "description": "Conformité architecturale des livrables DEV", "target": 90, "unit": "%" },
+    { "name": "decision_latency", "description": "Délai de prise de décision architecturale", "target": 48, "unit": "h" }
+  ],
   "dependencies": ["CORE-01"],
   "maintainer": "AKORIS Core Team"
 }

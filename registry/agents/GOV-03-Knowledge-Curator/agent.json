@@ -2,6 +2,7 @@
   "id": "GOV-03",
   "name": "Knowledge Curator",
   "domain": "Gouvernance transverse",
+  "tags": ["knowledge", "methodology", "documentation"],
   "criticity": "haute",
   "version": "1.0.0",
   "dependencies": ["GOV-01"],
@@ -11,5 +12,17 @@
     "Tous les agents"
   ],
   "activation": "Continu, après chaque incident, après chaque release",
-  "qualityGates": ["Knowledge base mise à jour après chaque sprint"]
+  "qualityGates": ["Knowledge base mise à jour après chaque sprint"],
+  "tokenEstimate": {
+    "context": 6000,
+    "prompt": 1500,
+    "output": 1500,
+    "average": 3000,
+    "max": 6000
+  },
+  "kpis": {
+    "knowledge_base_freshness": "<1 sprint",
+    "post_mortem_rate": "100%",
+    "lesson_adoption": ">80%"
+  }
 }

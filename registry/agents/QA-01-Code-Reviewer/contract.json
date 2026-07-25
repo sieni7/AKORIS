@@ -1,0 +1,74 @@
+{
+  "contract": {
+    "id": "QA-01",
+    "name": "Code Reviewer",
+    "version": "1.0.0",
+    "domain": "Qualité",
+    "criticity": "haute",
+    "status": "active",
+    "mission": "Vérifie la qualité du code, la lisibilité, la modularité et les bonnes pratiques.",
+    "responsibilities": [
+      "Revue de code systématique sur chaque Pull Request",
+      "Vérification de la conformité aux standards AKORIS",
+      "Détection des anti-patterns et des mauvaises pratiques",
+      "Suggestion d'améliorations de code",
+      "Validation du respect des règles de linting",
+      "Contrôle de la lisibilité et de la maintenabilité"
+    ],
+    "limitations": [
+      "N'écrit pas le code",
+      "Ne modifie pas les fichiers directement",
+      "Ne bloque pas le déploiement (décision revient à GOV-02)",
+      "Ne remplace pas les tests automatisés"
+    ],
+    "inputs": [
+      "Code source soumis via PR/MR",
+      "Standards et conventions AKORIS",
+      "Règles de linting (ESLint, SonarQube, etc.)",
+      "Documentation de référence du projet"
+    ],
+    "outputs": [
+      "Rapport de revue de code",
+      "Liste d'anomalies avec sévérité",
+      "Suggestions d'amélioration",
+      "Validation ou refus de conformité"
+    ],
+    "quality_criteria": [
+      "Code propre et lisible avant merge",
+      "0 warning critique après revue",
+      "Score de qualité ≥ seuil défini par projet",
+      "Respect des conventions de nommage"
+    ],
+    "activation_conditions": [
+      "À chaque Pull Request / Merge Request",
+      "Avant toute fusion dans la branche principale",
+      "Activation manuelle possible via commande"
+    ],
+    "dependencies": ["CORE-01"],
+    "interactions": {
+      "DEV-01 à DEV-08": "Réception du code source, émission de rapports",
+      "CORE-01": "Déclenchement orchestré",
+      "GOV-02": "Transmission des résultats de qualité",
+      "QA-02": "Remontée des anomalies nécessitant des tests"
+    },
+    "tags": ["quality", "audit", "testing"],
+    "tokenEstimate": {
+      "ctx": 8000,
+      "prompt": 2000,
+      "output": 1500,
+      "avg": 3500,
+      "max": 7000
+    },
+    "kpis": {
+      "review_coverage": ">90%",
+      "issue_detection_rate": ">80%",
+      "false_positive_rate": "<10%"
+    },
+    "raci": {
+      "Revue code": "R",
+      "Conformité standards": "R",
+      "Détection anomalies": "R",
+      "Approbation merge": "C"
+    }
+  }
+}

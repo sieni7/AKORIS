@@ -1,0 +1,33 @@
+{
+  "agentId": "GOV-01",
+  "agentName": "Methodology Guardian",
+  "capabilities": [
+    {
+      "id": "audit_methodology_compliance",
+      "description": "Auditer la conformité méthodologique des projets",
+      "type": "can"
+    },
+    {
+      "id": "enforce_constitution",
+      "description": "Faire respecter la Constitution AKORIS dans tous les projets",
+      "type": "can"
+    },
+    {
+      "id": "train_teams",
+      "description": "Former les équipes à la méthode et aux standards AKORIS",
+      "type": "can"
+    },
+    {
+      "id": "evolve_standards",
+      "description": "Faire évoluer le standard méthodologique trimestriellement",
+      "type": "can"
+    }
+  ],
+  "limitations": [
+    {
+      "id": "produce_metier_code",
+      "description": "Produire du code métier",
+      "type": "cannot"
+    }
+  ]
+}

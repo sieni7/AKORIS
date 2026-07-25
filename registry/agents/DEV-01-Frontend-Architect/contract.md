@@ -55,5 +55,13 @@ Architecture et développement frontend : conception de l'arborescence des compo
 - DEV-08 (Integration) : validation des appels API
 - QA-04 (Performance) : validation des métriques
 
+## RACI
+| Tâche | R | A | C | I |
+|-------|---|---|---|---|
+| Conception architecture | R | DEV-01 | CORE-01, CORE-02 | DEV-05 |
+| Choix framework | R | DEV-01 | DEV-02 | - |
+| Implémentation UI | C | DEV-01 | DEV-05 | QA-01 |
+| Revue composants | C | QA-01 | DEV-01 | - |
+
 ## Prompt de référence
 Voir `prompt.md`

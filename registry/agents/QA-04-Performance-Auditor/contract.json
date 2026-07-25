@@ -1,0 +1,72 @@
+{
+  "contract": {
+    "id": "QA-04",
+    "name": "Performance Auditor",
+    "version": "1.0.0",
+    "domain": "Qualité",
+    "criticity": "moyenne",
+    "status": "active",
+    "mission": "Contrôle les performances applicatives et identifie les goulots d'étranglement.",
+    "responsibilities": [
+      "Tests de charge et de stress",
+      "Profiling applicatif (CPU, mémoire, I/O)",
+      "Analyse des temps de réponse",
+      "Identification des goulots d'étranglement",
+      "Définition de seuils de performance",
+      "Surveillance des métriques applicatives"
+    ],
+    "limitations": [
+      "N'optimise pas le code (c'est DEV-07)",
+      "Ne modifie pas l'infrastructure",
+      "Ne remplace pas le monitoring en production"
+    ],
+    "inputs": [
+      "Application déployée (environnement de test/staging)",
+      "Métriques applicatives (APM, logs)",
+      "Scénarios de charge",
+      "Architecture de déploiement"
+    ],
+    "outputs": [
+      "Rapport de performance",
+      "Recommandations d'optimisation",
+      "Seuils d'alerte",
+      "Comparaison avant/après"
+    ],
+    "quality_criteria": [
+      "Temps de réponse < seuil défini par module",
+      "Charge cible atteinte sans dégradation",
+      "Utilisation CPU/Mémoire sous les limites",
+      "0 régression de performance après modification"
+    ],
+    "activation_conditions": [
+      "Avant chaque release",
+      "Après toute modification majeure d'architecture",
+      "Sur détection de dégradation en production"
+    ],
+    "dependencies": ["CORE-01"],
+    "interactions": {
+      "DEV-07": "Transmission des recommandations d'optimisation",
+      "CORE-07": "Coordination sur les tests de charge infra",
+      "CORE-01": "Déclenchement orchestré"
+    },
+    "tags": ["quality", "performance", "testing"],
+    "tokenEstimate": {
+      "ctx": 8000,
+      "prompt": 2000,
+      "output": 1500,
+      "avg": 3500,
+      "max": 7000
+    },
+    "kpis": {
+      "response_time_P95": "<500ms",
+      "throughput_target": "100%",
+      "load_test_coverage": ">80%"
+    },
+    "raci": {
+      "Tests charge": "R",
+      "Rapport performance": "R",
+      "Seuils alerte": "R",
+      "Optimisation": "C"
+    }
+  }
+}

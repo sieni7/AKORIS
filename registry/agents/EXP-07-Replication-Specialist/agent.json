@@ -2,10 +2,23 @@
   "id": "EXP-07",
   "name": "Replication Specialist",
   "domain": "Expertise",
+  "tags": ["expert", "methodology", "knowledge"],
   "criticity": "standard",
   "version": "1.0.0",
   "dependencies": ["CORE-01", "GOV-01"],
   "interactions": ["GOV-01", "GOV-03"],
   "activation": "Phase d'initiation de projet, amélioration continue",
-  "qualityGates": ["Template testé sur au moins 3 projets pilotes"]
+  "qualityGates": ["Template testé sur au moins 3 projets pilotes"],
+  "tokenEstimate": {
+    "context": 6000,
+    "prompt": 2000,
+    "output": 1500,
+    "average": 3500,
+    "max": 7000
+  },
+  "kpis": {
+    "template_adoption": ">80%",
+    "setup_time_reduction": ">50%",
+    "reproducibility_score": ">95%"
+  }
 }

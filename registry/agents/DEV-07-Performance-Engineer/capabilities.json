@@ -1,0 +1,18 @@
+{
+  "agent": "DEV-07",
+  "name": "Performance Engineer",
+  "can": [
+    "define_performance_budget",
+    "optimize_loading",
+    "configure_caching",
+    "improve_cwv",
+    "implement_lazy_loading",
+    "optimize_bundle",
+    "produce_performance_reports"
+  ],
+  "cannot": [
+    "write_application_logic",
+    "audit_performance",
+    "define_backend_architecture"
+  ]
+}

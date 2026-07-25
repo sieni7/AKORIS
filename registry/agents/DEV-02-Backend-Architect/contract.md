@@ -55,5 +55,13 @@ Architecture et développement backend : conception des services métier, API, a
 - DEV-04 (Domain Modeler) : règles métier et domaine
 - DEV-08 (Integration) : intégration des services
 
+## RACI
+| Tâche | R | A | C | I |
+|-------|---|---|---|---|
+| Architecture services | R | DEV-02 | CORE-01, CORE-02 | DEV-08 |
+| Découpage applicatif | R | DEV-02 | DEV-03 | CORE-04 |
+| Choix patterns | R | DEV-02 | CORE-01 | - |
+| Implémentation | C | DEV-02 | QA-01 | - |
+
 ## Prompt de référence
 Voir `prompt.md`

@@ -5,6 +5,34 @@
   "domain": "Gouvernance",
   "criticity": "critique",
   "status": "active",
+  "tags": ["core", "security", "compliance"],
+  "tokenEstimate": {
+    "contextSize": 10000,
+    "typicalPrompt": 2500,
+    "typicalOutput": 1500,
+    "averageTokens": 4000,
+    "maximumTokens": 8000
+  },
+  "kpis": [
+    {
+      "name": "vuln_severity_score",
+      "description": "Score de sévérité des vulnérabilités détectées (moyenne CVSS)",
+      "target": "<7.5",
+      "unit": "CVSS"
+    },
+    {
+      "name": "auth_coverage",
+      "description": "Couverture des mécanismes d'authentification sur l'ensemble du système",
+      "target": "100",
+      "unit": "%"
+    },
+    {
+      "name": "security_compliance",
+      "description": "Conformité aux normes et politiques de sécurité",
+      "target": ">95",
+      "unit": "%"
+    }
+  ],
   "dependencies": ["CORE-01", "CORE-02"],
   "maintainer": "AKORIS Core Team"
 }

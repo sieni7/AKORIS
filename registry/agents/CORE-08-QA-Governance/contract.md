@@ -58,3 +58,14 @@ Définit les Quality Gates, supervise les audits qualité et contrôle la confor
 
 ## Prompt de référence
 Voir [prompt.md](./prompt.md).
+
+## Matrice RACI
+
+| Activité | Responsable | Approbateur | Consulté | Informé |
+|----------|-------------|-------------|----------|---------|
+| Définir les Quality Gates | CORE-08 | GOV-02 | QA-01 à QA-07, CORE-01 | Tous |
+| Superviser les audits qualité | CORE-08 | CORE-01 | QA-01 à QA-07 | GOV-02 |
+| Centraliser les métriques qualité | CORE-08 | CORE-01 | QA-01 à QA-07 | Tous |
+| Produire les rapports de conformité | CORE-08 | CORE-01 | GOV-02 | CORE-01 |
+| Vérifier l'application des standards | CORE-08 | CORE-01 | Tous les agents CORE | GOV-02 |
+| Déclencher les actions correctives | CORE-08 | CORE-01 | GOV-02, QA concerné | CORE-01 |

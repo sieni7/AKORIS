@@ -7,5 +7,17 @@
   "dependencies": ["CORE-01", "CORE-02", "CORE-03"],
   "interactions": ["CORE-03", "CORE-07", "CORE-05"],
   "activation": ["projets-saas"],
-  "tags": ["multi-tenant", "billing", "onboarding", "subscriptions", "saas-metrics"]
+  "tags": ["expert", "saas", "architecture", "multi-tenant", "billing", "onboarding", "subscriptions", "saas-metrics"],
+  "tokenEstimate": {
+    "context": 8192,
+    "prompt": 2048,
+    "output": 1536,
+    "average": 3584,
+    "max": 7168
+  },
+  "kpis": {
+    "tenant_isolation": "100%",
+    "billing_accuracy": ">99%",
+    "churn_rate": "<5%"
+  }
 }

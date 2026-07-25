@@ -1,0 +1,18 @@
+{
+  "agent": "DEV-05",
+  "name": "UI/UX Engineer",
+  "can": [
+    "design_user_journeys",
+    "create_wireframes",
+    "enforce_wcag",
+    "design_responsive_ui",
+    "maintain_design_system",
+    "design_micro_interactions",
+    "validate_critical_paths"
+  ],
+  "cannot": [
+    "implement_technical_components",
+    "define_architecture",
+    "replace_qa_user_tests"
+  ]
+}

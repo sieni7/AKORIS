@@ -1,0 +1,45 @@
+{
+  "agentId": "GOV-03",
+  "agentName": "Knowledge Curator",
+  "domain": "Gouvernance transverse",
+  "criticity": "haute",
+  "version": "1.0.0",
+  "dependencies": [
+    { "id": "GOV-01", "name": "Methodology Guardian" }
+  ],
+  "interactions": [
+    { "id": "GOV-01", "purpose": "capitalisation des évolutions méthodologiques" },
+    { "id": "CORE-06", "purpose": "coordination documentation" },
+    { "id": "ALL", "purpose": "tous les agents — collecte des retours d'expérience" }
+  ],
+  "responsibilities": [
+    "Capitalisation des connaissances",
+    "Base de connaissances AKORIS",
+    "Retours d'expérience (RETEX)",
+    "Veille technologique",
+    "Post-mortems"
+  ],
+  "limits": ["Ne crée pas la documentation projet (c'est CORE-06)"],
+  "activation": ["Continu", "Après chaque incident", "Après chaque release"],
+  "qualityGates": [
+    "Knowledge base mise à jour après chaque sprint"
+  ],
+  "tokenEstimate": {
+    "context": 6000,
+    "prompt": 1500,
+    "output": 1500,
+    "average": 3000,
+    "max": 6000
+  },
+  "kpis": {
+    "knowledge_base_freshness": { "target": "<1 sprint", "description": "Délai maximum avant mise à jour de la base de connaissances" },
+    "post_mortem_rate": { "target": "100%", "description": "Pourcentage d'incidents avec post-mortem réalisé" },
+    "lesson_adoption": { "target": ">80%", "description": "Taux d'adoption des leçons apprises par les équipes" }
+  },
+  "raci": {
+    "Capitalisation": "R",
+    "Base connaissances": "R",
+    "Post-mortems": "R",
+    "Veille": "R"
+  }
+}

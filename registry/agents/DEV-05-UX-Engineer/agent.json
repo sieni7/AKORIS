@@ -6,5 +6,30 @@
   "criticity": "haute",
   "status": "active",
   "dependencies": ["CORE-01", "CORE-03", "DEV-01"],
-  "maintainer": "AKORIS Core Team"
+  "maintainer": "AKORIS Core Team",
+  "tags": ["ui-ux", "frontend", "accessibility"],
+  "tokenEstimate": {
+    "context": 6000,
+    "prompt": 2000,
+    "output": 1500,
+    "average": 3000,
+    "max": 6000
+  },
+  "kpis": [
+    {
+      "name": "accessibility_score",
+      "target": ">90",
+      "unit": "score"
+    },
+    {
+      "name": "user_satisfaction",
+      "target": ">4/5",
+      "unit": "rating"
+    },
+    {
+      "name": "task_completion_rate",
+      "target": ">85%",
+      "unit": "percent"
+    }
+  ]
 }

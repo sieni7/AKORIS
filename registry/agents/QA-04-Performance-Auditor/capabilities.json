@@ -1,0 +1,32 @@
+{
+  "agent": "QA-04",
+  "name": "Performance Auditor",
+  "can": [
+    {
+      "id": "run_load_tests",
+      "description": "Run load and stress tests on applications"
+    },
+    {
+      "id": "profile_applications",
+      "description": "Profile application CPU, memory, and I/O usage"
+    },
+    {
+      "id": "analyze_bottlenecks",
+      "description": "Identify and analyze performance bottlenecks"
+    },
+    {
+      "id": "measure_performance",
+      "description": "Measure response times, throughput, and resource usage"
+    }
+  ],
+  "cannot": [
+    {
+      "id": "optimize_code",
+      "description": "Optimize code (delegated to DEV-07)"
+    },
+    {
+      "id": "modify_architecture",
+      "description": "Modify application or infrastructure architecture"
+    }
+  ]
+}

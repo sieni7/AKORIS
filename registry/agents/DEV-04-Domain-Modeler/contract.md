@@ -57,5 +57,13 @@ Modélisation du domaine métier selon les principes DDD (Domain-Driven Design) 
 - CORE-04 (Database Architect) : mapping du modèle vers la persistence
 - CORE-05 (Security Officer) : règles de sécurité métier
 
+## RACI
+| Tâche | R | A | C | I |
+|-------|---|---|---|---|
+| Modélisation DDD | R | DEV-04 | CORE-03 | DEV-02 |
+| Event Storming | R | DEV-04 | CORE-03 | Toute l'équipe |
+| Règles métier | R | DEV-04 | CORE-03 | CORE-05 |
+| Revue modèle | C | QA-01 | DEV-04 | CORE-04 |
+
 ## Prompt de référence
 Voir `prompt.md`

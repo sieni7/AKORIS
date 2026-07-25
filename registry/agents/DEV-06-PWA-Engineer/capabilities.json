@@ -1,0 +1,18 @@
+{
+  "agent": "DEV-06",
+  "name": "PWA Engineer",
+  "can": [
+    "implement_service_workers",
+    "configure_cache",
+    "create_manifest",
+    "setup_push",
+    "implement_offline_mode",
+    "optimize_cache_strategy",
+    "document_pwa_strategies"
+  ],
+  "cannot": [
+    "design_backend_architecture",
+    "modify_notification_ui_design",
+    "manage_offline_database"
+  ]
+}

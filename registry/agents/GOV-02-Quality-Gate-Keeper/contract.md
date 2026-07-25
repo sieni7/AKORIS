@@ -28,3 +28,12 @@ Ne définit pas les QG (c'est CORE-08).
 
 ## Quality Gates
 - Processus lui-même audité trimestriellement
+
+## RACI
+
+| Activity | R | A | C | I |
+|----------|---|---|---|
+| Validation QG | **GOV-02** | CORE-01 | CORE-08 | GOV-01 |
+| Décision passage | **GOV-02** | CORE-01 | CORE-08 | GOV-01 |
+| Escalade blocages | **GOV-02** | CORE-01 | — | GOV-01 |
+| Reporting | GOV-01 | **GOV-02** | CORE-08 | CORE-01 |

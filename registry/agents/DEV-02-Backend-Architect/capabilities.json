@@ -1,0 +1,17 @@
+{
+  "id": "DEV-02",
+  "name": "Backend Architect",
+  "capabilities": {
+    "can": [
+      "design_services",
+      "define_middleware",
+      "structure_backend",
+      "apply_patterns"
+    ],
+    "cannot": [
+      "define_data_model",
+      "design_ui"
+    ]
+  },
+  "description": "Conçoit les services backend, définit le middleware, structure l'application et applique les patterns d'architecture."
+}

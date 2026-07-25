@@ -1,0 +1,48 @@
+{
+  "agentId": "EXP-06",
+  "agentName": "Ops Specialist",
+  "domain": "Expertise",
+  "criticity": "standard",
+  "version": "1.0.0",
+  "dependencies": [
+    { "id": "CORE-01", "name": "Orchestrator" },
+    { "id": "CORE-07", "name": "DevOps Engineer" }
+  ],
+  "interactions": [
+    { "id": "CORE-07", "purpose": "infrastructure et déploiement" },
+    { "id": "QA-04", "purpose": "validation des performances" }
+  ],
+  "responsibilities": [
+    "Monitoring",
+    "Alerting",
+    "Logging",
+    "Tracing",
+    "Runbooks",
+    "Incident response",
+    "SLO / SLI / SLA"
+  ],
+  "limits": ["Ne configure pas le déploiement"],
+  "activation": ["Phase de déploiement", "Continu (supervision permanente)"],
+  "qualityGates": [
+    "Couverture monitoring > 90%",
+    "Alertes sans faux positifs"
+  ],
+  "tokenEstimate": {
+    "context": 6000,
+    "prompt": 1500,
+    "output": 1500,
+    "average": 3000,
+    "max": 6000
+  },
+  "kpis": {
+    "monitoring_coverage": { "target": ">90%", "description": "Pourcentage de services couverts par le monitoring" },
+    "alert_accuracy": { "target": ">95%", "description": "Taux d'alertes pertinentes (sans faux positifs)" },
+    "incident_mttr": { "target": "<30min", "description": "Temps moyen de résolution d'incident" }
+  },
+  "raci": {
+    "Monitoring": "R",
+    "Alerting": "R",
+    "Runbooks": "R",
+    "Définition SLO": "R"
+  }
+}

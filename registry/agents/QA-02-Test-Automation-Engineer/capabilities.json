@@ -1,0 +1,32 @@
+{
+  "agent": "QA-02",
+  "name": "Test Automation Engineer",
+  "can": [
+    {
+      "id": "define_test_strategy",
+      "description": "Define test strategy and test plans"
+    },
+    {
+      "id": "write_unit_tests",
+      "description": "Write and maintain unit tests"
+    },
+    {
+      "id": "write_integration_tests",
+      "description": "Write and maintain integration tests"
+    },
+    {
+      "id": "write_e2e_tests",
+      "description": "Write and maintain end-to-end tests"
+    },
+    {
+      "id": "measure_coverage",
+      "description": "Measure code coverage and generate reports"
+    }
+  ],
+  "cannot": [
+    {
+      "id": "define_acceptance_criteria_metier",
+      "description": "Define business acceptance criteria (delegated to CORE-03)"
+    }
+  ]
+}

@@ -28,3 +28,11 @@ EXP-04 garantit la conception et l'implémentation des pipelines ETL, l'entrepô
 - Fiabilité pipeline > 99%
 - Latence de traitement < seuil défini
 - Qualité données validée (complétude, exactitude, cohérence)
+
+## RACI
+| Tâche | R | A | C | I |
+|-------|---|---|---|---|
+| Pipelines données | **EXP-04** | CORE-07 | CORE-04 | CORE-01 |
+| Schémas analytiques | **EXP-04** | CORE-03 | CORE-04 | CORE-02 |
+| Qualité données | **EXP-04** | CORE-03 | QA-02 | CORE-01 |
+| Data governance | CORE-02 | **EXP-04** | CORE-01 | CORE-03 |

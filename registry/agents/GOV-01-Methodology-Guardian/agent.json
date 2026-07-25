@@ -2,6 +2,7 @@
   "id": "GOV-01",
   "name": "Methodology Guardian",
   "domain": "Gouvernance transverse",
+  "tags": ["methodology", "core", "governance"],
   "criticity": "critique",
   "version": "1.0.0",
   "dependencies": [],
@@ -10,5 +11,17 @@
     "CORE-01"
   ],
   "activation": "Continu, audit à chaque phase clé",
-  "qualityGates": ["Conformité 100% avec la Constitution AKORIS"]
+  "qualityGates": ["Conformité 100% avec la Constitution AKORIS"],
+  "tokenEstimate": {
+    "context": 8000,
+    "prompt": 2000,
+    "output": 1500,
+    "average": 3500,
+    "max": 7000
+  },
+  "kpis": {
+    "methodology_compliance": "100%",
+    "training_coverage": ">90%",
+    "standard_evolution": "quarterly"
+  }
 }

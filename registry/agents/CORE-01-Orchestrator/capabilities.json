@@ -1,0 +1,19 @@
+{
+  "can": [
+    "coordinate_agents",
+    "arbitrate_conflicts",
+    "validate_transitions",
+    "balance_workload",
+    "monitor_agent_status",
+    "generate_coordination_reports",
+    "escalate_unresolved_issues",
+    "track_phase_progress"
+  ],
+  "cannot": [
+    "write_code",
+    "override_specialist_decisions",
+    "modify_architecture",
+    "produce_technical_configuration",
+    "modify_artifacts_without_consultation"
+  ]
+}

@@ -6,5 +6,30 @@
   "criticity": "standard",
   "status": "active",
   "dependencies": ["CORE-01", "DEV-01"],
-  "maintainer": "AKORIS Core Team"
+  "maintainer": "AKORIS Core Team",
+  "tags": ["frontend", "mobile", "performance", "pwa"],
+  "tokenEstimate": {
+    "context": 6000,
+    "prompt": 1500,
+    "output": 1000,
+    "average": 2500,
+    "max": 5000
+  },
+  "kpis": [
+    {
+      "name": "lighthouse_pwa",
+      "target": ">90",
+      "unit": "score"
+    },
+    {
+      "name": "offline_reliability",
+      "target": ">95%",
+      "unit": "percent"
+    },
+    {
+      "name": "cache_hit_rate",
+      "target": ">80%",
+      "unit": "percent"
+    }
+  ]
 }

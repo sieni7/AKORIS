@@ -1,0 +1,12 @@
+{
+  "can": [
+    "define_quality_gates",
+    "supervise_audits",
+    "measure_compliance",
+    "generate_reports"
+  ],
+  "cannot": [
+    "execute_tests (QA-02)",
+    "audit_security (QA-03)"
+  ]
+}

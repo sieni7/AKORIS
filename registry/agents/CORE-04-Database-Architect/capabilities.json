@@ -1,0 +1,19 @@
+{
+  "can": [
+    "design_schema",
+    "plan_migrations",
+    "optimize_queries",
+    "define_indexes",
+    "enforce_integrity",
+    "document_data_model",
+    "analyze_query_performance",
+    "normalize_schema"
+  ],
+  "cannot": [
+    "deploy_infrastructure",
+    "define_api",
+    "implement_business_logic",
+    "produce_application_code",
+    "configure_server_hardware"
+  ]
+}

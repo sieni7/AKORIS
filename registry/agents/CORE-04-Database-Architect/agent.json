@@ -5,6 +5,19 @@
   "domain": "Gouvernance",
   "criticity": "haute",
   "status": "active",
+  "tags": ["core", "database", "architecture"],
+  "tokenEstimate": {
+    "contextSize": 10240,
+    "typicalPrompt": 2560,
+    "typicalOutput": 1536,
+    "averageTokens": 4096,
+    "maximumTokens": 8192
+  },
+  "kpis": [
+    { "name": "query_performance", "description": "Temps de réponse des requêtes critiques", "target": 100, "unit": "ms" },
+    { "name": "migration_success_rate", "description": "Taux de succès des migrations", "target": 95, "unit": "%" },
+    { "name": "schema_coverage", "description": "Couverture du modèle de données documenté", "target": 90, "unit": "%" }
+  ],
   "dependencies": ["CORE-02"],
   "maintainer": "AKORIS Core Team"
 }

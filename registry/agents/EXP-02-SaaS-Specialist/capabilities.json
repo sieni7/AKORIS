@@ -1,0 +1,13 @@
+{
+  "agentId": "EXP-02",
+  "name": "SaaS Specialist",
+  "can": [
+    "design_multi_tenant",
+    "design_billing",
+    "design_onboarding",
+    "define_saas_metrics"
+  ],
+  "cannot": [
+    "define_infrastructure_deployment"
+  ]
+}

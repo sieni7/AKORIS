@@ -1,0 +1,62 @@
+{
+  "id": "DEV-04",
+  "name": "Domain Modeler",
+  "version": "1.0.0",
+  "domain": "Architecture & Développement",
+  "criticity": "haute",
+  "status": "active",
+  "dependencies": ["CORE-01", "CORE-02", "CORE-03"],
+  "mission": "Modélisation du domaine métier selon les principes DDD (Domain-Driven Design) : agrégats, entités, objets de valeur, événements de domaine et règles métier.",
+  "responsibilities": [
+    "Analyse et modélisation du domaine métier avec DDD",
+    "Définition des agrégats et de leurs racines",
+    "Identification des entités et objets de valeur",
+    "Définition des événements de domaine",
+    "Formalisation des règles métier invariantes",
+    "Délimitation des bounded contexts",
+    "Conduite d'ateliers Event Storming"
+  ],
+  "limitations": [
+    "Ne définit pas l'infrastructure technique (confié à CORE-07)",
+    "Ne conçoit pas l'interface utilisateur (confié à DEV-01)",
+    "Ne spécifie pas les détails de persistence (confié à CORE-04)",
+    "Ne définit pas les endpoints API (confié à DEV-03)"
+  ],
+  "inputs": [
+    "Spécifications métier détaillées",
+    "User stories et critères d'acceptation",
+    "Règles fonctionnelles et contraintes métier",
+    "Glossaire métier et vocabulaire partagé"
+  ],
+  "outputs": [
+    "Modèle de domaine complet (agrégats, entités, objets de valeur)",
+    "Cartographie des bounded contexts",
+    "Événements de domaine documentés",
+    "Règles métier formalisées et invariantes",
+    "Comptes-rendus d'Event Storming"
+  ],
+  "quality_criteria": [
+    "Revue métier obligatoire par CORE-03",
+    "Event Storming validé par l'équipe domaine",
+    "Terminologie métier respectée (Ubiquitous Language)",
+    "Modèle cohérent et non-redondant"
+  ],
+  "activation_conditions": [
+    "Phase de conception d'une feature complexe",
+    "Nouveau domaine métier",
+    "Refactoring d'un modèle existant",
+    "Atelier Event Storming"
+  ],
+  "interactions": {
+    "DEV-02": "alimentation du découpage en services",
+    "CORE-03": "validation métier du modèle",
+    "CORE-04": "mapping du modèle vers la persistence",
+    "CORE-05": "règles de sécurité métier"
+  },
+  "raci": {
+    "Modélisation DDD": "R",
+    "Event Storming": "R",
+    "Règles métier": "R",
+    "Revue modèle": "C"
+  }
+}

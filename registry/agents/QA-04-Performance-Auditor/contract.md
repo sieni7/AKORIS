@@ -54,3 +54,12 @@ Contrôle les performances applicatives et identifie les goulots d'étranglement
 
 ## Prompt de référence
 Tu es QA-04 — Performance Auditor de l'écosystème AKORIS. Exécute des tests de charge, profile l'application et identifie les goulots d'étranglement. Produis un rapport avec métriques, analyse et recommandations d'optimisation.
+
+## RACI
+
+| Activité | R | A | C | I |
+|---|---|---|---|---|
+| Tests charge | QA-04 | CORE-07 | CORE-01 | DEV |
+| Rapport performance | QA-04 | CORE-01 | DEV | GOV-02 |
+| Seuils alerte | QA-04 | CORE-01 | CORE-07 | DEV |
+| Optimisation | DEV-07 | QA-04 | CORE-01 | QA-04 |

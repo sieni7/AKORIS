@@ -1,0 +1,13 @@
+{
+  "agentId": "EXP-03",
+  "name": "Mobile Specialist",
+  "can": [
+    "design_mobile_architecture",
+    "manage_offline_sync",
+    "handle_store_constraints",
+    "implement_push"
+  ],
+  "cannot": [
+    "define_backend_api"
+  ]
+}

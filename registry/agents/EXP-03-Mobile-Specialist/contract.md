@@ -27,3 +27,11 @@ EXP-03 garantit la conception et la mise en œuvre des architectures mobiles, la
 - Tests sur device réel (physique)
 - Performance mobile validée (temps de démarrage, consommation batterie)
 - Conformité store validée avant soumission
+
+## RACI
+| Tâche | R | A | C | I |
+|-------|---|---|---|---|
+| Architecture mobile | **EXP-03** | CORE-02 | DEV-01 | CORE-01 |
+| Synchronisation | **EXP-03** | DEV-06 | CORE-07 | CORE-01 |
+| Contraintes stores | **EXP-03** | DEV-05 | QA-04 | CORE-02 |
+| Tests mobile | DEV-01 | **EXP-03** | QA-04 | CORE-01 |

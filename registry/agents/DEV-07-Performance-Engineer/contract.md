@@ -51,5 +51,14 @@ Optimiser le rendu, le chargement, le cache et les performances globales de l'ap
 - DEV-01 — Frontend Architect
 - QA-04 — Performance Auditor
 
+## RACI
+
+| Tâche                   | Rôle       |
+| ----------------------- | ---------- |
+| Performance budget      | R          |
+| Optimisations           | R          |
+| Recommandations         | R          |
+| Mesures                 | A          |
+
 ## Prompt de référence
 Voir prompt.md

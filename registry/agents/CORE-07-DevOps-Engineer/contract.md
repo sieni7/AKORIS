@@ -57,3 +57,14 @@ Met en place les pipelines CI/CD, les environnements, les déploiements et l'obs
 
 ## Prompt de référence
 Voir [prompt.md](./prompt.md).
+
+## Matrice RACI
+
+| Activité | Responsable | Approbateur | Consulté | Informé |
+|----------|-------------|-------------|----------|---------|
+| Concevoir les pipelines CI/CD | CORE-07 | CORE-01 | CORE-02 | QA-02, QA-04 |
+| Gérer les environnements | CORE-07 | CORE-01 | CORE-02, CORE-05 | Tous |
+| Orchestrer les déploiements | CORE-07 | CORE-01 | QA-04 | Tous |
+| Mettre en place le monitoring | CORE-07 | CORE-01 | CORE-02 | Tous |
+| Assurer le scaling automatique | CORE-07 | CORE-01 | CORE-02 | CORE-01 |
+| Gérer les secrets et configurations | CORE-07 | CORE-05 | CORE-05 | CORE-01 |

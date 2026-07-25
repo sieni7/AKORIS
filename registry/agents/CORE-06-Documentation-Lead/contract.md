@@ -55,3 +55,14 @@ Maintient la documentation, les ADR, le contexte projet et la capitalisation des
 
 ## Prompt de référence
 Voir [prompt.md](./prompt.md).
+
+## Matrice RACI
+
+| Activité | Responsable | Approbateur | Consulté | Informé |
+|----------|-------------|-------------|----------|---------|
+| Définir la structure documentaire | CORE-06 | CORE-01 | CORE-02, GOV-03 | Tous |
+| Gérer les ADR | CORE-06 | CORE-01 | Émetteur ADR | Tous |
+| Maintenir la base de connaissances | CORE-06 | CORE-01 | GOV-03 | Tous |
+| Produire les guides d'utilisation | CORE-06 | CORE-01 | Agents concernés | Tous |
+| Assurer la cohérence documentaire | CORE-06 | CORE-01 | QA-06 | Tous |
+| Coordonner la collecte d'information | CORE-06 | CORE-01 | Tous les agents | CORE-01 |

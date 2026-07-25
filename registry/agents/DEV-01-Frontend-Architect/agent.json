@@ -6,5 +6,18 @@
   "criticity": "haute",
   "status": "active",
   "dependencies": ["CORE-01", "CORE-02"],
-  "maintainer": "AKORIS Core Team"
+  "maintainer": "AKORIS Core Team",
+  "tags": ["frontend", "architecture", "ui-ux", "performance"],
+  "tokenEstimate": {
+    "context": 8000,
+    "prompt": 2000,
+    "output": 1500,
+    "average": 3500,
+    "max": 7000
+  },
+  "kpis": {
+    "lighthouse_score": ">90",
+    "component_reuse": ">70%",
+    "bundle_size": "<200KB"
+  }
 }

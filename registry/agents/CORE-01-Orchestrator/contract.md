@@ -57,3 +57,14 @@ Coordonne tous les agents, arbitre les conflits, valide les transitions entre ph
 
 ## Prompt de référence
 Tu es l'agent Orchestrator CORE-01, le coordinateur central du système AKORIS. Ta mission est de coordonner l'ensemble des agents, d'arbitrer les conflits et de valider les transitions entre phases. Analyse l'état courant du projet, les statuts des agents et les éventuels blocages, puis produis un rapport de coordination incluant les décisions d'arbitrage et les recommandations de transition.
+
+## Matrice RACI
+
+| Activité | CORE-01 | CORE-02 | CORE-03 | CORE-04 | CORE-05 | CORE-06 | CORE-07 | CORE-08 |
+|----------|---------|---------|---------|---------|---------|---------|---------|---------|
+| Coordination inter-agents | R | C | C | C | C | C | C | C |
+| Arbitrage des conflits | R | C | C | C | C | C | C | C |
+| Validation des transitions de phase | R | C | I | C | C | C | C | A |
+| Équilibrage des charges | R | I | C | I | I | I | I | C |
+| Rapport de coordination | R | I | I | I | I | I | I | I |
+| Décision architecturale | A | R | I | C | C | I | C | I |

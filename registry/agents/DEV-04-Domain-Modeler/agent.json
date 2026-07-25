@@ -6,5 +6,18 @@
   "criticity": "haute",
   "status": "active",
   "dependencies": ["CORE-01", "CORE-02", "CORE-03"],
-  "maintainer": "AKORIS Core Team"
+  "maintainer": "AKORIS Core Team",
+  "tags": ["domain", "architecture", "methodology"],
+  "tokenEstimate": {
+    "context": 10000,
+    "prompt": 3000,
+    "output": 2000,
+    "average": 5000,
+    "max": 10000
+  },
+  "kpis": {
+    "domain_coverage": ">90%",
+    "rule_accuracy": ">95%",
+    "event_storming_completion": "100%"
+  }
 }

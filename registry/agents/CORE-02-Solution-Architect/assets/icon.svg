@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <rect width="300" height="300" rx="20" fill="#1a237e"/>
+  <polygon points="150,50 230,110 230,190 150,250 70,190 70,110" fill="none" stroke="#ffffff" stroke-width="4"/>
+  <polygon points="150,80 205,123 205,177 150,220 95,177 95,123" fill="none" stroke="#5c6bc0" stroke-width="3"/>
+  <rect x="130" y="130" width="40" height="40" fill="#ffffff" rx="4"/>
+  <text x="150" y="280" text-anchor="middle" fill="#90caf9" font-family="Arial,sans-serif" font-size="14" font-weight="bold">CORE-02</text>
+</svg>

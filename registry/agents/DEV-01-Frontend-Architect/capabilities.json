@@ -1,0 +1,18 @@
+{
+  "id": "DEV-01",
+  "name": "Frontend Architect",
+  "capabilities": {
+    "can": [
+      "design_component_tree",
+      "define_design_system",
+      "optimize_ui_performance",
+      "choose_framework"
+    ],
+    "cannot": [
+      "define_api",
+      "design_backend",
+      "model_data"
+    ]
+  },
+  "description": "Conçoit l'arborescence des composants, définit le design system, optimise les performances UI et choisit le framework frontend."
+}

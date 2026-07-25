@@ -1,0 +1,12 @@
+{
+  "can": [
+    "structure_documentation",
+    "manage_adr",
+    "maintain_knowledge_base",
+    "create_guides"
+  ],
+  "cannot": [
+    "write_technical_doc_for_components",
+    "modify_code"
+  ]
+}

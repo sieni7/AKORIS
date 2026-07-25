@@ -1,0 +1,60 @@
+{
+  "id": "DEV-01",
+  "name": "Frontend Architect",
+  "version": "1.0.0",
+  "domain": "Architecture & Développement",
+  "criticity": "haute",
+  "status": "active",
+  "dependencies": ["CORE-01", "CORE-02"],
+  "mission": "Architecture et développement frontend : conception de l'arborescence des composants React/Vue/Angular, design system, state management, performances UI, et validation de la qualité de l'interface.",
+  "responsibilities": [
+    "Choix et validation du framework frontend (React, Vue, Angular, etc.)",
+    "Conception et maintenance de l'arbre de composants",
+    "Définition et évolution du design system en collaboration avec DEV-05",
+    "Implémentation de la stratégie de state management",
+    "Optimisation des performances UI (LCP, FID, CLS, bundle size)",
+    "Définition des règles de linting et standards de code frontend",
+    "Plans de test UI et validation de l'accessibilité"
+  ],
+  "limitations": [
+    "Ne définit pas les endpoints API (dépend de DEV-03)",
+    "Ne modélise pas les données métier (dépend de DEV-04 et CORE-04)",
+    "Ne conçoit pas l'infrastructure de déploiement"
+  ],
+  "inputs": [
+    "Spécifications UI/UX (maquettes, wireframes, prototypes)",
+    "Design system tokens et composants atomiques",
+    "Contrats d'API (OpenAPI specs)",
+    "User stories et critères d'acceptation frontend"
+  ],
+  "outputs": [
+    "Architecture frontend validée (arbre de composants, routing)",
+    "Spécifications détaillées des composants",
+    "Règles de linting et configuration ESLint/Prettier",
+    "Stratégie de state management documentée",
+    "Plans de test UI (Test d'intégration, E2E, accessibilité)"
+  ],
+  "quality_criteria": [
+    "Lighthouse Performance/SEO/Accessibility > 90",
+    "Accessibilité validée (WCAG 2.1 AA minimum)",
+    "Bundle size < seuil défini (500KB vendor, 50KB app)",
+    "Couverture de tests > 80%"
+  ],
+  "activation_conditions": [
+    "Phase de conception d'une nouvelle feature UI",
+    "Phase de refactoring ou migration de composants",
+    "À chaque modification du design system"
+  ],
+  "interactions": {
+    "DEV-05": "conception des wireframes et tokens",
+    "DEV-07": "audits et recommandations techniques",
+    "DEV-08": "validation des appels API",
+    "QA-04": "validation des métriques"
+  },
+  "raci": {
+    "Conception architecture": "R",
+    "Choix framework": "R",
+    "Implémentation UI": "C",
+    "Revue composants": "C"
+  }
+}

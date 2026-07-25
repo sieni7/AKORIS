@@ -1,0 +1,13 @@
+{
+  "agentId": "EXP-04",
+  "name": "Data Engineer",
+  "can": [
+    "design_etl_pipelines",
+    "design_data_warehouse",
+    "model_analytics",
+    "ensure_data_quality"
+  ],
+  "cannot": [
+    "define_transactional_model"
+  ]
+}

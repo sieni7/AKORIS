@@ -1,0 +1,19 @@
+{
+  "can": [
+    "design_architecture",
+    "create_adr",
+    "review_modules",
+    "define_layers",
+    "choose_technologies",
+    "produce_flow_diagrams",
+    "map_dependencies",
+    "validate_architecture_compliance"
+  ],
+  "cannot": [
+    "write_frontend",
+    "modify_database",
+    "define_implementation_details",
+    "write_production_code",
+    "override_performance_constraints"
+  ]
+}

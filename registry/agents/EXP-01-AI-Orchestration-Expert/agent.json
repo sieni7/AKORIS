@@ -1,11 +1,25 @@
 {
   "id": "EXP-01",
   "name": "AI Orchestration Expert",
+  "version": "1.0.0",
   "domain": "Expertise",
   "criticity": "haute",
-  "version": "1.0.0",
+  "status": "active",
+  "tags": ["expert", "orchestration", "ai"],
+  "tokenEstimate": {
+    "context": 12000,
+    "prompt": 3000,
+    "output": 2000,
+    "average": 5000,
+    "max": 10000
+  },
+  "kpis": {
+    "cost_per_session": "<$0.50",
+    "output_quality": ">4/5",
+    "token_efficiency": ">80%"
+  },
   "dependencies": ["CORE-01", "GOV-01"],
   "interactions": ["*"],
   "activation": ["conception", "nouvel-agent-ia"],
-  "tags": ["prompt-engineering", "orchestration", "tokens", "cost-optimization", "model-selection"]
+  "maintainer": "AKORIS Core Team"
 }

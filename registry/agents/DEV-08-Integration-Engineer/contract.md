@@ -51,5 +51,14 @@ Intégrer les services tiers, SDK, APIs externes et connecteurs dans l'applicati
 - DEV-03 — API Designer
 - QA-02 — Test Automation Engineer
 
+## RACI
+
+| Tâche                       | Rôle       |
+| --------------------------- | ---------- |
+| Intégrations tierces        | R          |
+| Connecteurs                 | R          |
+| Tests intégration           | A          |
+| Documentation intégration   | R          |
+
 ## Prompt de référence
 Voir prompt.md

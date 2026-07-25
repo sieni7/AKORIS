@@ -1,0 +1,39 @@
+{
+  "$schema": "https://akoris.dev/schemas/capabilities.json",
+  "agent": "QA-07",
+  "name": "Technical Debt Analyst",
+  "can": [
+    {
+      "id": "analyze_technical_debt",
+      "description": "Analyser la dette technique du code source",
+      "inputs": ["Code source", "Métriques SonarQube/ESLint"],
+      "outputs": ["Rapport de dette technique"]
+    },
+    {
+      "id": "prioritize_debt",
+      "description": "Prioriser les éléments de dette",
+      "inputs": ["Liste des dettes", "Critères de priorisation"],
+      "outputs": ["Backlog priorisé de remboursement"]
+    },
+    {
+      "id": "measure_metrics",
+      "description": "Mesurer les métriques de dette technique",
+      "inputs": ["Code source"],
+      "outputs": ["Métriques de dette", "Tableau de bord"]
+    },
+    {
+      "id": "track_trends",
+      "description": "Suivre l'évolution de la dette dans le temps",
+      "inputs": ["Historique des métriques"],
+      "outputs": ["Rapport de tendance", "Prévisions"]
+    }
+  ],
+  "cannot": [
+    {
+      "id": "repay_debt",
+      "description": "Rembourser la dette technique",
+      "reason": "Le remboursement est effectué par les agents DEV",
+      "mitigation": "Transmettre le backlog priorisé aux agents DEV concernés"
+    }
+  ]
+}

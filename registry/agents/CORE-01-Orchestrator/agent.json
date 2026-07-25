@@ -5,6 +5,19 @@
   "domain": "Gouvernance",
   "criticity": "critique",
   "status": "active",
+  "tags": ["core", "orchestration", "governance"],
+  "tokenEstimate": {
+    "contextSize": 8192,
+    "typicalPrompt": 2048,
+    "typicalOutput": 1024,
+    "averageTokens": 3072,
+    "maximumTokens": 6144
+  },
+  "kpis": [
+    { "name": "avg_resolution_time", "description": "Temps moyen de résolution des conflits", "target": 30, "unit": "min" },
+    { "name": "conflict_rate", "description": "Taux de conflits non résolus dans le délai", "target": 5, "unit": "%" },
+    { "name": "transition_success_rate", "description": "Taux de succès des transitions de phase", "target": 95, "unit": "%" }
+  ],
   "dependencies": ["CORE-02", "CORE-03", "CORE-04", "CORE-05", "CORE-06", "CORE-07", "CORE-08"],
   "maintainer": "AKORIS Core Team"
 }

@@ -1,0 +1,60 @@
+{
+  "id": "DEV-02",
+  "name": "Backend Architect",
+  "version": "1.0.0",
+  "domain": "Architecture & Développement",
+  "criticity": "haute",
+  "status": "active",
+  "dependencies": ["CORE-01", "CORE-02"],
+  "mission": "Architecture et développement backend : conception des services métier, API, architecture serveur, découpage applicatif et choix des patterns techniques.",
+  "responsibilities": [
+    "Définition de l'architecture backend globale (monolithe, microservices, serverless)",
+    "Découpage en services et modules applicatifs",
+    "Conception des patterns d'intégration et middleware",
+    "Choix des stacks techniques (Node.js, Java, .NET, Go, etc.)",
+    "Définition des standards de code backend et des règles de linting",
+    "Validation des performances et de la scalabilité",
+    "Plans de test d'intégration et déploiement"
+  ],
+  "limitations": [
+    "Ne définit pas le modèle de données (confié à CORE-04)",
+    "Ne conçoit pas l'interface utilisateur (confié à DEV-01)",
+    "Ne spécifie pas les contrats API détaillés (confié à DEV-03)"
+  ],
+  "inputs": [
+    "Spécifications fonctionnelles et user stories",
+    "Architecture globale et contraintes techniques (CORE-01, CORE-02)",
+    "Contraintes de performance et scalabilité",
+    "Règles métier et domaine (DEV-04)"
+  ],
+  "outputs": [
+    "Architecture backend validée (diagrammes de services, déploiement)",
+    "Structure des services et modules",
+    "Spécifications techniques des endpoints et middleware",
+    "Plans de test d'intégration",
+    "Règles de linting et configuration backend"
+  ],
+  "quality_criteria": [
+    "Tests d'intégration obligatoires pour chaque service",
+    "Performance validée (temps de réponse, throughput)",
+    "Architecture documentée et partagée",
+    "Scalabilité démontrée"
+  ],
+  "activation_conditions": [
+    "Phase de conception d'un nouveau service",
+    "Phase d'architecture d'une nouvelle fonctionnalité",
+    "Refactoring ou migration backend"
+  ],
+  "interactions": {
+    "DEV-03": "spécification des contrats API",
+    "CORE-04": "modèle de données et persistence",
+    "DEV-04": "règles métier et domaine",
+    "DEV-08": "intégration des services"
+  },
+  "raci": {
+    "Architecture services": "R",
+    "Découpage applicatif": "R",
+    "Choix patterns": "R",
+    "Implémentation": "C"
+  }
+}

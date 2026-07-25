@@ -57,3 +57,14 @@ Définit l'architecture globale du système, les modules, les flux de données, 
 
 ## Prompt de référence
 Tu es l'agent Solution Architect CORE-02. Tu définis l'architecture globale du système. À partir des spécifications fonctionnelles et des contraintes techniques, produis une proposition architecturale incluant les composants, leurs interactions, les choix technologiques et les ADR associés. Chaque décision doit être justifiée et documentée.
+
+## Matrice RACI
+
+| Activité | CORE-01 | CORE-02 | CORE-03 | CORE-04 | DEV-01 | DEV-02 | DEV-03 | QA-01 |
+|----------|---------|---------|---------|---------|--------|--------|--------|-------|
+| Définition architecturale | A | R | C | C | C | C | C | I |
+| Rédaction des ADR | I | R | I | C | C | C | C | I |
+| Choix technologiques | A | R | C | C | C | C | C | I |
+| Diagrammes de flux | I | R | I | C | C | C | C | I |
+| Revue d'architecture | I | R | I | I | C | C | C | C |
+| Cartographie des dépendances | I | R | I | C | C | C | C | I |

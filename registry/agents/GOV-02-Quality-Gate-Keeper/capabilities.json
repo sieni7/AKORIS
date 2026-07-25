@@ -1,0 +1,33 @@
+{
+  "agentId": "GOV-02",
+  "agentName": "Quality Gate Keeper",
+  "capabilities": [
+    {
+      "id": "validate_quality_gates",
+      "description": "Valider les Quality Gates selon les critères définis par CORE-08",
+      "type": "can"
+    },
+    {
+      "id": "authorize_transitions",
+      "description": "Autoriser ou refuser les transitions de phase et les releases",
+      "type": "can"
+    },
+    {
+      "id": "block_releases",
+      "description": "Bloquer une release en cas de non-conformité critique",
+      "type": "can"
+    },
+    {
+      "id": "report_compliance",
+      "description": "Produire des rapports de conformité pour les décisions de gate",
+      "type": "can"
+    }
+  ],
+  "limitations": [
+    {
+      "id": "define_quality_gates",
+      "description": "Définir les Quality Gates (responsabilité CORE-08)",
+      "type": "cannot"
+    }
+  ]
+}

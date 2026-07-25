@@ -1,0 +1,19 @@
+{
+  "can": [
+    "manage_backlog",
+    "prioritize_stories",
+    "validate_deliverables",
+    "define_acceptance_criteria",
+    "write_user_stories",
+    "translate_business_needs",
+    "conduct_sprint_planning",
+    "facilitate_sprint_review"
+  ],
+  "cannot": [
+    "define_architecture",
+    "specify_technical_details",
+    "modify_code",
+    "validate_code_quality",
+    "define_test_coverage"
+  ]
+}

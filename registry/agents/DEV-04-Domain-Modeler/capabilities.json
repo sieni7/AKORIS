@@ -1,0 +1,17 @@
+{
+  "id": "DEV-04",
+  "name": "Domain Modeler",
+  "capabilities": {
+    "can": [
+      "model_domain",
+      "design_event_storming",
+      "define_bounded_contexts",
+      "formalize_business_rules"
+    ],
+    "cannot": [
+      "design_infrastructure",
+      "build_ui"
+    ]
+  },
+  "description": "Modélise le domaine métier avec DDD, anime des ateliers Event Storming, délimite les bounded contexts et formalise les règles métier."
+}

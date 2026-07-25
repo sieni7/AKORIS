@@ -1,0 +1,12 @@
+{
+  "can": [
+    "setup_cicd",
+    "manage_environments",
+    "configure_monitoring",
+    "deploy_applications"
+  ],
+  "cannot": [
+    "define_app_architecture",
+    "modify_application_code"
+  ]
+}

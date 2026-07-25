@@ -28,3 +28,12 @@ Ne crée pas la documentation projet (c'est CORE-06).
 
 ## Quality Gates
 - Knowledge base mise à jour après chaque sprint
+
+## RACI
+
+| Activity | R | A | C | I |
+|----------|---|---|---|
+| Capitalisation | **GOV-03** | CORE-01 | Tous les agents | GOV-01 |
+| Base connaissances | **GOV-03** | CORE-01 | CORE-06 | Tous les agents |
+| Post-mortems | **GOV-03** | CORE-01 | EXP-06, QA-* | — |
+| Veille | **GOV-03** | CORE-01 | CORE-04, DEV-* | — |

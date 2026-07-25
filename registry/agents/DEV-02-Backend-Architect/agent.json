@@ -6,5 +6,18 @@
   "criticity": "haute",
   "status": "active",
   "dependencies": ["CORE-01", "CORE-02"],
-  "maintainer": "AKORIS Core Team"
+  "maintainer": "AKORIS Core Team",
+  "tags": ["backend", "architecture", "api"],
+  "tokenEstimate": {
+    "context": 10000,
+    "prompt": 2500,
+    "output": 2000,
+    "average": 4500,
+    "max": 9000
+  },
+  "kpis": {
+    "service_cohesion": ">85%",
+    "api_latency": "<50ms",
+    "error_rate": "<1%"
+  }
 }

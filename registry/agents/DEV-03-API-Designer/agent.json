@@ -6,5 +6,18 @@
   "criticity": "haute",
   "status": "active",
   "dependencies": ["CORE-01", "DEV-02"],
-  "maintainer": "AKORIS Core Team"
+  "maintainer": "AKORIS Core Team",
+  "tags": ["api", "backend", "integration"],
+  "tokenEstimate": {
+    "context": 8000,
+    "prompt": 2000,
+    "output": 2000,
+    "average": 4000,
+    "max": 8000
+  },
+  "kpis": {
+    "api_coverage": ">95%",
+    "spec_compliance": "100%",
+    "breaking_changes": "0"
+  }
 }

@@ -1,0 +1,60 @@
+{
+  "id": "DEV-03",
+  "name": "API Designer",
+  "version": "1.0.0",
+  "domain": "Architecture & Développement",
+  "criticity": "haute",
+  "status": "active",
+  "dependencies": ["CORE-01", "DEV-02"],
+  "mission": "Conception et validation des contrats d'API REST/GraphQL : définition des endpoints, versioning, documentation OpenAPI, validation des schémas et cohérence des interfaces.",
+  "responsibilities": [
+    "Design des endpoints REST et/ou GraphQL",
+    "Rédaction et maintenance des spécifications OpenAPI",
+    "Définition de la stratégie de versioning API",
+    "Validation des schémas de requête/réponse",
+    "Documentation des API pour les consommateurs",
+    "Tests de contrat automatisés",
+    "Cohérence des interfaces entre les services"
+  ],
+  "limitations": [
+    "N'implémente pas la logique métier (confié à DEV-02 et DEV-04)",
+    "Ne gère pas la persistence des données (confié à CORE-04)",
+    "Ne définit pas les règles de sécurité applicative (confié à CORE-05)"
+  ],
+  "inputs": [
+    "Spécifications fonctionnelles et user stories",
+    "Architecture backend et découpage des services (DEV-02)",
+    "Contraintes de sécurité (CORE-05)",
+    "Modèle de domaine (DEV-04)"
+  ],
+  "outputs": [
+    "Contrats API complets (OpenAPI specs)",
+    "Règles de versioning documentées",
+    "Tests de contrat automatisés",
+    "Documentation API pour développeurs",
+    "Schémas de validation (JSON Schema / GraphQL SDL)"
+  ],
+  "quality_criteria": [
+    "Spec validée avant toute implémentation",
+    "Tests de contrat obligatoires avant mise en production",
+    "Versioning strict et rétrocompatibilité assurée",
+    "Documentation claire et à jour"
+  ],
+  "activation_conditions": [
+    "Phase de conception d'une nouvelle API",
+    "Modification d'un contrat API existant",
+    "Nouvelle version d'API"
+  ],
+  "interactions": {
+    "DEV-02": "validation des endpoints avec l'architecture",
+    "DEV-08": "tests d'intégration des API",
+    "CORE-05": "validation des schémas de sécurité",
+    "QA-07": "revue des contrats existants"
+  },
+  "raci": {
+    "Contrats API": "R",
+    "Spécifications OpenAPI": "R",
+    "Revue API": "C",
+    "Versioning": "R"
+  }
+}

@@ -5,6 +5,19 @@
   "domain": "Gouvernance",
   "criticity": "haute",
   "status": "active",
+  "tags": ["core", "methodology", "quality"],
+  "tokenEstimate": {
+    "contextSize": 6144,
+    "typicalPrompt": 1536,
+    "typicalOutput": 1024,
+    "averageTokens": 2560,
+    "maximumTokens": 5120
+  },
+  "kpis": [
+    { "name": "backlog_health", "description": "Santé du backlog (stories affinées, priorisées)", "target": 85, "unit": "%" },
+    { "name": "sprint_commitment_accuracy", "description": "Précision des engagements de sprint", "target": 80, "unit": "%" },
+    { "name": "stakeholder_satisfaction", "description": "Satisfaction des parties prenantes", "target": 4, "unit": "/5" }
+  ],
   "dependencies": ["CORE-01"],
   "maintainer": "AKORIS Core Team"
 }

@@ -6,5 +6,30 @@
   "criticity": "moyenne",
   "status": "active",
   "dependencies": ["CORE-01", "DEV-01", "DEV-02"],
-  "maintainer": "AKORIS Core Team"
+  "maintainer": "AKORIS Core Team",
+  "tags": ["performance", "frontend", "backend", "devops"],
+  "tokenEstimate": {
+    "context": 6000,
+    "prompt": 1500,
+    "output": 1500,
+    "average": 3000,
+    "max": 6000
+  },
+  "kpis": [
+    {
+      "name": "core_web_vitals_pass",
+      "target": ">90%",
+      "unit": "percent"
+    },
+    {
+      "name": "bundle_under_budget",
+      "target": "100%",
+      "unit": "percent"
+    },
+    {
+      "name": "load_time",
+      "target": "<2s",
+      "unit": "seconds"
+    }
+  ]
 }

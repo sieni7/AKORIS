@@ -52,5 +52,14 @@ Implémenter les fonctionnalités Progressive Web App : service workers, cache, 
 - DEV-01 — Frontend Architect
 - DEV-07 — Performance Engineer
 
+## RACI
+
+| Tâche                   | Rôle       |
+| ----------------------- | ---------- |
+| Service workers         | R          |
+| Stratégie cache         | R          |
+| Manifest                | R          |
+| Tests offline           | A          |
+
 ## Prompt de référence
 Voir prompt.md

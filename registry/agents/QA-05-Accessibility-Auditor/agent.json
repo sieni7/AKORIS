@@ -5,6 +5,19 @@
   "domain": "Qualité",
   "criticity": "standard",
   "status": "active",
+  "tags": ["quality", "accessibility", "audit"],
+  "tokenEstimate": {
+    "context": 6000,
+    "prompt": 1500,
+    "output": 1000,
+    "average": 2500,
+    "max": 5000
+  },
+  "kpis": {
+    "wcag_aa_compliance": "100%",
+    "accessibility_score": ">85%",
+    "critical_issues": 0
+  },
   "dependencies": ["CORE-01"],
   "maintainer": "AKORIS Core Team"
 }

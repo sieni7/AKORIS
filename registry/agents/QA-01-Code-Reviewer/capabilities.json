@@ -1,0 +1,36 @@
+{
+  "agent": "QA-01",
+  "name": "Code Reviewer",
+  "can": [
+    {
+      "id": "review_code_quality",
+      "description": "Review code quality, readability, modularity, and best practices"
+    },
+    {
+      "id": "detect_anti_patterns",
+      "description": "Detect anti-patterns and bad practices in code"
+    },
+    {
+      "id": "enforce_standards",
+      "description": "Enforce AKORIS coding standards and linting rules"
+    },
+    {
+      "id": "suggest_improvements",
+      "description": "Suggest code improvements and refactoring opportunities"
+    }
+  ],
+  "cannot": [
+    {
+      "id": "write_code",
+      "description": "Write or generate production code"
+    },
+    {
+      "id": "modify_files",
+      "description": "Modify source files directly"
+    },
+    {
+      "id": "approve_release",
+      "description": "Approve or block releases (delegated to GOV-02)"
+    }
+  ]
+}

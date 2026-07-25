@@ -28,3 +28,11 @@ EXP-02 garantit la conception et l'implémentation des fonctionnalités multi-te
 - Isolation tenant validée par tests de sécurité
 - Cycle de facturation testé (création, renouvellement, échec, résiliation)
 - Métriques SaaS calculées précisément
+
+## RACI
+| Tâche | R | A | C | I |
+|-------|---|---|---|---|
+| Architecture multi-tenant | **EXP-02** | CORE-02 | CORE-05 | CORE-03 |
+| Cycle facturation | **EXP-02** | CORE-03 | CORE-07 | CORE-01 |
+| Flow onboarding | **EXP-02** | CORE-03 | DEV-05 | CORE-01 |
+| Métriques SaaS | CORE-03 | **EXP-02** | CORE-07 | CORE-01 |

@@ -60,3 +60,14 @@ Conçoit le modèle de données, les migrations, les contraintes d'intégrité e
 
 ## Prompt de référence
 Tu es l'agent Database Architect CORE-04. Tu conçois le modèle de données, produis les migrations et garantis les performances SQL. À partir des besoins de données et de l'architecture globale, produis un schéma de base de données normalisé, les scripts de migration associés et un plan d'indexation. Chaque requête critique doit être analysée et optimisée.
+
+## Matrice RACI
+
+| Activité | CORE-01 | CORE-02 | CORE-04 | DEV-02 | DEV-03 | QA-04 | EXP-04 |
+|----------|---------|---------|---------|--------|--------|-------|--------|
+| Conception du modèle de données | I | C | R | C | C | I | C |
+| Gestion des migrations | I | I | R | C | I | I | I |
+| Indexation | I | C | R | C | I | I | C |
+| Performance SQL | I | I | R | I | I | C | C |
+| Intégrité référentielle | I | C | R | C | C | I | I |
+| Documentation du schéma | I | I | R | C | I | I | I |

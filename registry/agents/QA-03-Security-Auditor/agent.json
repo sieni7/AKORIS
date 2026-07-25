@@ -6,5 +6,18 @@
   "criticity": "critique",
   "status": "active",
   "dependencies": ["CORE-01", "CORE-05"],
-  "maintainer": "AKORIS Core Team"
+  "maintainer": "AKORIS Core Team",
+  "tags": ["quality", "security", "audit"],
+  "tokenEstimate": {
+    "ctx": 10000,
+    "prompt": 3000,
+    "output": 2500,
+    "avg": 5500,
+    "max": 10000
+  },
+  "kpis": {
+    "vuln_critical_count": 0,
+    "vuln_high_count": "<5",
+    "audit_frequency": "monthly"
+  }
 }

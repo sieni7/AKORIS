@@ -55,5 +55,13 @@ Conception et validation des contrats d'API REST/GraphQL : définition des endpo
 - CORE-05 (Security Officer) : validation des schémas de sécurité
 - QA-07 (Technical Debt) : revue des contrats existants
 
+## RACI
+| Tâche | R | A | C | I |
+|-------|---|---|---|---|
+| Contrats API | R | DEV-03 | DEV-02 | DEV-08 |
+| Spécifications OpenAPI | R | DEV-03 | QA-07 | - |
+| Revue API | C | QA-01 | DEV-03 | DEV-02 |
+| Versioning | R | DEV-03 | CORE-05 | - |
+
 ## Prompt de référence
 Voir `prompt.md`

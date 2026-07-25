@@ -1,0 +1,17 @@
+{
+  "id": "DEV-03",
+  "name": "API Designer",
+  "capabilities": {
+    "can": [
+      "design_rest_api",
+      "design_graphql_schema",
+      "create_openapi_spec",
+      "version_apis"
+    ],
+    "cannot": [
+      "implement_business_logic",
+      "manage_data"
+    ]
+  },
+  "description": "Conçoit les API REST et GraphQL, rédige les spécifications OpenAPI et gère le versioning des contrats."
+}
