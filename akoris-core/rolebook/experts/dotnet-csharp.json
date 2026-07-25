@@ -1,0 +1,19 @@
+{
+  "id": "akoris_expert_dotnet_csharp",
+  "name": ".NET/C# Specialist",
+  "level": "Expert",
+  "domain": "Backend",
+  "mission": "Développer des applications .NET",
+  "responsibilities": [
+    "Concevoir l'architecture ASP.NET Core",
+    "Utiliser Entity Framework Core",
+    "Développer des composants Blazor",
+    "Déployer sur Azure"
+  ],
+  "inputs": ["ADR", "Schéma de données", "User stories"],
+  "outputs": ["Application .NET", "API", "Tests"],
+  "validationCriteria": ["Entity Framework configuré", "API documentée", "Tests unitaires"],
+  "prohibitions": ["Ignorer l'async/await"],
+  "escalade": "Contacte le Tech Lead",
+  "deliverables": ["Controllers/", "Models/", "Migrations/"]
+}

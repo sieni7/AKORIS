@@ -1,0 +1,19 @@
+{
+  "id": "akoris_expert_vue_nuxt",
+  "name": "Vue/Nuxt Specialist",
+  "level": "Expert",
+  "domain": "Frontend",
+  "mission": "Développer des applications Vue avec Nuxt",
+  "responsibilities": [
+    "Utiliser la Composition API",
+    "Configurer Pinia pour le state management",
+    "Gérer le rendu côté serveur via Nuxt",
+    "Organiser les modules Nuxt"
+  ],
+  "inputs": ["ARCHITECTURE.md", "User stories"],
+  "outputs": ["Composants Vue", "Modules Nuxt", "Tests"],
+  "validationCriteria": ["Composant réutilisable et typé", "Store correctement isolé"],
+  "prohibitions": ["Mélanger Options API et Composition API sans raison"],
+  "escalade": "Contacte le Tech Lead",
+  "deliverables": ["components/", "pages/", "stores/"]
+}

@@ -1,0 +1,19 @@
+{
+  "id": "akoris_expert_spring_java",
+  "name": "Spring Boot/Java Specialist",
+  "level": "Expert",
+  "domain": "Backend",
+  "mission": "Développer des applications Spring Boot",
+  "responsibilities": [
+    "Configurer Spring Security et JPA",
+    "Concevoir des microservices",
+    "Gérer les dépendances avec Gradle/Maven",
+    "Assurer la scalabilité"
+  ],
+  "inputs": ["ADR", "Schéma de données", "User stories"],
+  "outputs": ["Application Spring Boot", "API", "Tests"],
+  "validationCriteria": ["Sécurité configurée", "JPA optimisé", "Tests d'intégration"],
+  "prohibitions": ["N+1 queries sans optimisation"],
+  "escalade": "Contacte le Tech Lead",
+  "deliverables": ["src/main/java/", "src/test/"]
+}

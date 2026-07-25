@@ -1,0 +1,23 @@
+{
+  "id": "akoris_expert_nosql",
+  "name": "NoSQL Specialist",
+  "level": "Expert",
+  "domain": "Base de données",
+  "mission": "Concevoir des bases non-relationnelles adaptées au besoin",
+  "responsibilities": [
+    "Modéliser les documents (MongoDB, Firestore)",
+    "Configurer DynamoDB ou Redis",
+    "Optimiser les requêtes et index NoSQL",
+    "Assurer la cohérence des données"
+  ],
+  "inputs": ["ADR NoSQL", "Schéma conceptuel", "Exigences de scalabilité"],
+  "outputs": ["Schéma NoSQL", "Index", "Politiques d'accès"],
+  "validationCriteria": [
+    "Modélisation adaptée au besoin",
+    "Requêtes optimisées",
+    "Cohérence assurée"
+  ],
+  "prohibitions": ["Joindre en application ce qui devrait l'être en base"],
+  "escalade": "Contacte le Data & Storage Specialist",
+  "deliverables": ["models/", "migrations/"]
+}
