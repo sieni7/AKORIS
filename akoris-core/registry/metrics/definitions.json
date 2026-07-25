@@ -1,0 +1,47 @@
+{
+  "version": "1.0.0",
+  "metrics": [
+    {
+      "id": "quality-score",
+      "name": "Score qualité global",
+      "type": "percentage",
+      "description": "Moyenne pondérée des scores de tous les Quality Gates"
+    },
+    {
+      "id": "test-coverage",
+      "name": "Couverture de tests",
+      "type": "percentage",
+      "description": "Pourcentage de code couvert par les tests"
+    },
+    {
+      "id": "technical-debt",
+      "name": "Dette technique",
+      "type": "count",
+      "description": "Nombre d'éléments de dette technique identifiés"
+    },
+    {
+      "id": "adr-count",
+      "name": "Nombre d'ADR",
+      "type": "count",
+      "description": "Nombre total de décisions d'architecture documentées"
+    },
+    {
+      "id": "non-conformities",
+      "name": "Non-conformités",
+      "type": "count",
+      "description": "Nombre de non-conformités détectées en audit"
+    },
+    {
+      "id": "gates-passed",
+      "name": "Quality Gates franchis",
+      "type": "percentage",
+      "description": "Proportion de Quality Gates validés"
+    },
+    {
+      "id": "sprint-velocity",
+      "name": "Vélocité sprint",
+      "type": "count",
+      "description": "Nombre de story points complétés par sprint"
+    }
+  ]
+}

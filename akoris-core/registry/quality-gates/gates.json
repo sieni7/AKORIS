@@ -1,0 +1,79 @@
+{
+  "version": "1.0.0",
+  "gates": [
+    {
+      "id": "architecture",
+      "name": "Architecture",
+      "description": "Conforme aux spécifications et aux bonnes pratiques",
+      "checklist": [
+        "ADR à jour",
+        "Diagrammes d'architecture à jour",
+        "Respect des principes fondateurs",
+        "Séparation des responsabilités respectée"
+      ]
+    },
+    {
+      "id": "documentation",
+      "name": "Documentation",
+      "description": "Documentation à jour et complète",
+      "checklist": [
+        "README à jour",
+        "API documentée",
+        "Guides utilisateur à jour",
+        "CHANGELOG mis à jour"
+      ]
+    },
+    {
+      "id": "tests",
+      "name": "Tests",
+      "description": "Tests validés avec couverture satisfaisante",
+      "checklist": [
+        "Tests unitaires passent",
+        "Tests d'intégration passent",
+        "Couverture minimale atteinte",
+        "Tests E2E validés"
+      ]
+    },
+    {
+      "id": "audit",
+      "name": "Audit",
+      "description": "Rapport d'audit favorable",
+      "checklist": [
+        "Rapport d'audit produit",
+        "Aucune non-conformité critique",
+        "Recommandations traitées"
+      ]
+    },
+    {
+      "id": "debt",
+      "name": "Dette technique",
+      "description": "Niveau acceptable et documenté",
+      "checklist": [
+        "Dette technique documentée",
+        "Plan de résolution établi",
+        "Seuil maximal non dépassé"
+      ]
+    },
+    {
+      "id": "security",
+      "name": "Sécurité",
+      "description": "Validée selon les standards applicables",
+      "checklist": [
+        "Analyse des vulnérabilités effectuée",
+        "Secrets et clés non exposés",
+        "RLS/Auth configurée",
+        "Dépendances auditées"
+      ]
+    },
+    {
+      "id": "adr",
+      "name": "ADR",
+      "description": "Décisions d'architecture mises à jour",
+      "checklist": [
+        "ADR-000 (projet) existe",
+        "Toute décision structurante a son ADR",
+        "ADRs sont approuvés"
+      ]
+    }
+  ]
+}

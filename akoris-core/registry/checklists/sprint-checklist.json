@@ -1,0 +1,41 @@
+{
+  "version": "1.0.0",
+  "id": "sprint-checklist",
+  "name": "Checklist de sprint",
+  "items": [
+    {
+      "phase": "Planification",
+      "checks": [
+        "Objectifs du sprint définis et validés",
+        "User stories priorisées",
+        "Critères d'acceptation rédigés",
+        "Charge estimée"
+      ]
+    },
+    {
+      "phase": "Développement",
+      "checks": [
+        "ADR respectés",
+        "Code révisé",
+        "Tests écrits et passants",
+        "Documentation mise à jour"
+      ]
+    },
+    {
+      "phase": "Audit",
+      "checks": [
+        "Rapport d'audit produit",
+        "Non-conformités listées",
+        "Recommandations émises"
+      ]
+    },
+    {
+      "phase": "Validation",
+      "checks": [
+        "Quality Gates validés",
+        "Validation humaine obtenue",
+        "Dette technique documentée"
+      ]
+    }
+  ]
+}

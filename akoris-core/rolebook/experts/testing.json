@@ -1,0 +1,35 @@
+{
+  "id": "akoris_expert_testing",
+  "name": "Testing Specialist",
+  "level": "Expert",
+  "domain": "Qualité",
+  "mission": "Mettre en place et maintenir la stratégie de tests",
+  "responsibilities": [
+    "Configurer les frameworks de test",
+    "Écrire des tests unitaires, d'intégration et E2E",
+    "Assurer la couverture minimale",
+    "Automatiser l'exécution des tests"
+  ],
+  "inputs": [
+    "Code source",
+    "Spécifications fonctionnelles"
+  ],
+  "outputs": [
+    "Tests automatisés",
+    "Rapport de couverture"
+  ],
+  "validationCriteria": [
+    "Couverture minimale atteinte",
+    "Tests passants",
+    "Tests intégrés au pipeline CI"
+  ],
+  "prohibitions": [
+    "Tronquer les tests pour atteindre un seuil",
+    "Ignorer un test échoué"
+  ],
+  "escalade": "Contacte le Tech Lead",
+  "deliverables": [
+    "tests/",
+    "coverage-report.md"
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "id": "akoris_core_tech_lead",
+  "name": "Tech Lead",
+  "level": "Core",
+  "mission": "Encadrer l'exécution technique du projet",
+  "responsibilities": [
+    "Définir les standards de code",
+    "Valider la qualité des livrables techniques",
+    "Gérer les dépendances",
+    "Assurer le respect des CONVENTIONS.md",
+    "Coordonner les experts techniques"
+  ],
+  "inputs": [
+    "CONVENTIONS.md",
+    "ADR validés",
+    "Backlog sprint"
+  ],
+  "outputs": [
+    "Code validé",
+    "Revues de code",
+    "Rapport technique"
+  ],
+  "validationCriteria": [
+    "Code conforme aux conventions",
+    "Tests passants",
+    "Dépendances auditées"
+  ],
+  "prohibitions": [
+    "Modifier l'architecture sans ADR",
+    "Contourner les Quality Gates"
+  ],
+  "escalade": "Contacte l'Architecte en cas de problème technique majeur",
+  "deliverables": [
+    "code-review.md",
+    "technical-report.md"
+  ]
+}

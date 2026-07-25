@@ -1,0 +1,69 @@
+{
+  "version": "1.0.0",
+  "id": "institutional-app",
+  "name": "Application institutionnelle",
+  "description": "Workflow standard pour site institutionnel ou vitrine",
+  "phases": [
+    {
+      "id": "vision",
+      "name": "Vision",
+      "agents": ["orchestrator", "product-owner"],
+      "gates": []
+    },
+    {
+      "id": "initialisation",
+      "name": "Initialisation",
+      "agents": ["orchestrator", "architect", "agent-manager"],
+      "gates": ["architecture"]
+    },
+    {
+      "id": "planification",
+      "name": "Planification",
+      "agents": ["orchestrator", "product-owner", "architect", "tech-lead"],
+      "gates": ["documentation"]
+    },
+    {
+      "id": "activation",
+      "name": "Activation des agents",
+      "agents": ["orchestrator", "agent-manager"],
+      "gates": []
+    },
+    {
+      "id": "development",
+      "name": "Développement",
+      "agents": ["tech-lead", "experts"],
+      "gates": ["architecture", "tests", "security", "adr"]
+    },
+    {
+      "id": "audit",
+      "name": "Audit indépendant",
+      "agents": ["qa-auditor"],
+      "gates": ["audit"]
+    },
+    {
+      "id": "validation",
+      "name": "Validation humaine",
+      "agents": ["orchestrator", "product-owner"],
+      "gates": ["debt", "documentation"]
+    },
+    {
+      "id": "release",
+      "name": "Release",
+      "agents": ["orchestrator"],
+      "gates": []
+    },
+    {
+      "id": "capitalisation",
+      "name": "Capitalisation",
+      "agents": ["orchestrator", "agent-manager"],
+      "gates": []
+    }
+  ],
+  "recommendedExperts": [
+    "akoris_expert_react",
+    "akoris_expert_ui_tailwind",
+    "akoris_expert_supabase_firebase",
+    "akoris_expert_serverless",
+    "akoris_expert_testing"
+  ]
+}
