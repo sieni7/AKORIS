@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
+import chalk from 'chalk';
 import { readFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { initCommand } from './commands/init.js';
+import { setGlobalOptions } from './output/format.js';
 import { doctorCommand } from './commands/doctor.js';
 import { infoCommand } from './commands/info.js';
 import { statusCommand } from './commands/status.js';
@@ -98,12 +100,32 @@ const WELCOME = `
 
 const program = new Command();
 
+const pkgVersion = pkg.version;
+
 program
   .name('akoris')
   .description('AKORIS - Standard de gouvernance pour le developpement logiciel assiste par IA')
-  .version(pkg.version)
+  .version(pkgVersion)
   .helpOption('--help', 'Aide complete')
-  .allowExcessArguments(false);
+  .allowExcessArguments(false)
+  .option('--json', 'Sortie au format JSON')
+  .option('--verbose', 'Affiche les logs détaillés')
+  .option('--quiet', 'Réduit la sortie au minimum')
+  .option('--no-color', 'Désactive les couleurs')
+  .option('--output <file>', 'Exporte le résultat dans un fichier')
+  .hook('preAction', (thisCommand) => {
+    const opts = thisCommand.opts() as { json?: boolean; verbose?: boolean; quiet?: boolean; noColor?: boolean; output?: string };
+    setGlobalOptions({
+      json: !!opts.json,
+      verbose: !!opts.verbose,
+      quiet: !!opts.quiet,
+      noColor: !!opts.noColor,
+      output: opts.output,
+    });
+    if (opts.noColor) {
+      chalk.level = 0;
+    }
+  });
 
 program.addCommand(initCommand);
 program.addCommand(doctorCommand);
@@ -135,3 +157,5 @@ if (process.argv.length <= 2) {
 }
 
 program.parse(process.argv);
+
+export { program };

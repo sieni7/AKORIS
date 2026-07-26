@@ -1,6 +1,7 @@
 import { Command } from 'commander';
 import { RegistryReaderV2 } from '../services/registry-reader-v2.service.js';
 import { CapabilityResolver } from '../services/capability.service.js';
+import { shouldOutputJSON, printJSON, title, header, info, warn, log } from '../output/format.js';
 
 export const capabilityCommand = new Command('capability')
   .description('Recherche et résolution des capacités des agents');
@@ -9,37 +10,35 @@ capabilityCommand
   .command('find')
   .description('Trouve les agents possédant une capacité')
   .argument('<capability>', 'Nom de la capacité (ex: design_database)')
-  .option('--json', 'Sortie au format JSON')
-  .action((capability: string, options: { json?: boolean }) => {
+  .action((capability: string) => {
     const reader = new RegistryReaderV2();
     const resolver = new CapabilityResolver(reader);
     const agents = resolver.findAgents(capability);
 
-    if (options.json) {
-      console.log(JSON.stringify({ capability, agents }, null, 2));
+    if (shouldOutputJSON()) {
+      printJSON({ capability, agents });
       return;
     }
 
     if (agents.length === 0) {
-      console.log(`ℹ️  Aucun agent trouvé pour la capacité "${capability}"`);
+      info(`Aucun agent trouvé pour la capacité "${capability}"`);
       const similar = resolver.searchCapabilities(capability);
       if (similar.length > 0) {
-        console.log('\nCapacités similaires :');
+        header('Capacités similaires');
         for (const s of similar.slice(0, 5)) {
-          console.log(`  ${s.capability} → ${s.agents.join(', ')}`);
+          log(`  ${s.capability} → ${s.agents.join(', ')}`);
         }
       }
       return;
     }
 
-    console.log(`Capacité : ${capability}`);
-    console.log(`Agents disponibles (${agents.length}) :\n`);
+    log(`Capacité : ${capability}`);
+    log(`Agents disponibles (${agents.length}) :`);
     for (const agent of agents) {
       const caps = resolver.getCapabilities(agent);
       const allCaps = caps.join(', ');
-      console.log(`  ${agent}`);
-      console.log(`    Capacités : ${allCaps}`);
-      console.log();
+      log(`  ${agent}`);
+      log(`    Capacités : ${allCaps}`);
     }
   });
 
@@ -52,16 +51,20 @@ capabilityCommand
     const resolver = new CapabilityResolver(reader);
     const results = resolver.searchCapabilities(query);
 
-    if (results.length === 0) {
-      console.log(`ℹ️  Aucune capacité trouvée pour "${query}"`);
+    if (shouldOutputJSON()) {
+      printJSON({ query, results });
       return;
     }
 
-    console.log(`Recherche : "${query}" — ${results.length} résultat(s)\n`);
+    if (results.length === 0) {
+      info(`Aucune capacité trouvée pour "${query}"`);
+      return;
+    }
+
+    log(`Recherche : "${query}" — ${results.length} résultat(s)`);
     for (const r of results) {
-      console.log(`  ${r.capability}`);
-      console.log(`    Agents : ${r.agents.join(', ')}`);
-      console.log();
+      log(`  ${r.capability}`);
+      log(`    Agents : ${r.agents.join(', ')}`);
     }
   });
 
@@ -69,28 +72,26 @@ capabilityCommand
   .command('team')
   .description('Construit une équipe d\'agents pour une liste de tâches')
   .argument('<tasks...>', 'Liste des tâches (ex: design_api optimize_queries)')
-  .option('--json', 'Sortie au format JSON')
-  .action((tasks: string[], options: { json?: boolean }) => {
+  .action((tasks: string[]) => {
     const reader = new RegistryReaderV2();
     const resolver = new CapabilityResolver(reader);
     const team = resolver.findTeam(tasks);
 
-    if (options.json) {
+    if (shouldOutputJSON()) {
       const obj: Record<string, string[]> = {};
       for (const [agent, agentTasks] of team) {
         obj[agent] = agentTasks;
       }
-      console.log(JSON.stringify({ tasks, team: obj }, null, 2));
+      printJSON({ tasks, team: obj });
       return;
     }
 
-    console.log(`Tâches : ${tasks.join(', ')}`);
-    console.log(`Équipe : ${team.size} agent(s)\n`);
+    log(`Tâches : ${tasks.join(', ')}`);
+    log(`Équipe : ${team.size} agent(s)`);
 
     for (const [agent, agentTasks] of team) {
-      console.log(`  ${agent}`);
-      console.log(`    Tâches : ${agentTasks.join(', ')}`);
-      console.log();
+      log(`  ${agent}`);
+      log(`    Tâches : ${agentTasks.join(', ')}`);
     }
 
     const totalAll = tasks.length;
@@ -99,11 +100,11 @@ capabilityCommand
       for (const t of agentTasks) covered.add(t);
     }
 
-    console.log(`Couverture : ${covered.size}/${totalAll} tâches`);
+    log(`Couverture : ${covered.size}/${totalAll} tâches`);
     if (covered.size < totalAll) {
       const missing = tasks.filter(t => !covered.has(t));
-      console.log(`Tâches non couvertes : ${missing.join(', ')}`);
-      console.log('Utilisez "akoris capability find <capacité>" pour chercher des agents.');
+      warn(`Tâches non couvertes : ${missing.join(', ')}`);
+      log('Utilisez "akoris capability find <capacité>" pour chercher des agents.');
     }
   });
 
@@ -118,20 +119,33 @@ capabilityCommand
     if (options.agent) {
       const caps = resolver.getCapabilities(options.agent);
       if (caps.length === 0) {
-        console.log(`ℹ️  Aucune capacité trouvée pour l'agent "${options.agent}"`);
+        info(`Aucune capacité trouvée pour l'agent "${options.agent}"`);
         return;
       }
-      console.log(`Capacités de ${options.agent} :\n`);
+      if (shouldOutputJSON()) {
+        printJSON({ agent: options.agent, capabilities: caps });
+        return;
+      }
+      header(`Capacités de ${options.agent}`);
       for (const cap of caps) {
-        console.log(`  ${cap}`);
+        log(`  ${cap}`);
       }
       return;
     }
 
     const allCaps = resolver.getAllCapabilities();
-    console.log(`Registre des capacités (${allCaps.length} capacités)\n`);
+    if (shouldOutputJSON()) {
+      const obj: Record<string, string[]> = {};
+      for (const cap of allCaps) {
+        obj[cap] = resolver.findAgents(cap);
+      }
+      printJSON({ capabilities: obj });
+      return;
+    }
+
+    header(`Registre des capacités (${allCaps.length} capacités)`);
     for (const cap of allCaps) {
       const agents = resolver.findAgents(cap);
-      console.log(`  ${cap} → ${agents.join(', ')}`);
+      log(`  ${cap} → ${agents.join(', ')}`);
     }
   });

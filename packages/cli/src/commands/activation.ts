@@ -2,6 +2,7 @@ import { Command } from 'commander';
 import { RegistryReaderV2 } from '../services/registry-reader-v2.service.js';
 import { ActivationEngine } from '../services/activation.service.js';
 import { CapabilityResolver } from '../services/capability.service.js';
+import { shouldOutputJSON, printJSON, title, header, info, success, error, warn, log } from '../output/format.js';
 
 export const activationCommand = new Command('activation')
   .description('Gère l\'activation des agents par événement');
@@ -17,26 +18,29 @@ activationCommand
     const agents = engine.getAgentsForEvent(options.event);
 
     if (agents.length === 0) {
-      console.log(`ℹ️  Aucun agent trouvé pour l'événement "${options.event}"`);
-      console.log('   Utilisez "akoris activation list" pour voir les événements disponibles.');
+      info(`Aucun agent trouvé pour l'événement "${options.event}"`);
+      log('   Utilisez "akoris activation list" pour voir les événements disponibles.');
       return;
     }
 
     const phase = engine.getPhase(options.event);
     const frequency = engine.getFrequency(options.event);
 
-    console.log(`Événement : ${options.event}`);
-    if (phase) console.log(`Phase      : ${phase}`);
-    if (frequency) console.log(`Fréquence  : ${frequency}`);
-    console.log(`\nAgents à activer (${agents.length}) :\n`);
+    if (shouldOutputJSON()) {
+      printJSON({ event: options.event, phase, frequency, agents });
+      return;
+    }
+
+    log(`Événement : ${options.event}`);
+    if (phase) log(`Phase      : ${phase}`);
+    if (frequency) log(`Fréquence  : ${frequency}`);
+    header(`Agents à activer (${agents.length})`);
 
     for (const agent of agents) {
       const caps = resolver.getCapabilities(agent);
       const topCap = caps.slice(0, 3).join(', ');
-
-      console.log(`  ${agent}`);
-      if (topCap) console.log(`    Capacités : ${topCap}`);
-      console.log();
+      log(`  ${agent}`);
+      if (topCap) log(`    Capacités : ${topCap}`);
     }
   });
 
@@ -50,13 +54,21 @@ activationCommand
     const events = engine.getAllEvents();
 
     if (events.length === 0) {
-      console.log('⚠️  Aucun événement trouvé dans la matrice d\'activation');
+      warn('Aucun événement trouvé dans la matrice d\'activation');
       return;
     }
 
     const filtered = options.phase
       ? events.filter(e => e.phase === options.phase)
       : events;
+
+    if (shouldOutputJSON()) {
+      printJSON({ events: filtered, filter: options.phase || null });
+      return;
+    }
+
+    title(`Matrice d'activation (${filtered.length} événements)`);
+    if (options.phase) log(`Filtre : phase "${options.phase}"`);
 
     const byPhase = new Map<string, typeof filtered>();
     for (const ev of filtered) {
@@ -65,18 +77,13 @@ activationCommand
       byPhase.set(ev.phase, list);
     }
 
-    console.log(`Matrice d'activation (${filtered.length} événements)`);
-    if (options.phase) console.log(`Filtre : phase "${options.phase}"`);
-    console.log();
-
     for (const [phase, phaseEvents] of byPhase) {
-      console.log(`Phase : ${phase}`);
+      header(`Phase : ${phase}`);
       for (const ev of phaseEvents) {
-        console.log(`  ${ev.id}`);
-        console.log(`    ${ev.description}`);
-        console.log(`    Agents (${ev.agents.length}) : ${ev.agents.join(', ')}`);
-        console.log(`    Fréquence : ${ev.frequency}`);
-        console.log();
+        log(`  ${ev.id}`);
+        log(`    ${ev.description}`);
+        log(`    Agents (${ev.agents.length}) : ${ev.agents.join(', ')}`);
+        log(`    Fréquence : ${ev.frequency}`);
       }
     }
   });
@@ -91,16 +98,20 @@ activationCommand
     const events = engine.getEventsForAgent(options.agent);
 
     if (events.length === 0) {
-      console.log(`ℹ️  L'agent "${options.agent}" n'est activé par aucun événement`);
+      info(`L'agent "${options.agent}" n'est activé par aucun événement`);
       return;
     }
 
-    console.log(`Agent : ${options.agent}`);
-    console.log(`Activé par ${events.length} événement(s) :\n`);
+    if (shouldOutputJSON()) {
+      printJSON({ agent: options.agent, events });
+      return;
+    }
+
+    log(`Agent : ${options.agent}`);
+    log(`Activé par ${events.length} événement(s) :`);
     for (const ev of events) {
-      console.log(`  ${ev.event}`);
-      console.log(`    ${ev.description}`);
-      console.log(`    Phase : ${ev.phase} | Fréquence : ${ev.frequency}`);
-      console.log();
+      log(`  ${ev.event}`);
+      log(`    ${ev.description}`);
+      log(`    Phase : ${ev.phase} | Fréquence : ${ev.frequency}`);
     }
   });

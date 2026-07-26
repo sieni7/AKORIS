@@ -1,6 +1,7 @@
 import { Command } from 'commander';
 import { RegistryReaderV2 } from '../services/registry-reader-v2.service.js';
 import { CapabilityResolver } from '../services/capability.service.js';
+import { shouldOutputJSON, printJSON, title, header, info, success, error, warn, log } from '../output/format.js';
 
 interface AgentData {
   id: string;
@@ -34,7 +35,7 @@ agentCommand
     const dirs = reader.listAgentDirs();
 
     if (dirs.length === 0) {
-      console.log('ℹ️  Aucun agent trouvé dans le Registry');
+      info('Aucun agent trouvé dans le Registry');
       return;
     }
 
@@ -44,6 +45,20 @@ agentCommand
       if (data) agents.push(data);
     }
 
+    if (shouldOutputJSON()) {
+      const byDomain: Record<string, AgentData[]> = {};
+      for (const a of agents) {
+        const list = byDomain[a.domain] || [];
+        list.push(a);
+        byDomain[a.domain] = list;
+      }
+      for (const a of agents) {
+        (a as any).capabilities = resolver.getCapabilities(a.id);
+      }
+      printJSON({ agents, byDomain });
+      return;
+    }
+
     const byDomain = new Map<string, AgentData[]>();
     for (const a of agents) {
       const list = byDomain.get(a.domain) || [];
@@ -51,21 +66,20 @@ agentCommand
       byDomain.set(a.domain, list);
     }
 
-    console.log(`🤖 Agents disponibles (${agents.length}) :\n`);
+    title(`Agents disponibles (${agents.length})`);
     for (const [domain, domainAgents] of byDomain) {
-      console.log(`  ${domain} :`);
+      header(domain);
       for (const a of domainAgents) {
         const caps = resolver.getCapabilities(a.id);
         if (a.status && a.status !== 'active') {
-          console.log(`    ${a.id} — ${a.name} [${a.status}]`);
+          log(`  ${a.id} — ${a.name} [${a.status}]`);
         } else {
-          console.log(`    ${a.id} — ${a.name}`);
+          log(`  ${a.id} — ${a.name}`);
         }
         if (caps.length > 0) {
-          console.log(`      Capacités : ${caps.slice(0, 4).join(', ')}${caps.length > 4 ? ` (+${caps.length - 4})` : ''}`);
+          log(`    Capacités : ${caps.slice(0, 4).join(', ')}${caps.length > 4 ? ` (+${caps.length - 4})` : ''}`);
         }
       }
-      console.log();
     }
   });
 
@@ -78,13 +92,13 @@ agentCommand
     const resolver = getResolver(reader);
     const dir = reader.findAgentDir(id);
     if (!dir) {
-      console.error(`❌ Agent "${id}" introuvable`);
+      error(`Agent "${id}" introuvable`);
       process.exit(1);
     }
 
     const data = reader.readAgentJson<AgentData>(dir);
     if (!data) {
-      console.error(`❌ Agent "${id}" introuvable`);
+      error(`Agent "${id}" introuvable`);
       process.exit(1);
     }
 
@@ -92,32 +106,36 @@ agentCommand
     const contractData = reader.getAgentContract(id);
     const contracts = contractData ? Object.keys(contractData).slice(0, 5) : [];
 
-    console.log(`🤖 Agent : ${data.name}\n`);
-    console.log(`   ID         : ${data.id}`);
-    console.log(`   Version    : ${data.version}`);
-    console.log(`   Domaine    : ${data.domain}`);
-    console.log(`   Statut     : ${data.status || 'non défini'}`);
-    console.log(`   Criticité  : ${data.criticity || 'non définie'}`);
+    if (shouldOutputJSON()) {
+      printJSON({ ...data, capabilities: caps, contracts: contractData || {} });
+      return;
+    }
+
+    title(`Agent : ${data.name}`);
+    log(`   ID         : ${data.id}`);
+    log(`   Version    : ${data.version}`);
+    log(`   Domaine    : ${data.domain}`);
+    log(`   Statut     : ${data.status || 'non défini'}`);
+    log(`   Criticité  : ${data.criticity || 'non définie'}`);
     if (data.tags && data.tags.length > 0) {
-      console.log(`   Tags       : ${data.tags.join(', ')}`);
+      log(`   Tags       : ${data.tags.join(', ')}`);
     }
     if (data.dependencies && data.dependencies.length > 0) {
-      console.log(`   Dépend de  : ${data.dependencies.join(', ')}`);
+      log(`   Dépend de  : ${data.dependencies.join(', ')}`);
     }
     if (data.maintainer) {
-      console.log(`   Maintainer : ${data.maintainer}`);
+      log(`   Maintainer : ${data.maintainer}`);
     }
     if (caps.length > 0) {
-      console.log(`\n   Capacités (${caps.length}) :`);
+      log(`\n   Capacités (${caps.length}) :`);
       for (const cap of caps.slice(0, 10)) {
-        console.log(`     - ${cap}`);
+        log(`     - ${cap}`);
       }
-      if (caps.length > 10) console.log(`     ... et ${caps.length - 10} autre(s)`);
+      if (caps.length > 10) log(`     ... et ${caps.length - 10} autre(s)`);
     }
     if (contracts.length > 0) {
-      console.log(`\n   Contrats : ${contracts.join(', ')}`);
+      log(`\n   Contrats : ${contracts.join(', ')}`);
     }
-    console.log();
   });
 
 agentCommand
@@ -125,8 +143,8 @@ agentCommand
   .description('Active un agent')
   .argument('<id>', 'Identifiant de l\'agent')
   .action((id: string) => {
-    console.log(`🔧 Activation de l'agent "${id}"...`);
-    console.log('ℹ️  Fonctionnalité à implémenter dans une version ultérieure');
+    info(`Activation de l'agent "${id}"...`);
+    info('Fonctionnalité à implémenter dans une version ultérieure');
   });
 
 agentCommand
@@ -134,8 +152,8 @@ agentCommand
   .description('Désactive un agent')
   .argument('<id>', 'Identifiant de l\'agent')
   .action((id: string) => {
-    console.log(`🔧 Désactivation de l'agent "${id}"...`);
-    console.log('ℹ️  Fonctionnalité à implémenter dans une version ultérieure');
+    info(`Désactivation de l'agent "${id}"...`);
+    info('Fonctionnalité à implémenter dans une version ultérieure');
   });
 
 agentCommand
@@ -147,19 +165,23 @@ agentCommand
     const contract = reader.getAgentContract(id);
 
     if (!contract) {
-      console.log(`ℹ️  Aucun contrat trouvé pour l'agent "${id}"`);
+      info(`Aucun contrat trouvé pour l'agent "${id}"`);
       return;
     }
 
-    console.log(`📜 Contrat de l'agent "${id}" :\n`);
+    if (shouldOutputJSON()) {
+      printJSON({ agent: id, contract });
+      return;
+    }
+
+    log(`Contrat de l'agent "${id}" :`);
     for (const [key, value] of Object.entries(contract)) {
       if (typeof value === 'string') {
-        console.log(`   ${key} : ${value}`);
+        log(`   ${key} : ${value}`);
       } else if (Array.isArray(value)) {
-        console.log(`   ${key} : ${(value as string[]).join(', ')}`);
+        log(`   ${key} : ${(value as string[]).join(', ')}`);
       }
     }
-    console.log();
   });
 
 agentCommand
@@ -167,6 +189,6 @@ agentCommand
   .description('Lance un audit sur le travail d\'un agent')
   .argument('<id>', 'Identifiant de l\'agent')
   .action((id: string) => {
-    console.log(`🔍 Audit de l'agent "${id}"...`);
-    console.log('ℹ️  Fonctionnalité à implémenter dans une version ultérieure');
+    info(`Audit de l'agent "${id}"...`);
+    info('Fonctionnalité à implémenter dans une version ultérieure');
   });

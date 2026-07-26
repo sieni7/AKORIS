@@ -1,6 +1,7 @@
 import { Command } from 'commander';
 import { RegistryReaderV2 } from '../services/registry-reader-v2.service.js';
 import { StateMachineEngine } from '../services/state-machine.service.js';
+import { shouldOutputJSON, printJSON, title, header, info, success, error, warn, log, isQuiet } from '../output/format.js';
 
 export const stateCommand = new Command('state')
   .description('Gère la machine à états du projet AKORIS');
@@ -14,7 +15,7 @@ stateCommand
     const machine = engine.getMachine();
 
     if (!machine) {
-      console.log('⚠️  Machine à états non trouvée (state-machine.json manquant)');
+      warn('Machine à états non trouvée (state-machine.json manquant)');
       return;
     }
 
@@ -23,39 +24,43 @@ stateCommand
     const available = engine.getAvailableTransitions(currentState);
     const history = engine.getHistory();
 
-    console.log('Machine à états AKORIS\n');
-    console.log(`  État courant : ${currentState}`);
-    console.log(`  Version      : ${machine.version}`);
-    console.log(`  Nom          : ${machine.name}\n`);
+    if (shouldOutputJSON()) {
+      printJSON({ currentState, machine, available, history });
+      return;
+    }
+
+    title('Machine à états AKORIS');
+    log(`  État courant : ${currentState}`);
+    log(`  Version      : ${machine.version}`);
+    log(`  Nom          : ${machine.name}`);
 
     if (allStates.length > 0) {
-      console.log('États définis :');
+      header('États définis');
       for (const s of allStates) {
         const marker = s.id === currentState ? '◀' : ' ';
-        console.log(`  ${marker} ${s.id}${marker === '◀' ? ' (courant)' : ''}`);
-        console.log(`     ${s.description}`);
+        log(`  ${marker} ${s.id}${marker === '◀' ? ' (courant)' : ''}`);
+        log(`     ${s.description}`);
       }
-      console.log();
     }
 
     if (available.length > 0) {
-      console.log('Transitions possibles :');
+      header('Transitions possibles');
       for (const t of available) {
-        console.log(`  ${currentState} → ${t.to}`);
-        if (t.description) console.log(`     ${t.description}`);
-        console.log(`     Gates : ${t.gates.length} condition(s) à vérifier`);
-        console.log(`     Autorisation : ${t.authorizedBy}`);
+        log(`  ${currentState} → ${t.to}`);
+        if (t.description) log(`     ${t.description}`);
+        log(`     Gates : ${t.gates.length} condition(s) à vérifier`);
+        log(`     Autorisation : ${t.authorizedBy}`);
       }
     } else {
-      console.log('⚠️  Aucune transition possible depuis l\'état courant');
+      warn('Aucune transition possible depuis l\'état courant');
     }
 
     if (history.length > 0) {
-      console.log('\nHistorique :');
+      header('Historique');
       for (const h of history) {
         const entered = new Date(h.enteredAt).toLocaleString('fr-FR');
         const exited = h.exitedAt ? new Date(h.exitedAt).toLocaleString('fr-FR') : 'en cours';
-        console.log(`  ${h.state} : ${entered} → ${exited}`);
+        log(`  ${h.state} : ${entered} → ${exited}`);
       }
     }
   });
@@ -70,19 +75,23 @@ stateCommand
     const currentState = engine.getCurrentState();
 
     if (history.length === 0) {
-      console.log('ℹ️  Aucun historique. État actuel : ' + currentState);
+      info(`Aucun historique. État actuel : ${currentState}`);
       return;
     }
 
-    console.log('Historique des états\n');
+    if (shouldOutputJSON()) {
+      printJSON({ currentState, history });
+      return;
+    }
+
+    title('Historique des états');
     for (const h of history) {
       const entered = new Date(h.enteredAt).toLocaleString('fr-FR');
       const exited = h.exitedAt ? new Date(h.exitedAt).toLocaleString('fr-FR') : 'en cours';
       const marker = h.state === currentState ? '◀' : ' ';
-      console.log(`  ${marker} ${h.state}`);
-      console.log(`     Entré : ${entered}`);
-      console.log(`     Sorti : ${exited}`);
-      console.log();
+      log(`  ${marker} ${h.state}`);
+      log(`     Entré : ${entered}`);
+      log(`     Sorti : ${exited}`);
     }
   });
 
@@ -95,20 +104,25 @@ stateCommand
     const reader = new RegistryReaderV2();
     const engine = new StateMachineEngine(reader);
 
-    console.log(`Transition ${options.from} → ${options.to}\n`);
-
     const result = engine.transition(options.from, options.to);
 
+    if (shouldOutputJSON()) {
+      printJSON(result);
+      return;
+    }
+
+    log(`Transition ${options.from} → ${options.to}`);
+
     if (result.success) {
-      console.log(`  ✅ ${result.message}`);
+      success(result.message);
       if (result.gates.length > 0) {
-        console.log(`\n  Quality Gates à vérifier :`);
+        header('Quality Gates à vérifier');
         for (const gate of result.gates) {
-          console.log(`    ⏳ ${gate}`);
+          log(`  ⏳ ${gate}`);
         }
       }
     } else {
-      console.log(`  ❌ ${result.message}`);
+      error(result.message);
       process.exitCode = 1;
     }
   });
@@ -122,25 +136,29 @@ stateCommand
     const machine = engine.getMachine();
 
     if (!machine) {
-      console.log('⚠️  Machine à états non trouvée');
+      warn('Machine à états non trouvée');
       return;
     }
 
-    console.log(`Machine : ${machine.name}`);
-    console.log(`Version  : ${machine.version}`);
-    console.log(`Initial  : ${machine.initialState}\n`);
-
-    console.log('États :');
-    for (const s of machine.states) {
-      console.log(`  ${s.id} — ${s.description}`);
+    if (shouldOutputJSON()) {
+      printJSON(machine);
+      return;
     }
 
-    console.log('\nTransitions :');
+    title(`Machine : ${machine.name}`);
+    log(`Version  : ${machine.version}`);
+    log(`Initial  : ${machine.initialState}`);
+
+    header('États');
+    for (const s of machine.states) {
+      log(`  ${s.id} — ${s.description}`);
+    }
+
+    header('Transitions');
     for (const t of machine.transitions) {
-      console.log(`  ${t.from} → ${t.to}`);
-      console.log(`    Gates : ${t.gates.join(', ')}`);
-      console.log(`    Autorisation : ${t.authorizedBy}`);
-      if (t.description) console.log(`    Note : ${t.description}`);
-      console.log();
+      log(`  ${t.from} → ${t.to}`);
+      log(`    Gates : ${t.gates.join(', ')}`);
+      log(`    Autorisation : ${t.authorizedBy}`);
+      if (t.description) log(`    Note : ${t.description}`);
     }
   });
