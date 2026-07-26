@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20, 22]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Build monorepo (includes type checking)
+        run: pnpm build
+
+      - name: Run Core tests with coverage
+        run: pnpm --filter @akoris/core exec vitest run --coverage
+
+      - name: Upload coverage (only for Node 20)
+        if: matrix.node-version == 20
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./packages/core/coverage/lcov.info
+          flags: core
