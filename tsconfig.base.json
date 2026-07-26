@@ -7,15 +7,23 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
+    "composite": false,
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "outDir": "dist",
-    "rootDir": "src",
-    "resolveJsonModule": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true
-  }
+    "noFallthroughCasesInSwitch": true,
+    "baseUrl": ".",
+    "paths": {
+      "@akoris/contracts": ["./packages/contracts/src"],
+      "@akoris/contracts/*": ["./packages/contracts/src/*"],
+      "@akoris/sdk": ["./packages/sdk/src"],
+      "@akoris/sdk/*": ["./packages/sdk/src/*"],
+      "@akoris/core": ["./packages/core/src"],
+      "@akoris/shared": ["./packages/shared/src"]
+    }
+  },
+  "exclude": ["node_modules", "dist"]
 }

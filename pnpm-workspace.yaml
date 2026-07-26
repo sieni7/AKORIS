@@ -1,6 +1,7 @@
 packages:
+  - "packages/contracts"
+  - "packages/core"
+  - "packages/sdk"
   - "apps/*"
-  - "packages/*"
-  - "packages/adapters/*"
-  - "packages/connectors/*"
-  - "playbooks/*"
+allowBuilds:
+  esbuild: true
