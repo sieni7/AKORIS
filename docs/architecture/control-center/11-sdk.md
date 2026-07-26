@@ -1,304 +1,396 @@
 ---
-title: "AKORIS Control Center — SDK Client"
+title: "AKORIS Control Center — SDK Specification"
 version: "1.0"
 status: "Draft"
 owner: "AKORIS Core Team"
 last-updated: "2026-07-26"
 related:
-  - "03-core.md"
+  - "04-domain-model.md"
   - "05-api-contract.md"
-  - "06-events.md"
   - "07-websocket.md"
-  - "ADR-004-fastify.md"
 ---
-
-# 11 — SDK Client
+# 11 — SDK Specification
 
 ## 1. Objectif
 
-Ce document définit le **SDK client TypeScript** pour AKORIS Control Center. Le SDK est la manière privilégiée pour les applications (Dashboard, scripts, intégrations) de consommer l'API Control Center.
+Ce document définit le **SDK TypeScript** (`packages/sdk`) qui permet aux applications (Dashboard, CLI, extensions) de communiquer avec l'API AKORIS de manière **type-safe** et **abstraite**. Le SDK est la **seule interface** que le Dashboard doit utiliser pour interagir avec le Core.
+
+Le SDK expose :
+- Un client HTTP pour les appels REST.
+- Un client WebSocket pour le temps réel.
+- Des hooks React pour simplifier l'intégration dans le Dashboard.
+- Une gestion centralisée des erreurs.
 
 ---
 
-## 2. Principes
+## 2. Installation
 
-- **0 dépendance** : pas de framework, utilise `fetch` natif (Node 18+ / browser).
-- **Type-safe** : tous les types sont importés de `@akoris/shared`.
-- **Minimal** : chaque méthode correspond à un endpoint API.
-- **WebSocket intégré** : gestion automatique de la reconnexion.
-- **Testable** : le client HTTP peut être mocké.
-
----
-
-## 3. Architecture du SDK
-
-```
-packages/sdk/
-├── src/
-│   ├── index.ts              # Point d'entrée
-│   ├── client.ts             # Client HTTP principal
-│   ├── types.ts              # Réexport depuis @akoris/shared
-│   ├── errors.ts             # Erreurs SDK typées
-│   ├── websocket.ts          # Client WebSocket avec reconnexion
-│   ├── hooks/                # Hooks React (optionnel)
-│   │   ├── useState.ts
-│   │   ├── useLogs.ts
-│   │   ├── useSearch.ts
-│   │   └── usePrompts.ts
-│   └── utils.ts              # Utilitaires
+```bash
+pnpm add @akoris/sdk
 ```
 
 ---
 
-## 4. Client HTTP
-
-### 4.1. Initialisation
+## 3. Client HTTP (REST)
 
 ```typescript
-import { createClient } from '@akoris/sdk';
+// packages/sdk/src/client.ts
 
-const client = createClient({
-  baseUrl: 'http://localhost:3001',
-  timeout: 5000,       // Optionnel, défaut: 10000
-});
-```
+import { z } from 'zod';
+import { AgentSchema, StateSchema, LogEntrySchema } from '@akoris/shared';
 
-### 4.2. Méthodes disponibles
+export class AKORISClient {
+  private baseUrl: string;
+  private headers: Record<string, string>;
 
-```typescript
-interface AkorisClient {
-  // Health
-  health(): Promise<HealthResponse>;
+  constructor(config: { baseUrl: string; token?: string }) {
+    this.baseUrl = config.baseUrl;
+    this.headers = {
+      'Content-Type': 'application/json',
+      ...(config.token ? { Authorization: `Bearer ${config.token}` } : {}),
+    };
+  }
 
-  // State
-  getState(): Promise<StateResponse>;
-  getHistory(options?: PaginationOptions): Promise<HistoryResponse>;
-  transition(from: string, to: string, actor?: string): Promise<TransitionResponse>;
+  // ===== Health =====
+  async getHealth(): Promise<HealthResponse> {
+    return this.request<HealthResponse>('/health');
+  }
 
-  // Registry
-  listAgents(filter?: AgentFilter): Promise<AgentListResponse>;
-  getAgent(id: string): Promise<AgentResponse>;
-  listRules(filter?: RuleFilter): Promise<RuleListResponse>;
-  listCapabilities(filter?: CapabilityFilter): Promise<CapabilityListResponse>;
-  listQualityGates(): Promise<QualityGateListResponse>;
+  // ===== State =====
+  async getStateMachine(): Promise<StateMachine> {
+    return this.request<StateMachine>('/state/machine');
+  }
 
-  // Search
-  search(query: string, options?: SearchOptions): Promise<SearchResponse>;
+  async getCurrentState(): Promise<State> {
+    return this.request<State>('/state/current');
+  }
 
-  // Logs
-  getLogs(filter?: LogFilter): Promise<LogResponse>;
+  async getStateHistory(): Promise<TransitionHistory[]> {
+    return this.request<TransitionHistory[]>('/state/history');
+  }
 
-  // Prompts
-  buildPrompt(input: PromptInput): Promise<PromptBuildResponse>;
-  testPrompt(prompt: ParsedPrompt, provider: LLMProvider): Promise<PromptTestResponse>;
-  savePrompt(data: SavePromptInput): Promise<SavePromptResponse>;
-  listPrompts(): Promise<PromptListResponse>;
+  async transition(from: string, to: string, comment?: string): Promise<TransitionResult> {
+    return this.request<TransitionResult>('/state/transition', {
+      method: 'POST',
+      body: JSON.stringify({ from, to, comment }),
+    });
+  }
 
-  // Secrets
-  listSecrets(): Promise<SecretListResponse>;
-  setSecret(key: string, value: string): Promise<SetSecretResponse>;
-  getSecret(key: string): Promise<GetSecretResponse>;
-  deleteSecret(key: string): Promise<DeleteSecretResponse>;
+  // ===== Registry =====
+  async getRegistryIndex(): Promise<RegistryIndex> {
+    return this.request<RegistryIndex>('/registry/index');
+  }
 
-  // Aliases
-  listAliases(): Promise<AliasListResponse>;
-  setAlias(name: string, command: string, description?: string): Promise<SetAliasResponse>;
-  deleteAlias(name: string): Promise<DeleteAliasResponse>;
+  async listAgents(filters?: { domain?: string; status?: string }): Promise<Agent[]> {
+    const params = new URLSearchParams(filters as Record<string, string>);
+    return this.request<Agent[]>(`/registry/agents?${params}`);
+  }
 
-  // Doctor
-  diagnose(): Promise<DiagnosisResponse>;
-  fix(checks?: string[]): Promise<FixResponse>;
+  async getAgent(id: string): Promise<Agent> {
+    return this.request<Agent>(`/registry/agents/${id}`);
+  }
 
-  // WebSocket
-  connectEvents(): WebSocketClient;
-  connectLogs(): WebSocketClient;
+  // ===== Search =====
+  async search(query: string, options?: { type?: string; limit?: number }): Promise<SearchResult[]> {
+    const params = new URLSearchParams({ q: query, ...options });
+    return this.request<SearchResult[]>(`/search?${params}`);
+  }
+
+  // ===== Prompts =====
+  async buildPrompt(input: PromptBuildInput): Promise<Prompt> {
+    return this.request<Prompt>('/prompts/build', {
+      method: 'POST',
+      body: JSON.stringify(input),
+    });
+  }
+
+  async executePrompt(prompt: Prompt): Promise<PromptExecution> {
+    return this.request<PromptExecution>('/prompts/execute', {
+      method: 'POST',
+      body: JSON.stringify(prompt),
+    });
+  }
+
+  async listPrompts(): Promise<Prompt[]> {
+    return this.request<Prompt[]>('/prompts/library');
+  }
+
+  async savePrompt(prompt: Prompt): Promise<void> {
+    await this.request('/prompts/library', {
+      method: 'POST',
+      body: JSON.stringify(prompt),
+    });
+  }
+
+  // ===== Secrets =====
+  async listSecrets(): Promise<string[]> {
+    return this.request<string[]>('/secrets');
+  }
+
+  async setSecret(key: string, value: string, provider: string): Promise<void> {
+    await this.request('/secrets', {
+      method: 'POST',
+      body: JSON.stringify({ key, value, provider }),
+    });
+  }
+
+  async getSecret(key: string): Promise<string> {
+    return this.request<string>(`/secrets/${key}`);
+  }
+
+  // ===== Logs =====
+  async getLogs(filters?: { lines?: number; agent?: string; since?: string }): Promise<LogEntry[]> {
+    const params = new URLSearchParams(filters as Record<string, string>);
+    return this.request<LogEntry[]>(`/logs?${params}`);
+  }
+
+  // ===== Doctor =====
+  async diagnose(): Promise<DiagnosisReport> {
+    return this.request<DiagnosisReport>('/doctor');
+  }
+
+  async fix(): Promise<FixReport> {
+    return this.request<FixReport>('/doctor/fix', { method: 'POST' });
+  }
+
+  // ===== DevOps =====
+  async listServices(): Promise<ConnectedService[]> {
+    return this.request<ConnectedService[]>('/devops/services');
+  }
+
+  async deploy(environment: string, version: string): Promise<Deployment> {
+    return this.request<Deployment>('/devops/deploy', {
+      method: 'POST',
+      body: JSON.stringify({ environment, version }),
+    });
+  }
+
+  // ===== Notifications =====
+  async listNotifications(): Promise<Notification[]> {
+    return this.request<Notification[]>('/notifications');
+  }
+
+  async markNotificationAsRead(id: string): Promise<void> {
+    await this.request(`/notifications/${id}/read`, { method: 'PUT' });
+  }
+
+  // ===== Méthode privée =====
+  private async request<T>(path: string, options?: RequestInit): Promise<T> {
+    const response = await fetch(`${this.baseUrl}${path}`, {
+      ...options,
+      headers: this.headers,
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new SDKError(error.errors?.[0] || { code: 'UNKNOWN', message: 'Erreur inconnue' });
+    }
+
+    const result = await response.json();
+    return result.data;
+  }
 }
-```
 
-### 4.3. Exemple d'utilisation
+export class SDKError extends Error {
+  public code: string;
+  public suggestion?: string;
 
-```typescript
-import { createClient } from '@akoris/sdk';
-
-const client = createClient({ baseUrl: 'http://localhost:3001' });
-
-// Récupérer l'état
-const state = await client.getState();
-console.log(`Current state: ${state.data.current}`);
-
-// Exécuter une transition
-const result = await client.transition('Draft', 'Planned');
-if (result.success) {
-  console.log(`Transitioned: ${result.data.from} → ${result.data.to}`);
-}
-
-// Rechercher
-const search = await client.search('transition Draft');
-console.log(`${search.data.total} results`);
-
-// Lire les logs
-const logs = await client.getLogs({ lines: 10 });
-logs.data.entries.forEach(entry => {
-  console.log(`[${entry.level}] ${entry.action}: ${entry.details}`);
-});
-```
-
----
-
-## 5. Client WebSocket
-
-```typescript
-import { createWebSocketClient } from '@akoris/sdk';
-
-const events = createWebSocketClient('ws://localhost:3001/ws/v1/events');
-
-// Souscrire à des canaux
-events.subscribe(['state:*', 'prompt:*']);
-
-// Écouter les événements
-events.on('state:changed', (event) => {
-  console.log(`State changed: ${event.payload.from} → ${event.payload.to}`);
-});
-
-events.on('prompt:executed', (event) => {
-  console.log(`LLM call completed in ${event.metadata?.duration}ms`);
-});
-
-// Démarrer la connexion (avec reconnexion automatique)
-events.connect();
-
-// Arrêter
-events.disconnect();
-```
-
-### Reconnexion automatique
-
-```typescript
-const logs = createWebSocketClient('ws://localhost:3001/ws/v1/logs', {
-  reconnect: true,
-  maxRetries: 10,
-  retryDelay: 1000,       // Délai initial (ms)
-  maxRetryDelay: 30000,    // Délai maximum (backoff exponentiel)
-});
-
-logs.on('open', () => console.log('Connected'));
-logs.on('close', (code) => console.log(`Disconnected: ${code}`));
-logs.on('error', (err) => console.error('WS Error:', err));
-logs.connect();
-```
-
----
-
-## 6. Hooks React (optionnel)
-
-Le SDK exporte des hooks React pour une intégration directe dans le Dashboard.
-
-### useState
-
-```typescript
-import { useState } from '@akoris/sdk/hooks';
-
-function StatePanel() {
-  const { data, loading, error } = useState();
-
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
-
-  return <div>Current state: {data?.current}</div>;
-}
-```
-
-### useLogs (avec WebSocket)
-
-```typescript
-import { useLogs } from '@akoris/sdk/hooks';
-
-function LogsPanel() {
-  const { entries, isConnected } = useLogs({
-    filter: { agents: ['CORE-01'] },
-    lines: 50,
-  });
-
-  return (
-    <div>
-      <div>Status: {isConnected ? '🟢' : '🔴'}</div>
-      {entries.map((entry, i) => (
-        <div key={i}>{entry.timestamp} - {entry.details}</div>
-      ))}
-    </div>
-  );
-}
-```
-
-### useSearch
-
-```typescript
-import { useSearch } from '@akoris/sdk/hooks';
-
-function SearchBar() {
-  const { query, setQuery, results, loading } = useSearch();
-
-  return (
-    <div>
-      <input value={query} onChange={(e) => setQuery(e.target.value)} />
-      {loading && <div>Searching...</div>}
-      {results.map(r => (
-        <div key={r.id}>{r.title} ({r.score})</div>
-      ))}
-    </div>
-  );
-}
-```
-
----
-
-## 7. Gestion des erreurs
-
-```typescript
-import { ApiError, ConnectionError } from '@akoris/sdk';
-
-try {
-  await client.transition('Draft', 'Invalid');
-} catch (err) {
-  if (err instanceof ApiError) {
-    console.error(`API Error: ${err.code} - ${err.message}`);
-    console.error(`Suggestion: ${err.suggestion}`);
-  } else if (err instanceof ConnectionError) {
-    console.error('Connection failed, retrying...');
+  constructor(error: { code: string; message: string; suggestion?: string }) {
+    super(error.message);
+    this.name = 'SDKError';
+    this.code = error.code;
+    this.suggestion = error.suggestion;
   }
 }
 ```
 
 ---
 
-## 8. Schémas partagés
-
-Tous les types de requête et réponse sont importés de `@akoris/shared` :
+## 4. WebSocket Client
 
 ```typescript
-import type {
-  Agent, Rule, Capability, Deliverable, QualityGate,
-  ProjectState, TransitionRecord, TransitionResult,
-  LogEntry, Prompt, ParsedPrompt, LLMResponse, LLMProvider,
-  Alias, Secret, SearchResult, SearchOptions,
-  DiagnosisReport, FixReport,
-  AkorisEvent,
-} from '@akoris/shared';
+// packages/sdk/src/websocket.ts
+
+import { EventEmitter } from 'events';
+
+export class WSClient extends EventEmitter {
+  private ws: WebSocket | null = null;
+  private reconnectAttempts = 0;
+  private maxReconnectAttempts = 5;
+  private reconnectDelay = 2000;
+
+  constructor(private url: string) {
+    super();
+  }
+
+  connect(channels: string[], filters?: Record<string, unknown>): void {
+    this.ws = new WebSocket(this.url);
+    this.ws.onopen = () => {
+      this.send({
+        type: 'subscribe',
+        channels,
+        filters: filters || {},
+      });
+      this.reconnectAttempts = 0;
+    };
+
+    this.ws.onmessage = (event) => {
+      try {
+        const message = JSON.parse(event.data);
+        this.emit('message', message);
+        if (message.type === 'log') {
+          this.emit('log', message.payload);
+        } else if (message.type === 'event') {
+          this.emit('event', message.payload);
+        } else if (message.type === 'notification') {
+          this.emit('notification', message.payload);
+        }
+      } catch (error) {
+        this.emit('error', error);
+      }
+    };
+
+    this.ws.onclose = () => {
+      this.emit('disconnected');
+      this.reconnect();
+    };
+
+    this.ws.onerror = (error) => {
+      this.emit('error', error);
+    };
+  }
+
+  private reconnect(): void {
+    if (this.reconnectAttempts >= this.maxReconnectAttempts) {
+      this.emit('max_reconnect_attempts');
+      return;
+    }
+
+    this.reconnectAttempts++;
+    const delay = Math.min(this.reconnectDelay * 2 ** this.reconnectAttempts, 30000);
+    setTimeout(() => {
+      this.connect([], {}); // reconnect avec les mêmes canaux
+    }, delay);
+  }
+
+  private send(data: unknown): void {
+    if (this.ws?.readyState === WebSocket.OPEN) {
+      this.ws.send(JSON.stringify(data));
+    }
+  }
+
+  disconnect(): void {
+    if (this.ws) {
+      this.ws.close();
+      this.ws = null;
+    }
+  }
+}
 ```
 
 ---
 
-## 9. Cohérence avec le Blueprint
+## 5. Hooks React
 
-- Le SDK encapsule l'API REST (`05-api-contract.md`) et WebSocket (`07-websocket.md`).
-- Les types sont partagés via `@akoris/shared` (DRY).
-- Les hooks React s'intègrent directement au Dashboard (`02-technical-architecture.md`).
-- La gestion d'erreur est cohérente avec le modèle d'erreur du Core (`03-core.md`).
+```typescript
+// packages/sdk/src/hooks.ts
+
+import { useEffect, useState } from 'react';
+import { AKORISClient, WSClient } from './index';
+
+export function useHealth(client: AKORISClient) {
+  const [health, setHealth] = useState<HealthResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    client.getHealth()
+      .then(setHealth)
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, [client]);
+
+  return { health, loading };
+}
+
+export function useLogs(client: AKORISClient, ws: WSClient, filters?: { agent?: string }) {
+  const [logs, setLogs] = useState<LogEntry[]>([]);
+
+  useEffect(() => {
+    // Charger les logs statiques
+    client.getLogs({ lines: 20, ...filters })
+      .then(setLogs)
+      .catch(console.error);
+
+    // Écouter les logs en temps réel
+    const onLog = (entry: LogEntry) => {
+      setLogs((prev) => [entry, ...prev].slice(0, 100));
+    };
+    ws.on('log', onLog);
+
+    return () => {
+      ws.off('log', onLog);
+    };
+  }, [client, ws, filters]);
+
+  return { logs };
+}
+```
 
 ---
 
-## Statut
+## 6. Usage dans le Dashboard
 
-- `11-sdk.md` : 🔍 **Draft**
+```typescript
+// apps/dashboard/src/lib/sdk.ts
 
-**Prochaine action** : Validez ce document pour finaliser la Phase B.
+import { AKORISClient, WSClient } from '@akoris/sdk';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1';
+export const client = new AKORISClient({ baseUrl: API_URL });
+export const ws = new WSClient(API_URL.replace('/api/v1', '/ws'));
+
+// Connexion WebSocket
+ws.connect(['logs', 'events', 'notifications']);
+```
+
+```typescript
+// apps/dashboard/src/routes/executive/index.tsx
+
+import { useHealth } from '@akoris/sdk/hooks';
+import { client } from '../../lib/sdk';
+
+export default function ExecutiveDashboard() {
+  const { health, loading } = useHealth(client);
+
+  if (loading) return <div>Chargement...</div>;
+
+  return (
+    <div>
+      <h1>Health Score: {health?.healthScore}</h1>
+      <p>Status: {health?.status}</p>
+      <p>Tendance: {health?.trend}</p>
+    </div>
+  );
+}
+```
+
+---
+
+## 7. Tests du SDK
+
+Le SDK est testé avec :
+- **Vitest** (unitaires, mocks de `fetch` et `WebSocket`).
+- **Playwright** (intégration avec l'API réelle).
+
+**Règle** : Toute modification du SDK nécessite une mise à jour des tests.
+
+---
+
+## 8. Prochaine étape
+
+Avec la Phase B (Contrats) maintenant complète, la prochaine étape est la **Phase C** (Implémentation) :
+
+- `08-security.md`
+- `09-ui-system.md`
+- `10-state-management.md`
+- `13-error-model.md`

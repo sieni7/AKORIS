@@ -1,5 +1,5 @@
 ---
-title: "AKORIS Control Center — WebSocket Protocol"
+title: "AKORIS Control Center — WebSocket Contract"
 version: "1.0"
 status: "Draft"
 owner: "AKORIS Core Team"
@@ -8,207 +8,179 @@ related:
   - "05-api-contract.md"
   - "06-events.md"
   - "11-sdk.md"
-  - "ADR-004-fastify.md"
 ---
-
-# 07 — WebSocket Protocol
+# 07 — WebSocket Contract
 
 ## 1. Objectif
 
-Ce document définit le **protocole WebSocket** d'AKORIS Control Center. Les WebSockets sont utilisés pour la diffusion en temps réel d'événements et de logs vers le Dashboard, le CLI et le SDK.
+Ce document définit le contrat WebSocket exposé par `apps/api` pour permettre une communication **temps réel** entre le Core Engine et le Dashboard. Les WebSockets sont utilisés pour les cas où le polling serait inefficace ou trop lent (logs, événements, notifications).
 
 ---
 
-## 2. Principes
+## 2. Connexion
 
-- **Uniquement serveur → client** pour les événements (pas de RPC via WebSocket).
-- **Connexion persistante** avec reconnexion automatique côté client.
-- **Canaux logiques** pour filtrer les événements côté client.
-- **Format JSON** pour tous les messages.
-- **Basé sur `@fastify/websocket`** (intégré à Fastify).
+- **URL** : `ws://localhost:3000/ws`
+- **Protocole** : `ws` (WebSocket standard)
+- **Heartbeat** : ping/pong (toutes les 30 secondes).
 
----
-
-## 3. Connexion
-
-### Endpoints WebSocket
-
-| Endpoint | Description |
-|----------|-------------|
-| `WS /ws/v1/events` | Événements système (state, registry, prompts, etc.) |
-| `WS /ws/v1/logs` | Streaming des logs en temps réel |
-
-### Exemple de connexion
-
-```javascript
-// SDK
-const ws = new WebSocket('ws://localhost:3001/ws/v1/events');
-ws.onmessage = (event) => {
-  const message = JSON.parse(event.data);
-  console.log(message);
-};
-```
-
----
-
-## 4. Messages
-
-### 4.1. Format des messages serveur → client
-
-```json
-{
-  "type": "event",
-  "channel": "state:changed",
-  "data": { ... },
-  "timestamp": "2026-07-26T12:00:00Z"
-}
-```
-
-| Champ | Type | Description |
-|-------|------|-------------|
-| `type` | string | Toujours `"event"` pour un événement |
-| `channel` | string | Type d'événement (cf. `06-events.md`) |
-| `data` | object | Payload de l'événement |
-| `timestamp` | string | ISO 8601 |
-
-### 4.2. Contrôle de flux
-
-Le serveur peut envoyer des messages de contrôle :
-
-```json
-{
-  "type": "heartbeat",
-  "timestamp": "2026-07-26T12:00:00Z"
-}
-```
-
-```json
-{
-  "type": "error",
-  "code": "RATE_LIMITED",
-  "message": "Too many subscriptions"
-}
-```
-
----
-
-## 5. Souscription aux canaux
-
-Les clients peuvent souscrire à des canaux spécifiques pour filtrer les événements.
-
-### Souscrire
-
+**Format du message de connexion :**
 ```json
 {
   "type": "subscribe",
-  "channels": ["state:*", "log:*"]
+  "channels": ["logs", "events", "notifications"],
+  "filters": {
+    "agent": "CORE-01",
+    "level": "info"
+  }
 }
 ```
 
-### Désouscrire
-
+**Réponse de confirmation :**
 ```json
 {
-  "type": "unsubscribe",
-  "channels": ["log:entry"]
+  "type": "subscribed",
+  "channels": ["logs", "notifications"],
+  "status": "ok"
 }
 ```
-
-### Liste des canaux disponibles
-
-| Canal | Événements | Endpoint WS |
-|-------|------------|-------------|
-| `state:*` | Tous les événements d'état | `/ws/v1/events` |
-| `state:changed` | Transition réussie | `/ws/v1/events` |
-| `state:transition-denied` | Transition refusée | `/ws/v1/events` |
-| `state:gate-passed` | QG validé | `/ws/v1/events` |
-| `state:gate-failed` | QG échoué | `/ws/v1/events` |
-| `registry:*` | Tous les événements Registry | `/ws/v1/events` |
-| `registry:reloaded` | Registry rechargé | `/ws/v1/events` |
-| `search:*` | Tous les événements Search | `/ws/v1/events` |
-| `search:completed` | Recherche terminée | `/ws/v1/events` |
-| `prompt:*` | Tous les événements Prompt | `/ws/v1/events` |
-| `prompt:executed` | Prompt exécuté | `/ws/v1/events` |
-| `doctor:*` | Tous les événements Doctor | `/ws/v1/events` |
-| `secret:*` | Tous les événements Secret | `/ws/v1/events` |
-| `alias:*` | Tous les événements Alias | `/ws/v1/events` |
-| `system:*` | Tous les événements système | `/ws/v1/events` |
-| `log:*` | Tous les logs | `/ws/v1/logs` |
-| `log:entry` | Nouvelle ligne de log | `/ws/v1/logs` |
-
-**Note :** `channel` supporte les wildcards (`*`). `state:*` souscrit à tous les événements commençant par `state:`.
 
 ---
 
-## 6. Reconnexion
+## 3. Canaux disponibles
 
-Les clients doivent implémenter une reconnexion automatique :
+| Canal | Description | Payload |
+|-------|-------------|---------|
+| `/ws/logs` | Streaming des logs en temps réel | LogEntry |
+| `/ws/events` | Événements métier (StateChanged, GatePassed, etc.) | Event |
+| `/ws/notifications` | Notifications temps réel | Notification |
+| `/ws/deploy` | Statut des déploiements | DeploymentStatus |
+| `/ws/quality` | Résultats des Quality Gates | GateResult |
 
-```javascript
-// SDK - reconnect strategy
-const RECONNECT_DELAYS = [1000, 2000, 5000, 10000, 30000];
+---
 
-function connectWithReconnect() {
-  const ws = new WebSocket('ws://localhost:3001/ws/v1/events');
+## 4. Format des messages
 
-  ws.onclose = (event) => {
-    if (!event.wasClean) {
-      const delay = RECONNECT_DELAYS[Math.min(attempt, RECONNECT_DELAYS.length - 1)];
-      setTimeout(connectWithReconnect, delay);
-      attempt++;
-    }
+Tous les messages WebSocket suivent une structure commune :
+
+```typescript
+interface WSMessage {
+  type: string;             // "log" | "event" | "notification" | "deploy_status" | "gate_result"
+  channel: string;          // "logs" | "events" | "notifications" | "deploy" | "quality"
+  timestamp: string;        // ISO 8601 UTC
+  payload: Record<string, unknown>;
+  metadata?: {
+    agentId?: string;
+    sessionId?: string;
+    version?: string;
   };
 }
 ```
 
 ---
 
-## 7. Logs streaming
+## 5. Détail par canal
 
-Le endpoint `WS /ws/v1/logs` diffuse chaque nouvelle entrée de log en temps réel :
+### 5.1. `/ws/logs`
 
+- **Producteur** : `LogReader.watchLogs()`
+- **Filtres** : `agent` (partiel), `since` (date), `lines` (nombre, défaut: 1).
+- **Message type** : `"log"`
+- **Payload** :
 ```json
 {
-  "type": "event",
-  "channel": "log:entry",
-  "data": {
-    "timestamp": "2026-07-26T12:00:01Z",
-    "agentId": "CORE-01",
-    "action": "transition",
-    "details": "Draft → Planned",
-    "level": "info",
-    "metadata": {
-      "from": "Draft",
-      "to": "Planned"
-    }
-  },
-  "timestamp": "2026-07-26T12:00:01Z"
+  "timestamp": "2026-07-26T14:30:00Z",
+  "agentId": "CORE-01",
+  "action": "transition",
+  "details": "Draft → Planned"
+}
+```
+
+**Exemple de souscription avec filtres :**
+```json
+{
+  "type": "subscribe",
+  "channels": ["logs"],
+  "filters": {
+    "agent": "CORE",
+    "since": "2026-07-26T00:00:00Z"
+  }
+}
+```
+
+### 5.2. `/ws/events`
+
+- **Producteur** : Core Engine (après chaque événement métier).
+- **Message type** : `"event"`
+- **Payload** : Un événement complet (voir `06-events.md`).
+
+### 5.3. `/ws/notifications`
+
+- **Producteur** : `NotificationService`.
+- **Message type** : `"notification"`
+- **Payload** :
+```json
+{
+  "id": "notif_123",
+  "type": "success",
+  "title": "Transition réussie",
+  "message": "Le projet est passé en PLANNED.",
+  "link": "/project",
+  "read": false,
+  "timestamp": "2026-07-26T14:30:00Z"
+}
+```
+
+### 5.4. `/ws/deploy`
+
+- **Producteur** : `DeployEngine`.
+- **Message type** : `"deploy_status"`
+- **Payload** :
+```json
+{
+  "deploymentId": "dep_123",
+  "environment": "staging",
+  "version": "1.3.0",
+  "status": "running",
+  "progress": 45,
+  "logs": ["Compilation...", "Tests passent..."],
+  "timestamp": "2026-07-26T14:30:00Z"
+}
+```
+
+### 5.5. `/ws/quality`
+
+- **Producteur** : `QualityEngine`.
+- **Message type** : `"gate_result"`
+- **Payload** :
+```json
+{
+  "gateId": "QG-004",
+  "status": "PASS",
+  "score": 0.95,
+  "details": "Couverture des tests 98%",
+  "timestamp": "2026-07-26T14:30:00Z"
 }
 ```
 
 ---
 
-## 8. Gestion des erreurs
+## 6. Gestion des erreurs
 
-| Situation | Comportement |
-|-----------|--------------|
-| Connexion perdue | Le client tente la reconnexion (backoff exponentiel) |
-| Canal invalide | Le serveur ignore la souscription et envoie une erreur |
-| Trop de souscriptions | Le serveur rejette la souscription (rate limit) |
-| Payload invalide | Le serveur ferme la connexion avec code 1003 |
-
----
-
-## 9. Cohérence avec le Blueprint
-
-- WebSocket utilisé uniquement pour le temps réel (logs, événements), pas pour les RPC (conforme à `05-api-contract.md`).
-- Les canaux correspondent aux types d'événements de `06-events.md`.
-- Le SDK encapsule la reconnexion (`11-sdk.md`).
+| Code | Message | Description |
+|------|---------|-------------|
+| `WS_001` | `Unknown channel` | Le canal demandé n'existe pas. |
+| `WS_002` | `Invalid filters` | Les filtres fournis sont invalides. |
+| `WS_003` | `Rate limited` | Trop de messages envoyés. |
+| `WS_004` | `Connection closed` | Fermeture normale. |
 
 ---
 
-## Statut
+## 7. Reconnexion
 
-- `07-websocket.md` : 🔍 **Draft**
+Le SDK (et le Dashboard) doivent implémenter une **reconnexion automatique** avec backoff exponentiel (2s, 4s, 8s, 16s, max 30s). Après la reconnexion, une nouvelle souscription est envoyée.
 
-**Prochaine action** : Validez ce document pour passer au SDK.
+---
+
+## 8. Prochaine étape
+
+La spécification WebSocket permet maintenant de concevoir le SDK (`11-sdk.md`) pour consommer ces canaux de manière transparente dans le Dashboard.

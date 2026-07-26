@@ -1,219 +1,290 @@
 ---
-title: "AKORIS Control Center — Event System"
+title: "AKORIS Control Center — Events"
 version: "1.0"
 status: "Draft"
 owner: "AKORIS Core Team"
 last-updated: "2026-07-26"
 related:
-  - "03-core.md"
+  - "04-domain-model.md"
   - "05-api-contract.md"
   - "07-websocket.md"
-  - "11-sdk.md"
 ---
-
-# 06 — Event System
+# 06 — Events
 
 ## 1. Objectif
 
-Ce document définit le **système d'événements** d'AKORIS Control Center. Les événements sont le mécanisme central de communication entre le Core, l'API et le Dashboard. Ils permettent la mise à jour temps réel du Dashboard et la traçabilité de toutes les actions.
+Ce document catalogue l'ensemble des **événements métier** émis par le Core Engine et consommés par les interfaces (Dashboard, CLI, etc.). Les événements sont utilisés pour :
+
+- Mettre à jour l'interface en temps réel (Dashboard).
+- Enrichir la Timeline.
+- Générer des Notifications.
+- Déclencher des actions (Webhooks, automations).
 
 ---
 
-## 2. Principes
-
-- **Event-driven architecture** : toutes les actions importantes produisent un événement.
-- **Fire-and-forget** : le Core émet un événement sans attendre de réponse.
-- **Typé** : chaque événement a un type, un schéma et un payload définis.
-- **Traçable** : chaque événement a un timestamp et un `eventId` unique.
-- **Persistant** : les événements sont écrits dans les logs pour relecture différée.
-
----
-
-## 3. Format d'événement
+## 2. Structure standard d'un événement
 
 ```typescript
-interface AkorisEvent {
-  eventId: string;               // UUID v4
-  type: string;                  // Namespace:action (e.g. "state:changed")
-  timestamp: string;             // ISO 8601
-  source: string;                // "core" | "api" | "cli" | "dashboard"
-  actor?: string;                // Identifiant de l'acteur humain
+interface Event {
+  id: string;               // UUID
+  type: EventType;
+  source: string;           // Agent ID ou service (ex: "state-machine")
+  timestamp: string;        // ISO 8601 UTC
   payload: Record<string, unknown>;
-  metadata?: {
-    correlationId?: string;      // Pour chaîner des événements
-    duration?: number;           // Durée de l'opération (ms)
-    version?: string;            // Version du système
-  };
+  version: string;          // SemVer
 }
 ```
 
 ---
 
-## 4. Types d'événements
+## 3. Taxonomie des événements
 
-### 4.1. State events
-
-| Type | Description | Payload |
-|------|-------------|---------|
-| `state:changed` | Transition exécutée | `{ from, to, timestamp, gatesPassed, gatesFailed? }` |
-| `state:transition-denied` | Transition refusée | `{ from, to, reason, gatesFailed }` |
-| `state:gate-passed` | Quality Gate validé | `{ gateId, transition }` |
-| `state:gate-failed` | Quality Gate échoué | `{ gateId, transition, reason }` |
-| `state:repaired` | État réparé par doctor | `{ previous, current, repairs }` |
-
-### 4.2. Registry events
-
-| Type | Description | Payload |
-|------|-------------|---------|
-| `registry:reloaded` | Registry rechargé | `{ agents, rules, capabilities, timestamp }` |
-| `registry:agent-updated` | Agent modifié | `{ agentId, changes }` |
-| `registry:validation-failed` | Échec de validation du Registry | `{ errors }` |
-
-### 4.3. Search events
-
-| Type | Description | Payload |
-|------|-------------|---------|
-| `search:completed` | Recherche terminée | `{ query, total, duration }` |
-| `search:index-built` | Index reconstruit | `{ sources, duration }` |
-
-### 4.4. Prompt events
-
-| Type | Description | Payload |
-|------|-------------|---------|
-| `prompt:built` | Prompt construit | `{ agentId, promptId?, duration }` |
-| `prompt:executed` | Prompt exécuté sur LLM | `{ agentId, provider, model, duration, tokenUsage }` |
-| `prompt:saved` | Prompt sauvegardé | `{ promptId, name, agentId }` |
-| `prompt:deleted` | Prompt supprimé | `{ promptId }` |
-
-### 4.5. Log events
-
-| Type | Description | Payload |
-|------|-------------|---------|
-| `log:entry` | Nouvelle entrée de log | `{ agentId, action, details, level }` |
-
-### 4.6. Doctor events
-
-| Type | Description | Payload |
-|------|-------------|---------|
-| `doctor:diagnosis-completed` | Diagnostic terminé | `{ status, summary }` |
-| `doctor:fix-completed` | Réparation terminée | `{ fixed, failed, fixes }` |
-
-### 4.7. Secret events
-
-| Type | Description | Payload |
-|------|-------------|---------|
-| `secret:set` | Secret créé/mis à jour | `{ key }` |
-| `secret:deleted` | Secret supprimé | `{ key }` |
-
-### 4.8. Alias events
-
-| Type | Description | Payload |
-|------|-------------|---------|
-| `alias:set` | Alias créé/mis à jour | `{ name, command }` |
-| `alias:deleted` | Alias supprimé | `{ name }` |
-
-### 4.9. System events
-
-| Type | Description | Payload |
-|------|-------------|---------|
-| `system:startup` | API démarrée | `{ version, uptime }` |
-| `system:shutdown` | API arrêtée | `{ uptime }` |
-| `system:error` | Erreur système | `{ code, message }` |
+```
+Events
+├── State
+│   ├── StateChanged
+│   └── TransitionDenied
+├── Registry
+│   ├── RegistryReloaded
+│   └── AgentUpdated
+├── Quality
+│   ├── GatePassed
+│   └── GateFailed
+├── AI Studio
+│   ├── PromptExecuted
+│   └── PromptSaved
+├── DevOps
+│   ├── DeploymentStarted
+│   ├── DeploymentFinished
+│   └── SecretUpdated
+├── Observability
+│   ├── LogEmitted
+│   └── NotificationCreated
+└── System
+    ├── DoctorCompleted
+    └── SearchCompleted
+```
 
 ---
 
-## 5. Exemples d'événements
+## 4. Détail des événements
 
-### Événement de transition
+### 4.1. State
 
+#### StateChanged
+- **Producteur** : StateMachineEngine (`transition()`).
+- **Consommateurs** : Dashboard, Timeline, Notifications.
+- **Payload** :
 ```json
 {
-  "eventId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-  "type": "state:changed",
-  "timestamp": "2026-07-26T12:00:00Z",
-  "source": "core",
-  "actor": "user@example.com",
-  "payload": {
-    "from": "Draft",
-    "to": "Planned",
-    "timestamp": "2026-07-26T12:00:00Z",
-    "gatesPassed": ["QG-01", "QG-02"],
-    "gatesFailed": null
-  },
-  "metadata": {
-    "correlationId": "corr-001",
-    "duration": 15
-  }
+  "previousState": "DRAFT",
+  "newState": "PLANNED",
+  "actor": "GOV-01-Project-Manager",
+  "timestamp": "2026-07-26T14:30:00Z"
 }
 ```
 
-### Événement de log
-
+#### TransitionDenied
+- **Producteur** : StateMachineEngine (`canTransition()`).
+- **Consommateurs** : Dashboard, Notifications.
+- **Payload** :
 ```json
 {
-  "eventId": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
-  "type": "log:entry",
-  "timestamp": "2026-07-26T12:00:01Z",
-  "source": "core",
-  "payload": {
-    "agentId": "CORE-01",
-    "action": "transition",
-    "details": "Draft → Planned",
-    "level": "info"
-  }
+  "from": "ACTIVE",
+  "to": "AUDIT",
+  "reason": "Quality Gate QG-004 FAILED",
+  "missingGates": ["QG-004", "QG-005"],
+  "timestamp": "2026-07-26T14:30:00Z"
 }
 ```
 
----
+### 4.2. Registry
 
-## 6. Canaux de diffusion
-
-Les événements sont émis via deux canaux :
-
-1. **WebSocket** : diffusion temps réel aux clients connectés (Dashboard, CLI `logs --watch`).
-2. **Logs** : persistance dans `.akoris/logs/sessions/` pour relecture différée.
-
----
-
-## 7. Souscription aux événements
-
-### Serveur → Client (WebSocket)
-
-Les clients souscrivent à des types d'événements spécifiques via WebSocket :
-
-```
-WS /ws/v1/events
-```
-
-**Message de souscription (client → serveur) :**
+#### RegistryReloaded
+- **Producteur** : RegistryReader (`watch()`).
+- **Consommateurs** : Dashboard, SearchEngine.
+- **Payload** :
 ```json
 {
-  "type": "subscribe",
-  "channels": ["state:*", "log:*"]
+  "version": "1.0.0",
+  "timestamp": "2026-07-26T14:30:00Z",
+  "changes": ["Agent CORE-02 mis à jour", "Règle RULE-042 ajoutée"]
 }
 ```
 
-**Message de désouscription :**
+#### AgentUpdated
+- **Producteur** : RegistryReader (`loadAgent()`).
+- **Consommateurs** : Dashboard (Registry Explorer).
+- **Payload** :
 ```json
 {
-  "type": "unsubscribe",
-  "channels": ["log:entry"]
+  "agentId": "CORE-02-Solution-Architect",
+  "version": "1.0.1",
+  "timestamp": "2026-07-26T14:30:00Z"
+}
+```
+
+### 4.3. Quality
+
+#### GatePassed
+- **Producteur** : QualityEngine (`evaluateGate()`).
+- **Consommateurs** : Dashboard, Notifications.
+- **Payload** :
+```json
+{
+  "gateId": "QG-004",
+  "score": 0.95,
+  "details": "Tous les tests unitaires passent (98%)",
+  "timestamp": "2026-07-26T14:30:00Z"
+}
+```
+
+#### GateFailed
+- **Producteur** : QualityEngine (`evaluateGate()`).
+- **Consommateurs** : Dashboard, Notifications, StateMachineEngine.
+- **Payload** :
+```json
+{
+  "gateId": "QG-005",
+  "score": 0.45,
+  "details": "Couverture de tests insuffisante (45% vs 80% requis)",
+  "timestamp": "2026-07-26T14:30:00Z"
+}
+```
+
+### 4.4. AI Studio
+
+#### PromptExecuted
+- **Producteur** : PromptEngine (`executePrompt()`).
+- **Consommateurs** : Dashboard, Prompt Library.
+- **Payload** :
+```json
+{
+  "promptId": "123e4567",
+  "provider": "openai",
+  "tokensUsed": 345,
+  "durationMs": 1200,
+  "status": "success",
+  "timestamp": "2026-07-26T14:30:00Z"
+}
+```
+
+#### PromptSaved
+- **Producteur** : PromptEngine (`savePrompt()`).
+- **Consommateurs** : Dashboard, Prompt Library.
+- **Payload** :
+```json
+{
+  "promptId": "123e4567",
+  "name": "Generate Authentication Component",
+  "timestamp": "2026-07-26T14:30:00Z"
+}
+```
+
+### 4.5. DevOps
+
+#### DeploymentStarted
+- **Producteur** : DeployEngine (`deploy()`).
+- **Consommateurs** : Dashboard, Notifications.
+- **Payload** :
+```json
+{
+  "deploymentId": "dep_123",
+  "environment": "staging",
+  "version": "1.3.0",
+  "timestamp": "2026-07-26T14:30:00Z"
+}
+```
+
+#### DeploymentFinished
+- **Producteur** : DeployEngine (callback).
+- **Consommateurs** : Dashboard, Notifications.
+- **Payload** :
+```json
+{
+  "deploymentId": "dep_123",
+  "status": "success",
+  "durationMs": 45000,
+  "timestamp": "2026-07-26T14:30:00Z"
+}
+```
+
+#### SecretUpdated
+- **Producteur** : SecretManager (`setSecret()`, `removeSecret()`).
+- **Consommateurs** : Dashboard, ConnectedServices.
+- **Payload** :
+```json
+{
+  "key": "GITHUB_TOKEN",
+  "action": "set",
+  "timestamp": "2026-07-26T14:30:00Z"
+}
+```
+
+### 4.6. Observability
+
+#### LogEmitted
+- **Producteur** : LogReader (`watchLogs()`).
+- **Consommateurs** : Dashboard (Logs Live), WebSocket.
+- **Payload** :
+```json
+{
+  "timestamp": "2026-07-26T14:30:00Z",
+  "agentId": "CORE-01",
+  "action": "transition",
+  "details": "Draft → Planned"
+}
+```
+
+#### NotificationCreated
+- **Producteur** : NotificationService (après événement).
+- **Consommateurs** : Dashboard, Notifications.
+- **Payload** :
+```json
+{
+  "notificationId": "notif_123",
+  "type": "success",
+  "title": "Transition réussie",
+  "message": "Le projet est passé en PLANNED.",
+  "timestamp": "2026-07-26T14:30:00Z",
+  "link": "/project"
+}
+```
+
+### 4.7. System
+
+#### DoctorCompleted
+- **Producteur** : DoctorEngine (`fix()`).
+- **Consommateurs** : Dashboard, Notifications.
+- **Payload** :
+```json
+{
+  "fixed": true,
+  "fixes": ["Dossier .akoris/ créé", "manifest.json créé"],
+  "timestamp": "2026-07-26T14:30:00Z"
+}
+```
+
+#### SearchCompleted
+- **Producteur** : SearchEngine (`search()`).
+- **Consommateurs** : Dashboard.
+- **Payload** :
+```json
+{
+  "query": "database",
+  "resultCount": 5,
+  "timestamp": "2026-07-26T14:30:00Z"
 }
 ```
 
 ---
 
-## 8. Cohérence avec le Blueprint
+## 5. Canal de diffusion
 
-- Le système d'événements couvre tous les bounded contexts (`01-system-architecture.md`).
-- Les événements sont typés et versionnés (conforme à `03-core.md`).
-- La diffusion WebSocket est détaillée dans `07-websocket.md`.
-- Le SDK expose des souscripteurs (`11-sdk.md`).
+Les événements sont diffusés via **WebSocket** sur le canal `/ws/events`. Chaque événement est envoyé au format JSON. Le Dashboard écoute ce canal pour mettre à jour l'interface (Timeline, Notifications, etc.).
 
 ---
 
-## Statut
+## 6. Prochaine étape
 
-- `06-events.md` : 🔍 **Draft**
-
-**Prochaine action** : Validez ce document pour passer au protocole WebSocket.
+La définition des événements permet maintenant de spécifier le contrat WebSocket (`07-websocket.md`) et de concevoir le SDK (`11-sdk.md`) pour l'écoute de ces événements.
