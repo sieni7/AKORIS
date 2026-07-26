@@ -5,186 +5,194 @@ status: "Draft"
 owner: "AKORIS Core Team"
 last-updated: "2026-07-26"
 related:
+  - "00-vision.md"
   - "03-core.md"
-  - "11-sdk.md"
-  - "13-error-model.md"
+  - "ADR-006-extension-model.md"
 ---
 # 14 — Extension Model
 
 ## 1. Objectif
 
-Ce document définit le **modèle d'extension** du Control Center. Les extensions permettent d'ajouter des fonctionnalités sans modifier le Core ni l'API. Le modèle est conçu pour être simple, typé, et compatible avec le monorepo.
+Ce document définit comment AKORIS Control Center peut être **étendu** sans modifier le cœur du système. L'objectif est de permettre l'ajout de :
+
+- Nouveaux modules (ex: Analytics, Monitoring).
+- Nouveaux agents (ex: DATA-01-Data-Engineer).
+- Nouveaux providers LLM (ex: Mistral, Gemini).
+- Nouveaux providers DevOps (ex: AWS, DigitalOcean).
+- Nouvelles interfaces (ex: TUI, extension VS Code).
 
 ---
 
-## 2. Principes
+## 2. Principes d'extensibilité
 
-- **Le Core est extensible par design** : les moteurs acceptent des plugins optionnels.
-- **Les extensions sont des packages npm** : installées via pnpm, découvertes automatiquement.
-- **Pas de surcharge** : le Core fonctionne sans aucune extension.
-- **Typé** : chaque extension déclare son interface via des types partagés.
-
----
-
-## 3. Architecture des extensions
-
-```
-packages/
-├── core/                  # Moteur central (0 dépendance)
-├── sdk/                   # Client TypeScript
-└── extensions/            # Extensions officielles
-    ├── github/            # Intégration GitHub
-    ├── supabase/          # Intégration Supabase
-    ├── slack/             # Notifications Slack
-    └── vercel/            # Déploiement Vercel
-```
+1. **Le Core est fermé à la modification, ouvert à l'extension** (Open/Closed Principle).
+2. **Toute extension se fait via des interfaces publiques** (API, SDK, événements).
+3. **Les extensions sont découvertes automatiquement** (scan du Registry ou configuration).
+4. **Les extensions sont versionnées** et testées indépendamment.
 
 ---
 
-## 4. Interface d'extension
+## 3. Types d'extensions
 
-```typescript
-// packages/core/src/extensions/types.ts
-
-interface Extension {
-  id: string;                    // "akoris-extension-github"
-  name: string;                  // "GitHub Integration"
-  version: string;               // SemVer
-  description: string;
-
-  // Cycle de vie
-  onLoad?: (core: Core) => Promise<void>;
-  onUnload?: () => Promise<void>;
-
-  // Hooks dans les moteurs
-  hooks?: ExtensionHooks;
-}
-
-interface ExtensionHooks {
-  // State Machine
-  onTransition?: (from: string, to: string) => Promise<TransitionHookResult>;
-  onGateEvaluate?: (gateId: string) => Promise<GateEvaluateResult>;
-
-  // Registry
-  onAgentLoad?: (agentId: string) => Promise<AgentEnrichment>;
-
-  // Prompts
-  onPromptBuild?: (input: PromptInput) => Promise<Partial<PromptInput>>;
-  onPromptExecute?: (prompt: Prompt) => Promise<PromptExecutionHookResult>;
-
-  // DevOps
-  onDeploy?: (environment: string, version: string) => Promise<DeployResult>;
-
-  // Events
-  onEvent?: (event: Event) => Promise<void>;
-}
-```
-
-**Exemple : Extension GitHub**
-
-```typescript
-class GitHubExtension implements Extension {
-  id = 'akoris-extension-github';
-  name = 'GitHub Integration';
-  version = '1.0.0';
-  description = 'Synchronisation avec GitHub Issues et Actions';
-
-  async onLoad(core: Core) {
-    const token = await core.secrets.getSecret(process.cwd(), 'GITHUB_TOKEN');
-    if (!token) throw new Error('GITHUB_TOKEN required');
-    this.client = new GitHubClient(token);
-  }
-
-  hooks = {
-    onDeploy: async (env, version) => {
-      // Déclencher un workflow GitHub Actions
-      return this.client.triggerWorkflow('deploy.yml', { env, version });
-    },
-    onEvent: async (event) => {
-      if (event.type === 'StateChanged') {
-        // Créer une issue GitHub
-        await this.client.createIssue({
-          title: `Project transitioned to ${event.payload.newState}`,
-          body: `From: ${event.payload.previousState}`,
-        });
-      }
-    },
-  };
-}
-```
+| Type | Description | Point d'extension |
+|------|-------------|-------------------|
+| **Module** | Nouveau contexte métier | Route API + page Dashboard |
+| **Agent** | Nouvel agent AKORIS | Fichier agent.json dans `registry/agents/` |
+| **LLM Provider** | Nouveau modèle de langage | Implémentation de `LLMProvider` dans le Core |
+| **DevOps Provider** | Nouveau service externe | Implémentation de `DeployProvider` + SecretManager |
+| **Interface** | Nouvelle couche de présentation | SDK + API |
 
 ---
 
-## 5. Découverte des extensions
+## 4. Extension des modules (nouveau contexte)
 
-```typescript
-// packages/core/src/extensions/loader.ts
+### 4.1. Ajouter un module
 
-import { readdirSync } from 'fs';
-import { join } from 'path';
+**Étapes :**
+1. Ajouter une route dans l'API (`apps/api/src/routes/module-name/`).
+2. Ajouter une page dans le Dashboard (`apps/dashboard/src/routes/module-name/`).
+3. Ajouter un service dans le Core (`packages/core/src/module-name/`).
+4. Mettre à jour la navigation (sidebar).
 
-export function discoverExtensions(core: Core): Extension[] {
-  const extensionsDir = join(process.cwd(), 'node_modules');
-  const packages = readdirSync(extensionsDir);
-
-  return packages
-    .filter((pkg) => pkg.startsWith('akoris-extension-'))
-    .map((pkg) => {
-      const ext = require(join(extensionsDir, pkg));
-      return ext.default as Extension;
-    });
-}
-
-export async function loadExtensions(core: Core): Promise<Extension[]> {
-  const extensions = discoverExtensions(core);
-  for (const ext of extensions) {
-    if (ext.onLoad) {
-      await ext.onLoad(core);
-    }
-    console.log(`[ext] Loaded: ${ext.name} v${ext.version}`);
-  }
-  return extensions;
-}
-```
+**Règle** : Le module doit être auto-contenu et ne pas dépendre d'autres modules (sauf du Core).
 
 ---
 
-## 6. Configuration des extensions
+## 5. Extension des agents
 
-Fichier `.akoris/extensions.json` :
+### 5.1. Ajouter un agent
 
+Un agent est ajouté en créant un dossier dans `registry/agents/` avec l'ID `{DOMAINE}-{NN}-{Nom}` et le fichier `agent.json` (conforme au schéma).
+
+**Exemple :**
 ```json
 {
-  "extensions": {
-    "akoris-extension-github": {
-      "enabled": true,
-      "config": {
-        "owner": "sieni7",
-        "repo": "AKORIS",
-        "autoCreateIssues": true
-      }
-    },
-    "akoris-extension-slack": {
-      "enabled": false
-    }
+  "id": "DATA-01-Data-Engineer",
+  "name": "Data Engineer",
+  "domain": "DATA",
+  "criticity": "moyenne",
+  "status": "active",
+  "description": "Agent spécialisé en traitement de données.",
+  "tags": ["data", "etl", "analytics"],
+  "dependencies": [{ "agentId": "CORE-04-Database-Architect", "type": "mandatory" }],
+  "capabilities": [
+    { "id": "design_etl_pipeline", "name": "Concevoir un pipeline ETL" },
+    { "id": "data_quality_check", "name": "Vérifier la qualité des données" }
+  ]
+}
+```
+
+**Détection automatique** : Le RegistryReader scanne le dossier `registry/agents/` à chaque démarrage.
+
+---
+
+## 6. Extension des providers LLM
+
+### 6.1. Ajouter un provider
+
+**Interface à implémenter :**
+```typescript
+// packages/core/src/llm-provider.interface.ts
+
+export interface LLMProvider {
+  id: string;
+  name: string;
+  defaultModel: string;
+  maxTokens: number;
+  costPer1kTokens: number;
+
+  execute(prompt: string, options?: LLMOptions): Promise<LLMResponse>;
+}
+```
+
+**Exemple d'extension (Mistral) :**
+```typescript
+// packages/contrib/llm-mistral/src/index.ts
+
+export class MistralProvider implements LLMProvider {
+  id = 'mistral';
+  name = 'Mistral';
+  defaultModel = 'mistral-large-latest';
+  maxTokens = 8192;
+  costPer1kTokens = 0.002;
+
+  async execute(prompt: string): Promise<LLMResponse> {
+    // Appel à l'API Mistral
+  }
+}
+```
+
+**Découverte** : Le Provider est enregistré via le `SecretManager` (clé API) et le Core le charge dynamiquement.
+
+---
+
+## 7. Extension des providers DevOps
+
+### 7.1. Ajouter un provider
+
+**Interface à implémenter :**
+```typescript
+// packages/core/src/deploy-provider.interface.ts
+
+export interface DeployProvider {
+  id: string;
+  name: string;
+  environments: string[]; // staging, production
+
+  deploy(environment: string, version: string, config: DeployConfig): Promise<Deployment>;
+  getStatus(deploymentId: string): Promise<DeploymentStatus>;
+}
+```
+
+**Exemple d'extension (AWS) :**
+```typescript
+// packages/contrib/deploy-aws/src/index.ts
+
+export class AWSProvider implements DeployProvider {
+  id = 'aws';
+  name = 'AWS';
+  environments = ['staging', 'production'];
+
+  async deploy(environment: string, version: string): Promise<Deployment> {
+    // Appel à l'API AWS (EC2, ECS, etc.)
   }
 }
 ```
 
 ---
 
-## 7. Catalogue d'extensions (futur)
+## 8. Extension des interfaces (TUI, VS Code)
 
-| Extension | Description | Statut |
-|-----------|-------------|--------|
-| `akoris-extension-github` | Issues, Actions, PRs | Planifié |
-| `akoris-extension-slack` | Notifications Slack | Planifié |
-| `akoris-extension-supabase` | Synchronisation Registry | Planifié |
-| `akoris-extension-vercel` | Déploiement Vercel | Planifié |
-| `akoris-extension-notion` | Export vers Notion | Suggestion |
+### 8.1. Client SDK
+
+Toute nouvelle interface doit utiliser le SDK (`packages/sdk`) pour communiquer avec l'API.
+
+**Exemple d'extension CLI (TUI) :**
+```typescript
+// apps/tui/src/index.ts
+
+import { AKORISClient } from '@akoris/sdk';
+
+const client = new AKORISClient({ baseUrl: 'http://localhost:3000/api/v1' });
+const health = await client.getHealth();
+console.log(`Health Score: ${health.healthScore}`);
+```
+
+**Règle** : Une nouvelle interface ne doit JAMAIS appeler le Core directement ; elle doit passer par l'API.
 
 ---
 
-## 8. Prochaine étape
+## 9. Contribution et validation des extensions
 
-Le modèle d'extension termine les documents de la Phase D. Les ADR (ADR-001 à ADR-004) finalisent les décisions d'architecture du Control Center.
+- **Les extensions** sont des packages séparés, publiés sur npm (scoped `@akoris/contrib-xxx`).
+- **Validation** : chaque extension doit :
+  - Passer les tests (unitaires + intégration).
+  - Être documentée (README, exemples).
+  - Avoir un versionnement SemVer.
+  - Être testée avec la dernière version du Core.
+
+---
+
+## 10. Prochaine étape
+
+Après l'extension model, les ADR finales formalisent les choix structurants du projet.

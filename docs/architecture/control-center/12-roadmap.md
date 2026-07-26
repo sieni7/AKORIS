@@ -6,162 +6,145 @@ owner: "AKORIS Core Team"
 last-updated: "2026-07-26"
 related:
   - "00-vision.md"
-  - "03-core.md"
-  - "11-sdk.md"
+  - "01-system-architecture.md"
 ---
 # 12 — Roadmap
 
 ## 1. Objectif
 
-Ce document définit la **feuille de route** d'implémentation du Control Center, organisée en milestones.
+Ce document définit la feuille de route du développement d'AKORIS Control Center, en cohérence avec la vision et l'architecture validées. Elle est organisée en **4 Milestones**, chacune correspondant à une version publiable.
 
 ---
 
-## 2. Phases d'implémentation
+## 2. Principes de priorisation
 
-```
-M0 🎯 Architecture Freeze    (Blueprint terminé)
- │
-M1 🧱 Core Engine            (packages/core)
- │
-M2 📡 API + SDK              (apps/api + packages/sdk)
- │
-M3 🖥️ Dashboard MVP          (apps/dashboard)
- │
-M4 🔁 Intégration CLI        (apps/cli adapté)
- │
-M5 🚀 Release v1.0.0         (Alpha fermée)
-```
+- **Fondations avant fonctionnalités** : le Core et le monorepo sont prioritaires.
+- **MVP avant IA** : le Dashboard doit être opérationnel avant d'ajouter l'AI Studio.
+- **Qualité avant vitesse** : chaque Milestone inclut des tests, de la documentation et du hardening.
+- **Rétrocompatibilité** : les évolutions ne doivent pas casser les projets existants.
 
 ---
 
-## 3. Détail des milestones
+## 3. Milestones
 
-### M1 — Core Engine (j+1 à j+15)
+### Milestone 1 — Foundation (Core & Monorepo)
 
-| Tâche | Jours | Dépendances |
-|-------|-------|-------------|
-| Mise en place du monorepo pnpm | 1 | — |
-| Configuration TypeScript, Biome, Vitest | 1 | Monorepo |
-| `packages/shared` — types + schémas Zod | 2 | — |
-| `packages/core/registry` — RegistryReader | 3 | shared |
-| `packages/core/state` — StateMachineEngine | 3 | registry |
-| `packages/core/search` — SearchEngine | 2 | registry |
-| `packages/core/logs` — LogReader | 1 | — |
-| `packages/core/doctor` — DoctorEngine | 2 | registry, state |
-| `packages/core/secrets` — SecretManager | 1 | — |
-| `packages/core/alias` — AliasManager | 1 | — |
-| `packages/core/prompts` — PromptEngine | 3 | registry |
-| Tests unitaires (couverture 90%) | Continu | Chaque module |
+**Objectif** : Extraire toute la logique métier du CLI pour créer un package `core` indépendant, structurer le monorepo, et mettre en place les outils de base.
 
-**Livrable :** `@akoris/core` v0.1.0, `@akoris/shared` v0.1.0
+**Durée estimée** : 2 jours
 
----
+**Livrables :**
+- Structure du monorepo pnpm (`apps/`, `packages/`, `pnpm-workspace.yaml`).
+- Package `core` contenant : RegistryReader, StateMachineEngine, SearchEngine, LogReader, AliasManager, DoctorEngine, SecretManager (esquisse).
+- Package `shared` contenant les types et schémas Zod.
+- CLI mis à jour pour consommer le Core.
+- Tests unitaires du Core (≥ 80 % de couverture).
+- CI mise en place (lint, build, test).
 
-### M2 — API + SDK (j+16 à j+23)
-
-| Tâche | Jours | Dépendances |
-|-------|-------|-------------|
-| `apps/api` — structure Fastify + plugins | 2 | core |
-| Routes Health + State | 1 | core |
-| Routes Registry | 1 | core |
-| Routes Search | 1 | core |
-| Routes Prompts | 1 | core |
-| Routes Logs + Doctor | 1 | core |
-| Routes Secrets + Aliases | 1 | core |
-| Routes DevOps + Notifications | 1 | core |
-| WebSocket (events + logs) | 2 | core |
-| `packages/sdk` — client HTTP | 2 | shared |
-| `packages/sdk` — client WebSocket | 1 | — |
-| `packages/sdk` — hooks React | 2 | sdk client |
-
-**Livrable :** `@akoris/api` v0.1.0, `@akoris/sdk` v0.1.0
+**Critères de validation :**
+- `pnpm build` réussit sur l'ensemble du monorepo.
+- Le CLI est fonctionnel (`akoris state show`).
+- Tous les tests du Core passent.
 
 ---
 
-### M3 — Dashboard MVP (j+24 à j+35)
+### Milestone 2 — Control Center MVP
 
-| Tâche | Jours | Dépendances |
-|-------|-------|-------------|
-| Setup Vite + shadcn/ui + Tailwind | 1 | — |
-| Layout (Sidebar + Header + Content) | 2 | — |
-| Executive Dashboard (health, state) | 3 | sdk |
-| Project Dashboard (machine, timeline) | 3 | sdk |
-| Registry Explorer (agents, rules, gates) | 3 | sdk |
-| AI Studio (prompt builder, LLM test) | 4 | sdk |
-| DevOps (secrets, services, deploys) | 3 | sdk |
-| Command Palette | 2 | sdk |
-| Notifications + Timeline | 2 | sdk |
-| Tests E2E (Playwright) | 3 | Dashboard |
+**Objectif** : Livrer une interface web fonctionnelle permettant de visualiser l'état du projet et d'exécuter les commandes essentielles.
 
-**Livrable :** Dashboard v0.1.0
+**Durée estimée** : 5 jours
 
----
+**Livrables :**
+- API Fastify (routes : Health, State, Registry, Search, Logs, Command, Doctor).
+- WebSocket `/ws/logs` pour le streaming des logs.
+- SDK TypeScript (client REST + WebSocket + hooks React).
+- Dashboard React avec :
+  - Command Palette (Ctrl+K).
+  - Executive (Health Score, Quality Coverage).
+  - Project (State Machine interactive).
+  - Registry Explorer (arborescence des agents).
+  - Logs Live (via WebSocket).
+  - Notifications (toasts).
+- Tests E2E (Playwright) pour les 5 modules.
 
-### M4 — Intégration CLI (j+36 à j+40)
-
-| Tâche | Jours | Dépendances |
-|-------|-------|-------------|
-| Refactor CLI pour consommer `@akoris/core` | 3 | core |
-| Supprimer les services dupliqués | 1 | CLI refactor |
-| Adapter les tests CLI | 1 | CLI refactor |
-| Ajouter la commande `akoris serve` | 2 | API |
-
-**Livrable :** CLI v2.0.0 (compatible Core)
+**Critères de validation :**
+- Un utilisateur peut lancer le Dashboard, voir les KPIs, naviguer dans le Registry.
+- La Command Palette permet d'exécuter `state transition`.
+- Les logs en direct s'affichent dans l'interface.
+- Toutes les routes API retournent des réponses structurées.
 
 ---
 
-### M5 — Release v1.0.0 Alpha (j+41 à j+45)
+### Milestone 3 — AI Studio
 
-| Tâche | Jours | Dépendances |
-|-------|-------|-------------|
-| Tests d'intégration complets | 3 | M1→M4 |
-| Documentation API (Swagger) | 1 | API |
-| Documentation utilisateur | 2 | Dashboard |
-| Docker Compose (API + Dashboard) | 1 | API + Dashboard |
-| CI/CD (GitHub Actions) | 1 | Monorepo |
-| Beta interne (équipe AKORIS) | 3 | Tout |
+**Objectif** : Permettre la construction, le test et la sauvegarde de prompts gouvernés.
 
-**Livrable :** Control Center v1.0.0-alpha
+**Durée estimée** : 3 jours
 
----
+**Livrables :**
+- `PromptEngine` dans le Core (construction de prompts, injection de contexte).
+- Context Builder (UI à cocher : ADR, Registry, State, Logs, etc.).
+- LLM Playground (appel OpenAI/Anthropic, affichage réponse + tokens).
+- Prompt Library (sauvegarde, listage, versionnement).
+- Monaco Editor intégré pour le Prompt Builder.
 
-## 4. Diagramme de Gantt
-
-```
-Jours     0    5    10   15   20   25   30   35   40   45
-M1 Core   [███████████████]
-M2 API    ░░░░░[████████]
-M3 Dash   ░░░░░░░░░░[████████████]
-M4 CLI    ░░░░░░░░░░░░░░░░░░[█████]
-M5 Alpha  ░░░░░░░░░░░░░░░░░░░░░[█████]
-```
+**Critères de validation :**
+- Un développeur peut sélectionner un agent, cocher "ADR" et "Registry", générer un prompt, le tester sur GPT-4, et sauvegarder le prompt.
+- La réponse du LLM est affichée dans l'interface.
+- Les prompts sauvegardés sont listés et peuvent être rechargés.
 
 ---
 
-## 5. Dépendances inter-équipes
+### Milestone 4 — DevOps & Release
 
-| Dépendance | Bloquant pour |
-|------------|---------------|
-| `packages/shared` | Core, API, SDK |
-| `packages/core` | API, CLI |
-| `apps/api` | SDK, Dashboard |
-| `packages/sdk` | Dashboard |
-| `apps/api` + `packages/sdk` | Tests E2E |
+**Objectif** : Centraliser les secrets, visualiser les services connectés et piloter les déploiements.
+
+**Durée estimée** : 2 jours
+
+**Livrables :**
+- `SecretManager` dans le Core (chiffrement AES-256-GCM).
+- Secret Vault (UI de saisie/masquage des tokens).
+- Connected Services (statut GitHub, Supabase, Netlify, Vercel).
+- Deploy Center (boutons Staging/Production).
+- GitHub Actions Viewer (liste des workflows).
+- Dockerfile pour l'API et le Dashboard.
+- Documentation d'installation du Control Center.
+
+**Critères de validation :**
+- Les secrets sont chiffrés et déchiffrés correctement.
+- Les déploiements sont déclenchés avec les bons tokens.
+- L'application tourne en production via Docker.
+- La documentation d'installation est validée par un test sur machine vierge.
 
 ---
 
-## 6. Risques
+## 4. Synthèse des délais
 
-| Risque | Impact | Mitigation |
-|--------|--------|------------|
-| Complexité du PromptEngine | M3 peut glisser | MVP sans LLM, simulé |
-| WebSocket temps réel | M2 peut glisser | Fallback polling TanStack Query |
-| Refactor CLI | M4 peut glisser | CLI existant reste fonctionnel |
-| Disponibilité équipe | Global | Prioriser le Core (M1) |
+| Milestone | Durée | Cumulative |
+|-----------|-------|------------|
+| M1 — Foundation | 2 jours | Jour 1-2 |
+| M2 — MVP | 5 jours | Jour 3-7 |
+| M3 — AI Studio | 3 jours | Jour 8-10 |
+| M4 — DevOps & Release | 2 jours | Jour 11-12 |
+
+**Total** : 12 jours de développement.
 
 ---
 
-## 7. Prochaine étape
+## 5. Post-MVP (visions futures)
 
-Après la roadmap, le document `14-extension-model.md` définit le modèle d'extension, puis les ADR finalisent les décisions d'architecture.
+Après la v1.0 du Control Center, les évolutions suivantes pourront être envisagées :
+
+- **Monte Carlo** : prévisions de livraison basées sur la vélocité passée.
+- **Auto-Promotion CI** : déploiement automatique sur Staging si les tests E2E passent.
+- **Snapshot Comparatif** : comparaison de deux snapshots pour voir l'évolution de la dette.
+- **Journal des prompts** : historique complet des exécutions de prompts.
+- **Audit Trail** : journal immuable pour les exigences de conformité.
+- **Analytics prédictifs** : détection des risques avant qu'ils ne surviennent.
+- **Plugin System** : extension du Dashboard avec des plugins tiers.
+
+---
+
+## 6. Prochaine étape
+
+Après la roadmap, le document `14-extension-model.md` définit comment le système peut être étendu (nouveaux modules, agents, providers, etc.).
