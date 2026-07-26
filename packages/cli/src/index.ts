@@ -30,6 +30,9 @@ import { stateCommand } from './commands/state.js';
 import { logsCommand } from './commands/logs.js';
 import { activationCommand } from './commands/activation.js';
 import { capabilityCommand } from './commands/capability.js';
+import { aliasCommand } from './commands/alias.js';
+import { resolveAlias } from './services/alias.service.js';
+import { getProjectRoot } from './services/project.service.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const pkg = JSON.parse(
@@ -85,8 +88,9 @@ const WELCOME = `
      akoris logs           Logs d&apos;execution du projet
      akoris state          Machine a etats du projet
      akoris activation     Activation des agents
-     akoris capability     Recherche de capacites
-     akoris --help         Aide complete
+      akoris capability     Recherche de capacites
+      akoris alias          Alias de commandes
+      akoris --help         Aide complete
 
 \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
 
@@ -153,6 +157,22 @@ program.addCommand(stateCommand);
 program.addCommand(activationCommand);
 program.addCommand(capabilityCommand);
 program.addCommand(logsCommand);
+program.addCommand(aliasCommand());
+
+// Interception des alias avant le parsing Commander
+const firstArg = process.argv[2];
+if (firstArg && !['alias', 'help', '--help', '-h', '--version', '-V'].includes(firstArg)) {
+  try {
+    const projectRoot = getProjectRoot();
+    const resolved = resolveAlias(projectRoot, firstArg);
+    if (resolved) {
+      const resolvedParts = resolved.split(/\s+/);
+      process.argv = [process.argv[0], process.argv[1], ...resolvedParts, ...process.argv.slice(3)];
+    }
+  } catch {
+    // Ignorer si le projet n'est pas initialisé
+  }
+}
 
 if (process.argv.length <= 2) {
   console.log(WELCOME);
