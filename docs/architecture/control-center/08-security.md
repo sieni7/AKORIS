@@ -6,168 +6,141 @@ owner: "AKORIS Core Team"
 last-updated: "2026-07-26"
 related:
   - "02-technical-architecture.md"
-  - "03-core.md"
-  - "11-sdk.md"
+  - "05-api-contract.md"
+  - "13-error-model.md"
 ---
 # 08 — Security
 
 ## 1. Objectif
 
-Ce document définit le modèle de sécurité d'AKORIS Control Center. En v1.0, l'application est conçue pour un usage local (poste de travail du développeur). La sécurité se concentre sur le chiffrement des secrets, la validation des entrées et l'intégrité des données.
+Ce document définit les règles et mécanismes de sécurité applicables à l'ensemble du Control Center, de la gestion des secrets à l'authentification en passant par la sécurité des communications.
 
 ---
 
-## 2. Principes
+## 2. Principes de sécurité
 
-- **Zero trust local** : même en local, les secrets sont chiffrés au repos.
-- **Défense en profondeur** : validation à chaque couche (SDK → API → Core).
-- **Pas d'auth en v1.0** : l'authentification et les permissions sont hors scope (ajout possible en v2.0).
-- **Secrets en mémoire** : déchiffrés uniquement au moment de l'usage, jamais persistés en clair.
+1. **Défense en profondeur** : plusieurs couches de sécurité sont appliquées.
+2. **Moindre privilège** : les services n'ont accès qu'aux données strictement nécessaires.
+3. **Chiffrement par défaut** : les données sensibles sont chiffrées au repos et en transit.
+4. **Sécurité par obscurité** : jamais utilisée ; tout est documenté et vérifiable.
+5. **Journalisation des actions sensibles** : toutes les actions critiques sont traçables.
 
 ---
 
-## 3. Chiffrement des secrets
+## 3. Secrets (tokens, clés API)
 
-### 3.1. Algorithme
+### 3.1. Stockage
 
-- **Algorithme** : AES-256-GCM
-- **Module Node.js** : `crypto` (natif)
-- **Clé maîtresse** : fichier `.akoris/.secret.key` (généré automatiquement, jamais commité)
-- **Fichier de stockage** : `.akoris/secrets.enc`
+- **Localisation** : `.akoris/secrets.enc` (fichier chiffré).
+- **Chiffrement** : AES-256-GCM.
+- **Clé maîtresse** : `.akoris/.secret.key` (générée automatiquement à la première utilisation, 256 bits).
+- **Rotation** : la clé maîtresse peut être régénérée manuellement (invalide tous les secrets existants).
 
-### 3.2. Flux de chiffrement
+### 3.2. Algorithmes
 
 ```typescript
-import { createCipheriv, createDecipheriv, randomBytes, scryptSync } from 'crypto';
+// Chiffrement
+const cipher = crypto.createCipheriv('aes-256-gcm', key, iv);
+let encrypted = cipher.update(plaintext, 'utf8', 'hex');
+encrypted += cipher.final('hex');
+const authTag = cipher.getAuthTag().toString('hex');
 
-const ALGORITHM = 'aes-256-gcm';
-const IV_LENGTH = 16;
-
-function encrypt(value: string, masterKey: string): { encrypted: string; iv: string; tag: string } {
-  const iv = randomBytes(IV_LENGTH);
-  const cipher = createCipheriv(ALGORITHM, Buffer.from(masterKey, 'hex'), iv);
-  let encrypted = cipher.update(value, 'utf8', 'hex');
-  encrypted += cipher.final('hex');
-  const tag = cipher.getAuthTag().toString('hex');
-  return { encrypted, iv: iv.toString('hex'), tag };
-}
-
-function decrypt(data: { encrypted: string; iv: string; tag: string }, masterKey: string): string {
-  const decipher = createDecipheriv(ALGORITHM, Buffer.from(masterKey, 'hex'), Buffer.from(data.iv, 'hex'));
-  decipher.setAuthTag(Buffer.from(data.tag, 'hex'));
-  let decrypted = decipher.update(data.encrypted, 'hex', 'utf8');
-  decrypted += decipher.final('utf8');
-  return decrypted;
-}
+// Déchiffrement
+const decipher = crypto.createDecipheriv('aes-256-gcm', key, iv);
+decipher.setAuthTag(Buffer.from(authTag, 'hex'));
+let decrypted = decipher.update(encrypted, 'hex', 'utf8');
+decrypted += decipher.final('utf8');
 ```
 
-### 3.3. Fichiers sensibles
+### 3.3. Accès
 
-| Fichier | Contenu | Doit être commité ? |
-|---------|---------|---------------------|
-| `.akoris/secrets.enc` | Secrets chiffrés | Non (ajouter à `.gitignore`) |
-| `.akoris/.secret.key` | Clé maîtresse AES | Non (ajouter à `.gitignore`) |
-| `.akoris/state.json` | État du projet | Oui |
-| `registry/` | Référentiel de gouvernance | Oui |
-| `.env` | Variables d'environnement (token API) | Non |
+- **API** : le frontend n'accède jamais directement aux secrets déchiffrés. L'API retourne les secrets uniquement lorsqu'ils sont nécessaires à une action (ex: déploiement), et ne les expose jamais dans les logs.
+- **CLI** : `akoris secrets get` ne déchiffre que sur demande explicite (avec confirmation).
 
 ---
 
-## 4. Validation des entrées
+## 4. Authentification
 
-### 4.1. Validation API
+### 4.1. Mode local (défaut)
 
-Tous les endpoints API valident les entrées avec **Zod** (schémas dans `packages/shared`). Exemple :
+- **Aucune authentification** requise. Le Control Center est destiné à un usage local (poste de développeur).
+- Le Dashboard ne stocke pas de session.
 
-```typescript
-import { z } from 'zod';
+### 4.2. Mode distant (optionnel, futur)
 
-const TransitionSchema = z.object({
-  from: z.string().min(1).max(50),
-  to: z.string().min(1).max(50),
-  comment: z.string().max(500).optional(),
-});
-
-app.post('/api/v1/state/transition', async (req, reply) => {
-  const parsed = TransitionSchema.safeParse(req.body);
-  if (!parsed.success) {
-    return reply.status(400).send({
-      success: false,
-      errors: parsed.error.issues.map(i => ({
-        code: 'VALIDATION_ERROR',
-        message: i.message,
-        path: i.path,
-      })),
-    });
-  }
-  // ...
-});
-```
-
-### 4.2. Niveaux de validation
-
-| Couche | Validation | Outil |
-|--------|-----------|-------|
-| SDK | Types TypeScript + Zod (optionnel) | `@akoris/shared` |
-| API | Zod schemas | Fastify + Zod |
-| Core | Types TypeScript, assertions | Natif |
+- **OAuth 2.0** avec GitHub, GitLab ou Google.
+- Les tokens sont stockés dans le SecretManager.
+- **Rate limiting** : 100 requêtes par minute par IP.
 
 ---
 
-## 5. CORS
+## 5. Sécurité des communications
+
+- **En développement** : HTTP (localhost).
+- **En production** : HTTPS strict (certificats SSL/TLS).
+- **WebSocket** : sécurisé via `wss://` en production.
+
+### 5.1. CORS
+
+Configuration dans Fastify :
 
 ```typescript
-// apps/api/src/plugins/cors.ts
-import cors from '@fastify/cors';
-
-app.register(cors, {
+fastify.register(cors, {
   origin: ['http://localhost:5173', 'http://localhost:8080'],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: false,  // Pas d'auth en v1.0
+  allowedHeaders: ['Content-Type', 'Authorization'],
 });
 ```
 
 ---
 
-## 6. Rate limiting
+## 6. Validation des entrées
 
-Optionnel en v1.0 (usage local). Prévoir pour v2.0 :
+- Toutes les entrées sont validées avec **Zod** (API, Core, SDK).
+- Les erreurs de validation retournent un code HTTP 400 et un message explicite.
+
+**Exemple :**
 
 ```typescript
-import rateLimit from '@fastify/rate-limit';
-
-app.register(rateLimit, {
-  max: 100,
-  timeWindow: '1 minute',
+const TransitionSchema = z.object({
+  from: z.string().min(1),
+  to: z.string().min(1),
+  comment: z.string().optional(),
 });
+
+// Dans la route
+const { from, to } = TransitionSchema.parse(request.body);
 ```
 
 ---
 
-## 7. Headers de sécurité
+## 7. Journalisation de sécurité
 
-```typescript
-import helmet from '@fastify/helmet';
+Toutes les actions suivantes sont journalisées dans `.akoris/logs/security.log` :
 
-app.register(helmet, {
-  contentSecurityPolicy: false,  // Désactivé pour le développement
-});
+- Création/suppression d'un secret.
+- Transition d'état (succès/échec).
+- Déploiement.
+- Exécution de commande CLI via l'API.
+- Accès aux logs sensibles.
+
+Format :
+
+```
+[2026-07-26T14:30:00Z] ACTION:transition SUCCESS from:Draft to:Planned actor:GOV-01
+[2026-07-26T14:31:00Z] ACTION:secret_set FAILURE key:GITHUB_TOKEN error:invalid_token
 ```
 
 ---
 
-## 8. Bonnes pratiques
+## 8. Sécurité des dépendances
 
-| Règle | Description |
-|-------|-------------|
-| Pas de secret dans le code | Utiliser `SecretManager` ou `.env` |
-| Pas de secret dans les logs | Filtrer les valeurs sensibles avant log |
-| Validation stricte | Toute entrée utilisateur est validée |
-| Gitignore | `.akoris/secrets.enc`, `.akoris/.secret.key`, `.env` |
-| Principe du moindre privilège | Le Core n'accède qu'aux fichiers nécessaires |
+- `pnpm audit` exécuté automatiquement dans la CI.
+- Les vulnérabilités critiques doivent être corrigées dans les 24 heures.
+- Toutes les dépendances sont pinées (pas de version flottante).
 
 ---
 
 ## 9. Prochaine étape
 
-Avec ce modèle de sécurité, les documents suivants peuvent être rédigés : `09-ui-system.md` (système de composants UI), `10-state-management.md` (gestion d'état du Dashboard) et `13-error-model.md` (modèle d'erreurs unifié).
+Après la sécurité, le document `09-ui-system.md` définit les composants UI, le design system et les règles d'accessibilité.

@@ -6,196 +6,163 @@ owner: "AKORIS Core Team"
 last-updated: "2026-07-26"
 related:
   - "02-technical-architecture.md"
-  - "05-api-contract.md"
   - "10-state-management.md"
-  - "11-sdk.md"
 ---
 # 09 — UI System
 
 ## 1. Objectif
 
-Ce document définit le **système de composants UI** du Dashboard AKORIS Control Center. Basé sur **shadcn/ui** + **Tailwind CSS**, il garantit une expérience utilisateur cohérente, accessible et maintenable.
+Ce document définit le système d'interface utilisateur (UI) pour le Dashboard AKORIS Control Center : design tokens, composants, règles d'accessibilité et de cohérence visuelle.
 
 ---
 
-## 2. Stack UI
+## 2. Principes UX (rappel)
 
-| Technologie | Usage |
-|-------------|-------|
-| **shadcn/ui** | Composants de base (Button, Card, Dialog, Table, etc.) |
-| **Tailwind CSS 4** | Styles utilitaires, thème, responsive |
-| **Recharts** | Graphiques (health score, tendances) |
-| **Monaco Editor** | Éditeur de code (Prompt Builder) |
-| **Lucide React** | Icônes |
-| **TanStack Router** | Routing type-safe |
-| **React Hook Form + Zod** | Formulaires validés |
+1. Action fréquente ≤ 2 clics.
+2. Aucun écran surchargé.
+3. Command Palette accessible partout (Ctrl+K).
+4. Recherche omniprésente.
+5. Retour utilisateur immédiat.
+6. Cohérence visuelle.
 
 ---
 
-## 3. Architecture des composants
+## 3. Design Tokens (shadcn/ui + Tailwind)
 
-```
-apps/dashboard/src/
-├── components/
-│   ├── ui/                    # Composants shadcn (générés)
-│   │   ├── button.tsx
-│   │   ├── card.tsx
-│   │   ├── dialog.tsx
-│   │   ├── table.tsx
-│   │   ├── badge.tsx
-│   │   └── ...
-│   ├── shared/                # Composants métier réutilisables
-│   │   ├── CommandPalette.tsx
-│   │   ├── Notifications.tsx
-│   │   ├── Timeline.tsx
-│   │   ├── Header.tsx
-│   │   ├── Sidebar.tsx
-│   │   └── Layout.tsx
-│   └── features/              # Composants spécifiques à une page
-│       ├── executive/
-│       │   ├── HealthScoreCard.tsx
-│       │   ├── StateMachineView.tsx
-│       │   └── TrendChart.tsx
-│       ├── registry/
-│       │   ├── AgentCard.tsx
-│       │   ├── RuleList.tsx
-│       │   └── QualityGateBadge.tsx
-│       ├── ai-studio/
-│       │   ├── PromptBuilder.tsx
-│       │   ├── ContextSelector.tsx
-│       │   └── LLMResponseViewer.tsx
-│       └── devops/
-│           ├── ServiceStatus.tsx
-│           └── DeployButton.tsx
-├── routes/                    # Pages (TanStack Router)
-│   ├── __root.tsx
-│   ├── index.tsx              # Executive Dashboard (health, state)
-│   ├── project.tsx            # Project Dashboard (timeline, ADRs)
-│   ├── registry.tsx           # Registry Explorer
-│   ├── ai-studio.tsx          # AI Studio (prompts)
-│   └── devops.tsx             # DevOps (services, deploys)
-└── styles/
-    └── globals.css            # Tailwind directives + custom styles
-```
+### 3.1. Couleurs
 
----
+| Rôle | Valeur (Tailwind) |
+|------|-------------------|
+| Primary | `blue-600` |
+| Secondary | `slate-100` |
+| Success | `green-500` |
+| Warning | `yellow-500` |
+| Error | `red-500` |
+| Info | `blue-400` |
+| Background | `slate-50` |
+| Foreground | `slate-900` |
 
-## 4. Thème
+### 3.2. Typographie
 
-### 4.1. Palette de couleurs
+| Élément | Taille | Poids |
+|---------|--------|-------|
+| Titre principal | 2rem | 700 |
+| Titre secondaire | 1.25rem | 600 |
+| Corps de texte | 0.875rem | 400 |
+| Légende | 0.75rem | 400 |
 
-| Token | Valeur (light) | Valeur (dark) | Usage |
-|-------|----------------|----------------|-------|
-| `--background` | `#ffffff` | `#09090b` | Fond de page |
-| `--foreground` | `#09090b` | `#fafafa` | Texte principal |
-| `--primary` | `#18181b` | `#fafafa` | Boutons primaires |
-| `--secondary` | `#f4f4f5` | `#27272a` | Éléments secondaires |
-| `--muted` | `#f4f4f5` | `#27272a` | Texte secondaire |
-| `--accent` | `#f4f4f5` | `#27272a` | Éléments accentués |
-| `--destructive` | `#ef4444` | `#ef4444` | Actions destructives |
-| `--border` | `#e4e4e7` | `#27272a` | Bordures |
-| `--ring` | `#18181b` | `#fafafa` | Focus ring |
+**Police** : Inter (importée automatiquement par shadcn/ui).
 
-### 4.2. Typographie
+### 3.3. Espacements
 
-| Élément | Classe Tailwind | Taille |
-|---------|----------------|--------|
-| Page title | `text-3xl font-bold` | 30px |
-| Section title | `text-2xl font-semibold` | 24px |
-| Card title | `text-lg font-medium` | 18px |
-| Body | `text-sm` | 14px |
-| Small | `text-xs` | 12px |
-| Monospace | `font-mono text-sm` | Code, logs |
+| Niveau | Valeur |
+|--------|--------|
+| 1 | 4px (0.25rem) |
+| 2 | 8px (0.5rem) |
+| 3 | 12px (0.75rem) |
+| 4 | 16px (1rem) |
+| 5 | 24px (1.5rem) |
+| 6 | 32px (2rem) |
 
-### 4.3. Espacement
+### 3.4. Radius
 
-| Token | Valeur |
-|-------|--------|
-| Page padding | `p-8` (32px) |
-| Card padding | `p-6` (24px) |
-| Section gap | `gap-6` (24px) |
-| Card gap | `gap-4` (16px) |
-| Element gap | `gap-2` (8px) |
+| Élément | Valeur |
+|---------|--------|
+| Bouton | 8px |
+| Carte | 12px |
+| Modale | 16px |
+| Input | 6px |
 
 ---
 
-## 5. Layout
+## 4. Composants (shadcn/ui personnalisés)
 
-```
-┌──────────────────────────────────────────────┐
-│ Header (app name, search, notifications)      │
-├──────────┬───────────────────────────────────┤
-│          │                                    │
-│ Sidebar  │  Main Content                      │
-│          │  ┌─────────────────────────────┐  │
-│ - Exec   │  │ Executive Dashboard         │  │
-│ - Proj   │  │ Health Score: 82            │  │
-│ - Reg    │  │ State: DRAFT                │  │
-│ - AI     │  │ Timeline                    │  │
-│ - DevOps │  └─────────────────────────────┘  │
-│          │                                    │
-├──────────┴───────────────────────────────────┤
-│ Footer (version, status)                     │
-└──────────────────────────────────────────────┘
-```
+### 4.1. Layout
 
-- **Sidebar** : largeur fixe 240px, liens de navigation, indicateurs de statut.
-- **Header** : hauteur fixe 56px, barre de recherche globale (CommandPalette), notifications.
-- **Main Content** : zone de contenu scrollable, padding 32px.
+- `AppLayout` : Sidebar + Header + Content.
+- `Sidebar` : Navigation entre les 5 modules.
+- `Header` : Titre + Command Palette + Notifications + Profil.
 
----
+### 4.2. Widgets
 
-## 6. Composants clés
+- `Card` : utilisé pour tous les KPIs.
+- `Badge` : pour les statuts (PASS, FAIL, etc.).
+- `StatCard` : pour un KPI (titre, valeur, tendance).
+- `Table` : pour les listes (agents, logs, etc.).
+- `Timeline` : frise chronologique.
 
-### 6.1. CommandPalette
+### 4.3. Feedback
 
-- **Déclencheur** : `Cmd+K` (Mac) / `Ctrl+K` (Windows/Linux).
-- **Comportement** : Overlay modal avec champ de recherche.
-- **Sources** : Agents, règles, ADR, pages du Dashboard.
-- **Implémentation** : `cmdk` (shadcn/ui).
+- `Toast` : notifications (success/error/warning/info).
+- `Spinner` : indicateur de chargement.
+- `Modal` : pour les confirmations (transition, déploiement).
 
-### 6.2. Notifications
+### 4.4. Inputs
 
-- **Position** : Coin supérieur droit (toast).
-- **Types** : success (vert), error (rouge), warning (jaune), info (bleu).
-- **Durée** : 5 secondes (configurable).
-- **Stack** : TanStack Query + WebSocket.
-
-### 6.3. Timeline
-
-- **Affichage** : Frise chronologique verticale.
-- **Événements** : Transitions, déploiements, gates, ADR.
-- **Filtres** : Par type, par date, par agent.
-
-### 6.4. StateMachineView
-
-- **Affichage** : Graphe orienté (nœuds = états, flèches = transitions).
-- **État courant** : Mis en évidence (couleur primaire).
-- **Transitions disponibles** : En surbrillance.
+- `SearchBar` : barre de recherche.
+- `CommandPalette` : modale avec autocomplétion.
+- `FilterBar` : filtres (agent, date, domaine).
+- `Editor` : Monaco Editor pour l'AI Studio.
 
 ---
 
-## 7. Responsive
+## 5. Règles d'accessibilité (WCAG 2.1 AA)
 
-En v1.0, le Dashboard est conçu pour **desktop uniquement** (viewport >= 1024px). Un mode responsive pour tablette/mobile pourra être ajouté en v2.0.
-
-| Breakpoint | Comportement |
-|------------|-------------|
-| >= 1280px | Layout complet (sidebar + header + content) |
-| 1024–1279px | Sidebar rétractable (icônes seulement) |
-| < 1024px | Non supporté (message "Desktop required") |
-
----
-
-## 8. Accessibilité
-
-- Tous les composants shadcn/ui sont **accessibles par défaut** (ARIA labels, rôles, focus management).
-- **Navigation clavier** : Tab, Enter, Escape, Cmd+K.
-- **Contrastes** : Conformes WCAG 2.1 AA.
-- **Focus visible** : `focus-visible:ring-2` sur tous les éléments interactifs.
+- **Contraste** : 4.5:1 minimum pour le texte.
+- **Taille** : texte ≥ 14px (0.875rem).
+- **Navigation** : toutes les actions sont accessibles au clavier (Tab, Enter, Escape).
+- **Labels** : tous les champs ont des labels explicites.
+- **ARIA** : utilisé pour les composants complexes (Command Palette, Modal, Timeline).
+- **Testing** : tests d'accessibilité automatisés avec `axe-core` dans la CI.
 
 ---
 
-## 9. Prochaine étape
+## 6. Structure des pages
 
-Avec ce système UI défini, le document `10-state-management.md` peut spécifier la gestion d'état du Dashboard (TanStack Query + Zustand).
+### 6.1. Executive
+
+- En-tête : Titre + indicateur de santé global.
+- 5 cartes KPIs (Health, Velocity, Technical Debt, Quality Coverage, Release Readiness).
+- Graphique de tendance (Recharts).
+
+### 6.2. Project
+
+- Machine à états (visualisation).
+- Gantt des jalons.
+- Sprint Board (Kanban).
+- ADR Explorer.
+
+### 6.3. AI Studio
+
+- Agent Selector (dropdown).
+- Context Builder (checkboxes).
+- Prompt Builder (Monaco Editor).
+- LLM Playground (côte à côte prompt/réponse).
+- Prompt Library (grid).
+
+### 6.4. DevOps
+
+- Secret Vault (tableau avec masquage).
+- Connected Services (status cards).
+- Deploy Center (boutons + logs).
+- GitHub Actions Viewer (tableau des workflows).
+
+### 6.5. Registry Explorer
+
+- Arborescence (gauche) → Contrat (centre) → Relations (droite).
+- Recherche rapide.
+
+---
+
+## 7. Animation et transitions
+
+- **Transition des pages** : fade-in (durée 300ms).
+- **Ouverture de modale** : scale + fade (200ms).
+- **Mise à jour des données** : skeleton loading puis apparition douce.
+- **Notifications** : slide-in depuis la droite.
+
+---
+
+## 8. Prochaine étape
+
+Après l'UI, le document `10-state-management.md` définit comment l'état du Dashboard est géré (TanStack Query, Zustand).

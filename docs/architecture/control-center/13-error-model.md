@@ -5,274 +5,184 @@ status: "Draft"
 owner: "AKORIS Core Team"
 last-updated: "2026-07-26"
 related:
-  - "03-core.md"
   - "05-api-contract.md"
+  - "07-websocket.md"
   - "11-sdk.md"
 ---
 # 13 — Error Model
 
 ## 1. Objectif
 
-Ce document définit le **modèle d'erreurs unifié** d'AKORIS Control Center. Toutes les erreurs, quelle que soit la couche (Core, API, SDK), suivent une structure commune, sont typées et portent une suggestion pour l'utilisateur.
+Ce document définit le **modèle d'erreur unifié** pour l'ensemble du Control Center. Toutes les interfaces (API, WebSocket, SDK, CLI) partagent le même système de codes d'erreur, avec des messages clairs et des suggestions d'action.
 
 ---
 
-## 2. Principes
-
-- **Toutes les erreurs sont typées** : chaque erreur a un `code` unique.
-- **Toutes les erreurs portent une suggestion** : l'utilisateur sait quoi faire.
-- **Pas d'erreur générique** : pas de `"Something went wrong"`.
-- **Hiérarchie** : `CoreError` → `ApiError` → `SDKError`.
-- **Logging** : toutes les erreurs sont loguées avec leur code et leur contexte.
-
----
-
-## 3. Structure de base
+## 2. Structure de l'erreur
 
 ```typescript
-interface ErrorPayload {
-  code: string;           // "STATE_TRANSITION_DENIED"
-  message: string;        // "Transition impossible."
-  suggestion: string;     // "Exécutez les Quality Gates QG-004 et QG-005."
-  details?: Record<string, unknown>;  // Données contextuelles
+interface ErrorResponse {
+  code: string;               // Code unique (ex: "STATE_TRANSITION_DENIED")
+  message: string;            // Message lisible par l'humain
+  suggestion: string;         // Suggestion d'action corrective
+  details?: Record<string, unknown>; // Données supplémentaires
 }
 ```
 
 ---
 
-## 4. Codes d'erreur
+## 3. Codes d'erreur par domaine
 
-### 4.1. State Machine (STA)
+### 3.1. State Machine (ERR-STATE-xxx)
 
-| Code | HTTP | Message | Suggestion |
-|------|------|---------|------------|
-| `STATE_NOT_FOUND` | 404 | État introuvable | Vérifiez l'ID de l'état |
-| `STATE_FILE_CORRUPTED` | 500 | Fichier d'état corrompu | Exécutez `akoris doctor --fix` |
-| `INVALID_TRANSITION` | 400 | Transition non définie | Consultez la machine à états |
-| `TRANSITION_DENIED` | 400 | Transition refusée | Vérifiez les Quality Gates requis |
-| `GATE_FAILED` | 400 | Quality Gate non satisfait | Corrigez les gates en échec |
-| `GATE_NOT_FOUND` | 404 | Quality Gate introuvable | Vérifiez l'ID du gate |
+| Code | Message | Suggestion |
+|------|---------|------------|
+| `STATE_TRANSITION_DENIED` | Transition impossible. | Vérifiez les Quality Gates requis : {gates}. |
+| `STATE_INVALID_FROM` | État de départ invalide. | L'état "{from}" n'existe pas dans la machine. |
+| `STATE_INVALID_TO` | État d'arrivée invalide. | L'état "{to}" n'existe pas dans la machine. |
+| `STATE_GATE_FAILED` | Quality Gate échoué. | Corrigez le gate "{gateId}" avant de réessayer. |
 
-### 4.2. Registry (REG)
+### 3.2. Registry (ERR-REG-xxx)
 
-| Code | HTTP | Message | Suggestion |
-|------|------|---------|------------|
-| `AGENT_NOT_FOUND` | 404 | Agent introuvable | Vérifiez l'ID de l'agent |
-| `RULE_NOT_FOUND` | 404 | Règle introuvable | Vérifiez l'ID de la règle |
-| `CAPABILITY_NOT_FOUND` | 404 | Capacité introuvable | Vérifiez l'ID de la capacité |
-| `DELIVERABLE_NOT_FOUND` | 404 | Livrable introuvable | Vérifiez l'ID du livrable |
-| `REGISTRY_LOAD_FAILED` | 500 | Impossible de charger le Registry | Vérifiez l'intégrité du dossier registry/ |
-| `REGISTRY_VALIDATION_FAILED` | 400 | Registry invalide | Corrigez les erreurs de validation |
+| Code | Message | Suggestion |
+|------|---------|------------|
+| `REGISTRY_NOT_FOUND` | Registry introuvable. | Assurez-vous que le dossier `registry/` existe à la racine. |
+| `REGISTRY_INVALID` | Registry invalide. | Exécutez `akoris registry validate` pour identifier les erreurs. |
+| `AGENT_NOT_FOUND` | Agent introuvable. | L'agent "{agentId}" n'existe pas dans le Registry. |
 
-### 4.3. Search (SRH)
+### 3.3. Search (ERR-SRCH-xxx)
 
-| Code | HTTP | Message | Suggestion |
-|------|------|---------|------------|
-| `INDEX_NOT_BUILT` | 503 | Index non construit | Réexécutez une recherche pour déclencher l'indexation |
-| `SEARCH_QUERY_EMPTY` | 400 | Requête vide | Saisissez au moins 2 caractères |
-| `SEARCH_FAILED` | 500 | Recherche échouée | Réessayez ou contactez l'équipe |
+| Code | Message | Suggestion |
+|------|---------|------------|
+| `SEARCH_EMPTY_QUERY` | Requête vide. | Saisissez au moins un caractère pour rechercher. |
+| `SEARCH_TIMEOUT` | La recherche a pris trop de temps. | Essayez avec des termes plus spécifiques. |
 
-### 4.4. Prompts (PRM)
+### 3.4. Prompts (ERR-PRM-xxx)
 
-| Code | HTTP | Message | Suggestion |
-|------|------|---------|------------|
-| `AGENT_HAS_NO_PROMPT` | 400 | Agent sans template de prompt | Ajoutez un prompt.md au contrat de l'agent |
-| `PROMPT_BUILD_FAILED` | 500 | Construction du prompt échouée | Vérifiez le contexte et réessayez |
-| `PROMPT_NOT_FOUND` | 404 | Prompt introuvable | Vérifiez l'ID du prompt |
-| `LLM_CALL_FAILED` | 502 | Appel LLM échoué | Vérifiez la clé API et la disponibilité du service |
-| `UNSUPPORTED_LLM_PROVIDER` | 400 | Fournisseur LLM non supporté | Utilisez openai ou anthropic |
+| Code | Message | Suggestion |
+|------|---------|------------|
+| `PROMPT_BUILD_FAILED` | Échec de construction du prompt. | Vérifiez que l'agent et le contexte sont valides. |
+| `PROMPT_LLM_ERROR` | Erreur de l'appel LLM. | Vérifiez la clé API et les quotas. |
 
-### 4.5. Logs (LOG)
+### 3.5. Secrets (ERR-SEC-xxx)
 
-| Code | HTTP | Message | Suggestion |
-|------|------|---------|------------|
-| `LOG_DIR_NOT_FOUND` | 404 | Dossier de logs introuvable | Exécutez `akoris init` pour initialiser le projet |
-| `LOG_READ_FAILED` | 500 | Lecture des logs échouée | Vérifiez les permissions du dossier .akoris/ |
+| Code | Message | Suggestion |
+|------|---------|------------|
+| `SECRET_NOT_FOUND` | Secret introuvable. | La clé "{key}" n'existe pas. |
+| `SECRET_INVALID` | Secret invalide. | Le token est mal formé ou expiré. |
+| `SECRET_ENCRYPT_FAILED` | Échec du chiffrement. | Vérifiez que la clé maîtresse est valide. |
 
-### 4.6. Secrets (SEC)
+### 3.6. DevOps (ERR-DEV-xxx)
 
-| Code | HTTP | Message | Suggestion |
-|------|------|---------|------------|
-| `SECRET_NOT_FOUND` | 404 | Secret introuvable | Vérifiez le nom de la clé |
-| `SECRETS_FILE_NOT_FOUND` | 404 | Fichier de secrets introuvable | Exécutez `akoris secrets init` |
-| `SECRETS_DECRYPT_FAILED` | 500 | Déchiffrement échoué | Vérifiez que la clé maîtresse est valide |
-| `SECRETS_ENCRYPT_FAILED` | 500 | Chiffrement échoué | Réessayez |
-| `SECRET_ALREADY_EXISTS` | 409 | Secret déjà existant | Utilisez PUT pour mettre à jour |
+| Code | Message | Suggestion |
+|------|---------|------------|
+| `DEPLOY_FAILED` | Déploiement échoué. | Consultez les logs de déploiement. |
+| `SERVICE_DISCONNECTED` | Service déconnecté. | Vérifiez le token et la connexion réseau. |
 
-### 4.7. Alias (ALI)
+### 3.7. Websocket (ERR-WS-xxx)
 
-| Code | HTTP | Message | Suggestion |
-|------|------|---------|------------|
-| `ALIAS_NOT_FOUND` | 404 | Alias introuvable | Vérifiez le nom de l'alias |
-| `ALIAS_ALREADY_EXISTS` | 409 | Alias déjà existant | Utilisez un autre nom |
+| Code | Message | Suggestion |
+|------|---------|------------|
+| `WS_UNKNOWN_CHANNEL` | Canal inconnu. | Les canaux disponibles sont : logs, events, notifications, deploy, quality. |
+| `WS_INVALID_FILTER` | Filtres invalides. | Vérifiez le format des filtres. |
 
-### 4.8. Doctor (DOC)
+### 3.8. General (ERR-GEN-xxx)
 
-| Code | HTTP | Message | Suggestion |
-|------|------|---------|------------|
-| `FIX_FAILED` | 500 | Réparation échouée | Consultez les logs pour plus de détails |
-| `CHECK_NOT_FOUND` | 404 | Vérification introuvable | Vérifiez l'ID de la vérification |
-
-### 4.9. DevOps (DOP)
-
-| Code | HTTP | Message | Suggestion |
-|------|------|---------|------------|
-| `SERVICE_NOT_FOUND` | 404 | Service connecté introuvable | Vérifiez l'ID du service |
-| `DEPLOYMENT_FAILED` | 500 | Déploiement échoué | Consultez les logs de déploiement |
-| `ENVIRONMENT_NOT_FOUND` | 404 | Environnement introuvable | Vérifiez le nom de l'environnement |
-| `SECRET_VALIDATION_FAILED` | 400 | Secret invalide | Vérifiez que le token est correct |
-
-### 4.10. Génériques (GEN)
-
-| Code | HTTP | Message | Suggestion |
-|------|------|---------|------------|
-| `VALIDATION_ERROR` | 400 | Données invalides | Vérifiez les champs du formulaire |
-| `INTERNAL_ERROR` | 500 | Erreur interne | Réessayez ou contactez l'équipe |
-| `NOT_IMPLEMENTED` | 501 | Fonctionnalité non implémentée | Cette fonctionnalité sera disponible dans une version future |
-| `RATE_LIMITED` | 429 | Trop de requêtes | Attendez avant de réessayer |
+| Code | Message | Suggestion |
+|------|---------|------------|
+| `INTERNAL_ERROR` | Erreur interne du serveur. | Relancez l'opération, contactez l'équipe si ça persiste. |
+| `NOT_FOUND` | Ressource non trouvée. | Vérifiez l'URL ou l'ID. |
+| `VALIDATION_ERROR` | Erreur de validation. | Vérifiez les champs du formulaire : {fields}. |
 
 ---
 
-## 5. Implémentation
-
-### 5.1. CoreError
-
-```typescript
-// packages/core/src/shared/errors.ts
-
-export class CoreError extends Error {
-  public readonly code: string;
-  public readonly suggestion: string;
-  public readonly details?: Record<string, unknown>;
-
-  constructor(payload: ErrorPayload) {
-    super(payload.message);
-    this.name = 'CoreError';
-    this.code = payload.code;
-    this.suggestion = payload.suggestion;
-    this.details = payload.details;
-  }
-
-  toJSON(): ErrorPayload {
-    return {
-      code: this.code,
-      message: this.message,
-      suggestion: this.suggestion,
-      details: this.details,
-    };
-  }
-}
-
-// Factory functions
-export function agentNotFound(id: string): CoreError {
-  return new CoreError({
-    code: 'AGENT_NOT_FOUND',
-    message: `Agent "${id}" introuvable.`,
-    suggestion: 'Vérifiez l\'ID de l\'agent dans le Registry.',
-    details: { agentId: id },
-  });
-}
-
-export function transitionDenied(from: string, to: string, reason: string): CoreError {
-  return new CoreError({
-    code: 'TRANSITION_DENIED',
-    message: `Transition "${from} → ${to}" refusée.`,
-    suggestion: reason,
-    details: { from, to, reason },
-  });
-}
-```
-
-### 5.2. API Error Handler
-
-```typescript
-// apps/api/src/middleware/error-handler.ts
-
-import { FastifyError, FastifyReply, FastifyRequest } from 'fastify';
-import { CoreError } from '@akoris/core';
-
-export function errorHandler(error: FastifyError | CoreError, request: FastifyRequest, reply: FastifyReply) {
-  // CoreError → API error
-  if (error instanceof CoreError) {
-    const status = mapCodeToStatus(error.code);
-    return reply.status(status).send({
-      success: false,
-      errors: [error.toJSON()],
-      meta: { timestamp: new Date().toISOString() },
-    });
-  }
-
-  // Validation error (Zod)
-  if (error.validation) {
-    return reply.status(400).send({
-      success: false,
-      errors: error.validation.map((v) => ({
-        code: 'VALIDATION_ERROR',
-        message: v.message,
-        suggestion: 'Vérifiez les champs du formulaire.',
-        details: { path: v.instancePath },
-      })),
-      meta: { timestamp: new Date().toISOString() },
-    });
-  }
-
-  // Fallback
-  return reply.status(500).send({
-    success: false,
-    errors: [{
-      code: 'INTERNAL_ERROR',
-      message: 'Erreur interne du serveur.',
-      suggestion: 'Réessayez ou contactez l\'équipe.',
-    }],
-    meta: { timestamp: new Date().toISOString() },
-  });
-}
-
-function mapCodeToStatus(code: string): number {
-  if (code.endsWith('_NOT_FOUND')) return 404;
-  if (code.endsWith('_ALREADY_EXISTS')) return 409;
-  if (code.endsWith('_FAILED')) return 500;
-  if (code.startsWith('INVALID_') || code.startsWith('UNSUPPORTED_')) return 400;
-  return 400;
-}
-```
-
-### 5.3. SDKError
+## 4. Gestion dans le SDK
 
 ```typescript
 // packages/sdk/src/errors.ts
 
 export class SDKError extends Error {
-  public readonly code: string;
-  public readonly suggestion?: string;
+  public code: string;
+  public suggestion?: string;
+  public details?: Record<string, unknown>;
 
-  constructor(payload: ErrorPayload) {
-    super(payload.message);
+  constructor(error: ErrorResponse) {
+    super(error.message);
     this.name = 'SDKError';
-    this.code = payload.code;
-    this.suggestion = payload.suggestion;
+    this.code = error.code;
+    this.suggestion = error.suggestion;
+    this.details = error.details;
+  }
+}
+
+export function isRetryableError(error: SDKError): boolean {
+  const retryableCodes = [
+    'SEARCH_TIMEOUT',
+    'DEPLOY_FAILED',
+    'INTERNAL_ERROR',
+    'WS_CONNECTION_LOST'
+  ];
+  return retryableCodes.includes(error.code);
+}
+```
+
+**Usage dans le Dashboard :**
+
+```typescript
+try {
+  await client.transition('DRAFT', 'PLANNED');
+} catch (error) {
+  if (error instanceof SDKError) {
+    toast.error(`${error.message} — ${error.suggestion}`);
+  } else {
+    toast.error('Une erreur inattendue est survenue.');
   }
 }
 ```
 
 ---
 
-## 6. Logging des erreurs
+## 5. Format des erreurs dans l'API
 
-Toutes les erreurs sont loguées avec le format suivant :
+**Réponse HTTP (400 Bad Request) :**
 
-```typescript
-logger.error({
-  code: error.code,
-  message: error.message,
-  stack: error.stack,
-  requestId: request.id,
-  path: request.url,
-}, 'Erreur traitée');
+```json
+{
+  "success": false,
+  "errors": [
+    {
+      "code": "STATE_GATE_FAILED",
+      "message": "Quality Gate QG-004 échoué.",
+      "suggestion": "Corrigez le gate QG-004 avant de réessayer.",
+      "details": {
+        "gateId": "QG-004",
+        "score": 0.45,
+        "threshold": 0.8
+      }
+    }
+  ]
+}
+```
+
+**Erreur WebSocket (canal d'erreur) :**
+
+```json
+{
+  "type": "error",
+  "channel": "logs",
+  "payload": {
+    "code": "WS_INVALID_FILTER",
+    "message": "Filtres invalides.",
+    "suggestion": "Vérifiez le format du filtre 'since' (ISO 8601)."
+  }
+}
 ```
 
 ---
 
-## 7. Prochaine étape
+## 6. Prochaine étape
 
-Le modèle d'erreurs unifié finalise la Phase C. La prochaine phase est la **Phase D** (Implémentation) : migration du CLI, création des packages, tests et documentation API.
+Avec ce modèle d'erreur, la Phase C (Implémentation) est terminée. La Phase D (Gouvernance) peut commencer avec :
+
+- `12-roadmap.md` (déjà planifié)
+- `14-extension-model.md`
+- ADR-001 à ADR-006 (déjà planifiés)
