@@ -28,7 +28,7 @@ export class BaseAdapter implements AdapterContract {
     this.engine = engine;
   }
 
-  async translate(context: AdapterContext): Promise<AdapterResult> {
+  async translate(_context: AdapterContext): Promise<AdapterResult> {
     throw new Error(`translate() must be implemented by ${this.engine} adapter`);
   }
 }

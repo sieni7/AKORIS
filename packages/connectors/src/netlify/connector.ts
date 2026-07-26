@@ -6,7 +6,7 @@ export class NetlifyConnector extends BaseConnector {
   }
 
   async connect(config: Record<string, string>): Promise<boolean> {
-    const { token, siteId } = config;
+    const token = config.token;
     if (!token) {
       console.error('Netlify: token is required');
       return false;
