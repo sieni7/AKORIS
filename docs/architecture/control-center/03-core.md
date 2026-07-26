@@ -1,5 +1,5 @@
 ---
-title: "AKORIS Control Center — Core Engine Interfaces"
+title: "AKORIS Control Center — Core Engine Specification"
 version: "1.0"
 status: "Draft"
 owner: "AKORIS Core Team"
@@ -8,724 +8,358 @@ related:
   - "00-vision.md"
   - "01-system-architecture.md"
   - "02-technical-architecture.md"
-  - "ADR-001-control-center.md"
-  - "ADR-003-core-isolation.md"
+  - "ADR-003-core-first.md"
 ---
 
-# 03 — Core Engine Interfaces
+# 03 — Core Engine Specification
 
-## 1. Objectif
+## 1. Définition du Core Engine
 
-Ce document définit l'**API publique du Core Engine**, le cœur métier d'AKORIS. Le Core est le seul détenteur de la logique métier — il ne dépend d'aucun framework, d'aucune interface utilisateur, et s'exécute uniquement avec Node.js natif.
+Le Core Engine est l'unique détenteur de la **logique métier** d'AKORIS. Il est indépendant de toute interface (CLI, API, Dashboard, SDK) et ne connaît ni Fastify, ni React, ni Commander.
 
-Tous les moteurs listés ici sont accessibles via le point d'entrée unique du Core (`packages/core/src/index.ts`). Les interfaces (CLI, API, SDK) consomment ces services sans jamais dupliquer la logique métier.
+Le Core expose une API publique (TypeScript) que toutes les interfaces consomment. Cette API est stable, versionnée, et testée indépendamment.
 
----
+### 1.1. Responsabilités du Core
 
-## 2. Principes de conception
+- **Registry** : lecture, validation et indexation du référentiel de gouvernance (`registry/`).
+- **State Machine** : gestion du cycle de vie du projet (états, transitions, Quality Gates).
+- **Search** : indexation et recherche fédérée dans toutes les sources (agents, règles, ADR, logs, etc.).
+- **Prompts** : construction de prompts, injection de contexte, test LLM, gestion des templates.
+- **Doctor** : diagnostic et réparation automatique du projet (`doctor --fix`).
+- **Logs** : lecture des logs statiques et streaming en temps réel (`watch`).
+- **Alias** : gestion des alias de commandes (CRUD).
+- **Secrets** : chiffrement/déchiffrement des tokens (AES).
+- **Quality** : évaluation des Quality Gates (futur).
+- **Metrics** : agrégation des métriques (futur).
+- **Deploy** : orchestration des déploiements (via les providers).
 
-- **Indépendance** : aucune dépendance externe (sauf Node.js natif).
-- **Immutabilité** : les moteurs prennent des entrées, retournent des résultats, ne modifient jamais l'état global.
-- **Testabilité** : chaque moteur accepte ses dépendances en paramètre (injection de dépendances manuelle).
-- **Prédictibilité** : pas d'effets de bord cachés ; les mutations (filesystem) sont explicites.
-- **0 dépendance** : pas de librairie externe, pas de framework.
+### 1.2. Non-responsabilités (hors périmètre)
 
----
-
-## 3. Architecture du Core
-
-```
-packages/core/
-├── src/
-│   ├── index.ts              # Barillet d'export public
-│   ├── registry/
-│   │   ├── reader.ts         # RegistryReader : lecture du référentiel
-│   │   ├── types.ts          # Types internes du Registry
-│   │   └── index.ts
-│   ├── state/
-│   │   ├── machine.ts        # StateMachineEngine : cycles de vie
-│   │   ├── transitions.ts    # Définition des transitions
-│   │   ├── types.ts
-│   │   └── index.ts
-│   ├── search/
-│   │   ├── engine.ts         # SearchEngine : indexation et recherche
-│   │   ├── indexer.ts        # Indexer : construction de l'index
-│   │   ├── types.ts
-│   │   └── index.ts
-│   ├── prompts/
-│   │   ├── engine.ts         # PromptEngine : construction et test
-│   │   ├── builder.ts        # ContextBuilder : assemblage du contexte
-│   │   ├── store.ts          # PromptStore : sauvegarde/lecture
-│   │   ├── types.ts
-│   │   └── index.ts
-│   ├── logs/
-│   │   ├── reader.ts         # LogReader : lecture et watch
-│   │   ├── parser.ts         # Parser : parsing des logs bruts
-│   │   ├── types.ts
-│   │   └── index.ts
-│   ├── doctor/
-│   │   ├── engine.ts         # DoctorEngine : diagnostics
-│   │   ├── checks/           # Vérifications individuelles
-│   │   ├── types.ts
-│   │   └── index.ts
-│   ├── secrets/
-│   │   ├── manager.ts        # SecretManager : chiffrement/déchiffrement
-│   │   ├── types.ts
-│   │   └── index.ts
-│   ├── alias/
-│   │   ├── manager.ts        # AliasManager : résolution d'alias
-│   │   ├── types.ts
-│   │   └── index.ts
-│   ├── quality/
-│   │   ├── engine.ts         # QualityGateEngine (futur)
-│   │   ├── rules.ts
-│   │   ├── types.ts
-│   │   └── index.ts
-│   └── shared/
-│       ├── errors.ts         # Erreurs métier typées
-│       ├── types.ts          # Types partagés entre moteurs
-│       └── utils.ts          # Utilitaires internes
-├── tests/
-│   ├── registry/
-│   ├── state/
-│   ├── search/
-│   ├── prompts/
-│   ├── logs/
-│   ├── doctor/
-│   ├── secrets/
-│   └── alias/
-├── package.json
-└── tsconfig.json
-```
+- Le Core ne gère pas les **utilisateurs** (authentification, permissions). Ceci est délégué à l'API (via des tokens locaux ou OAuth à terme).
+- Le Core ne gère pas le **réseau** (WebSocket, HTTP). Il expose des méthodes synchrones ou asynchrones (Promise) qui sont appelées par l'API.
+- Le Core n'effectue pas d'**appels HTTP** directs (sauf pour les providers LLM, qui sont encapsulés dans un service dédié).
+- Le Core ne contient **aucune logique UI** (couleurs, formatage, affichage).
 
 ---
 
-## 4. Interfaces publiques des moteurs
+## 2. API Publique du Core (TypeScript)
 
-### 4.1. RegistryReader
-
-Lecture du référentiel de gouvernance (agents, règles, capacités, livrables, QG).
+Le Core expose une interface principale, consommée par le CLI, l'API et le SDK.
 
 ```typescript
-class RegistryReader {
-  constructor(private basePath: string);
+// packages/core/src/index.ts
 
-  // Charger tout le référentiel en mémoire
-  async load(): Promise<Registry>;
-
-  // Accès aux entités
-  getAgent(id: string): Promise<Agent | null>;
-  listAgents(): Promise<Agent[]>;
-  getRule(id: string): Promise<Rule | null>;
-  listRules(): Promise<Rule[]>;
-  getCapability(id: string): Promise<Capability | null>;
-  listCapabilities(): Promise<Capability[]>;
-  getDeliverable(id: string): Promise<Deliverable | null>;
-  listDeliverables(): Promise<Deliverable[]>;
-  getQualityGate(id: string): Promise<QualityGate | null>;
-  listQualityGates(): Promise<QualityGate[]>;
-
-  // Rechargement
-  reload(): Promise<void>;
-}
-```
-
-**Exemple d'utilisation :**
-```typescript
-const registry = new RegistryReader('/akoris/registry');
-await registry.load();
-const agent = await registry.getAgent('DEV-04');
-```
-
----
-
-### 4.2. StateMachineEngine
-
-Gestion du cycle de vie des projets : états, transitions, Quality Gates.
-
-```typescript
-class StateMachineEngine {
-  constructor(
-    private registry: RegistryReader,
-    private stateFile: string
-  );
-
-  // Lire l'état courant
-  getCurrentState(): Promise<ProjectState>;
-
-  // Lire l'historique complet
-  getHistory(): Promise<Transition[]>;
-
-  // Exécuter une transition
-  transition(to: string): Promise<TransitionResult>;
-
-  // Valider une transition (sans l'exécuter)
-  validateTransition(to: string): Promise<ValidationResult>;
-
-  // Recalculer l'état à partir du filesystem
-  repairState(): Promise<RepairResult>;
-}
-
-// Résultat d'une transition
-type TransitionResult = {
-  success: boolean;
-  from: string;
-  to: string;
-  timestamp: string;
-  gatesPassed: string[];
-  gatesFailed?: { id: string; reason: string }[];
-  error?: string;
-};
-
-// Résultat de validation
-type ValidationResult = {
-  valid: boolean;
-  gatesRequired: string[];
-  gatesPassed: string[];
-  gatesFailed?: { id: string; reason: string }[];
-};
-```
-
-**Exemple d'utilisation :**
-```typescript
-const sm = new StateMachineEngine(registry, '/akoris/.akoris/state.json');
-const result = await sm.transition('Planned');
-if (result.success) {
-  console.log(`Transition réussie : ${result.from} → ${result.to}`);
-}
-```
-
----
-
-### 4.3. SearchEngine
-
-Indexation et recherche fédérée dans toutes les sources (agents, règles, ADR, logs, etc.).
-
-```typescript
-class SearchEngine {
-  constructor(private registry: RegistryReader);
-
-  // Construire ou reconstruire l'index
-  index(): Promise<void>;
-
-  // Rechercher
-  query(q: string, options?: SearchOptions): Promise<SearchResults>;
-
-  // Recherche avec filtres
-  queryFiltered(filters: SearchFilters): Promise<SearchResults>;
-}
-
-type SearchOptions = {
-  types?: SearchSourceType[];   // Filtrer par type
-  limit?: number;               // Nombre max de résultats
-  fuzzy?: boolean;              // Tolérance aux fautes
-};
-
-type SearchFilters = {
-  types?: SearchSourceType[];
-  tags?: string[];
-  agents?: string[];
-  dateFrom?: string;
-  dateTo?: string;
-};
-
-type SearchResults = {
-  query: string;
-  total: number;
-  results: SearchResult[];
-};
-
-type SearchResult = {
-  type: SearchSourceType;
-  id: string;
-  title: string;
-  description?: string;
-  match: string;
-  score: number;
-};
-
-type SearchSourceType =
-  | 'agent'
-  | 'rule'
-  | 'capability'
-  | 'deliverable'
-  | 'adr'
-  | 'log'
-  | 'prompt';
-```
-
-**Exemple d'utilisation :**
-```typescript
-const search = new SearchEngine(registry);
-await search.index();
-const results = await search.query('transition Draft Planned');
-console.log(`${results.total} résultats trouvés`);
-```
-
----
-
-### 4.4. PromptEngine
-
-Construction contextuelle de prompts, envoi à un LLM, sauvegarde dans la Prompt Library.
-
-```typescript
-class PromptEngine {
-  constructor(
-    private registry: RegistryReader,
-    private store: PromptStore
-  );
-
-  // Construire un prompt à partir d'un agent et d'un contexte
-  build(options: BuildOptions): Promise<ParsedPrompt>;
-
-  // Tester un prompt sur un LLM
-  test(prompt: ParsedPrompt, llm: LLMConfig): Promise<PromptTestResult>;
-
-  // Sauvegarder un prompt
-  save(prompt: SavedPrompt): Promise<void>;
-
-  // Lister les prompts sauvegardés
-  list(): Promise<SavedPrompt[]>;
-
-  // Charger un prompt sauvegardé
-  load(id: string): Promise<SavedPrompt | null>;
-
-  // Supprimer un prompt
-  delete(id: string): Promise<void>;
-}
-
-type BuildOptions = {
-  agentId: string;
-  context: {
-    includeAdr?: boolean;
-    includeRegistry?: boolean;
-    includeRecentLogs?: boolean;
-    includeCapabilities?: boolean;
-    customInstructions?: string;
-  };
-};
-
-type ParsedPrompt = {
-  agentId: string;
-  system: string;
-  context: string;
-  instructions: string;
-  full: string;       // Prompt complet assemblé
-};
-
-type LLMConfig = {
-  provider: 'openai' | 'anthropic';
-  model: string;
-  temperature?: number;
-  maxTokens?: number;
-};
-
-type PromptTestResult = {
-  request: ParsedPrompt;
-  response: string;
-  duration: number;
-  tokenUsage: {
-    input: number;
-    output: number;
-    total: number;
-  };
-};
-
-type SavedPrompt = {
-  id: string;
-  name: string;
-  description?: string;
-  agentId: string;
-  prompt: ParsedPrompt;
-  createdAt: string;
-  updatedAt: string;
-};
-```
-
-**Exemple d'utilisation :**
-```typescript
-const prompts = new PromptEngine(registry, promptStore);
-const prompt = await prompts.build({
-  agentId: 'DEV-04',
-  context: { includeAdr: true, includeRegistry: true }
-});
-console.log(prompt.full);
-```
-
----
-
-### 4.5. LogReader
-
-Lecture et surveillance en temps réel des logs d'AKORIS.
-
-```typescript
-class LogReader {
-  constructor(private logDir: string);
-
-  // Lire les dernières entrées
-  read(lines?: number, agent?: string): Promise<LogEntry[]>;
-
-  // Lire avec pagination
-  readRange(options: ReadRangeOptions): Promise<LogEntry[]>;
-
-  // Watcher temps réel
-  watch(callback: (entry: LogEntry) => void, filter?: LogFilter): () => void;
-
-  // Arrêter le watcher
-  stopWatching(): void;
-
-  // Rechercher dans les logs
-  search(q: string, options?: SearchOptions): Promise<LogEntry[]>;
-}
-
-type ReadRangeOptions = {
-  from?: string;      // Date/Timestamp
-  to?: string;        // Date/Timestamp
-  agent?: string;     // Filtre par agent
-  limit?: number;
-  offset?: number;
-};
-
-type LogFilter = {
-  agents?: string[];
-  actions?: string[];
-  level?: string;
-};
-
-type LogEntry = {
-  timestamp: string;
-  agentId: string;
-  action: string;
-  details: string;
-  level: 'info' | 'warn' | 'error';
-  metadata?: Record<string, unknown>;
-};
-```
-
-**Exemple d'utilisation :**
-```typescript
-const logs = new LogReader('/akoris/.akoris/logs');
-const entries = await logs.read(20, 'CORE-01');
-entries.forEach(e => console.log(`[${e.level}] ${e.action}: ${e.details}`));
-```
-
----
-
-### 4.6. DoctorEngine
-
-Diagnostic et réparation de l'état du projet AKORIS.
-
-```typescript
-class DoctorEngine {
-  constructor(
-    private registry: RegistryReader,
-    private state: StateMachineEngine,
-    private logReader: LogReader
-  );
-
-  // Diagnostic complet
-  diagnose(): Promise<DiagnosisReport>;
-
-  // Exécuter une vérification spécifique
-  runCheck(checkName: string): Promise<CheckResult>;
-
-  // Réparer automatiquement
-  fix(): Promise<FixReport>;
-
-  // Réparer un problème spécifique
-  fixIssue(issueId: string): Promise<FixResult>;
-}
-
-type DiagnosisReport = {
-  timestamp: string;
-  status: 'healthy' | 'warning' | 'error';
-  checks: CheckResult[];
-  summary: {
-    passed: number;
-    warnings: number;
-    errors: number;
-  };
-};
-
-type CheckResult = {
-  id: string;
-  name: string;
-  status: 'passed' | 'warning' | 'error';
-  message: string;
-  suggestion?: string;
-};
-
-type FixReport = {
-  fixed: number;
-  failed: number;
-  fixes: FixResult[];
-};
-
-type FixResult = {
-  checkId: string;
-  status: 'fixed' | 'failed' | 'skipped';
-  message: string;
-};
-```
-
-**Exemple d'utilisation :**
-```typescript
-const doctor = new DoctorEngine(registry, stateMachine, logReader);
-const report = await doctor.diagnose();
-if (report.status !== 'healthy') {
-  console.log(`${report.summary.errors} erreurs détectées`);
-  await doctor.fix();
-}
-```
-
----
-
-### 4.7. SecretManager
-
-Chiffrement et déchiffrement des secrets d'environnement.
-
-```typescript
-class SecretManager {
-  constructor(private secretsFile: string);
-
-  // Initialiser le fichier de secrets (génère une clé AES)
-  init(): Promise<void>;
-
-  // Définir un secret
-  set(key: string, value: string): Promise<void>;
-
-  // Lire un secret
-  get(key: string): Promise<string | null>;
-
-  // Lister les clés
-  list(): Promise<string[]>;
-
-  // Supprimer un secret
-  delete(key: string): Promise<void>;
-
-  // Exporter les secrets (déchiffrés, stdout)
-  export(): Promise<Record<string, string>>;
-}
-```
-
-**Exemple d'utilisation :**
-```typescript
-const secrets = new SecretManager('/akoris/.akoris/secrets.enc');
-await secrets.init();
-await secrets.set('OPENAI_API_KEY', 'sk-...');
-const key = await secrets.get('OPENAI_API_KEY');
-```
-
----
-
-### 4.8. AliasManager
-
-Résolution et gestion des alias de commandes.
-
-```typescript
-class AliasManager {
-  constructor(
-    private registry: RegistryReader,
-    private aliasesFile: string
-  );
-
-  // Charger les alias
-  load(): Promise<void>;
-
-  // Résoudre un alias
-  resolve(input: string): Promise<ResolvedAlias | null>;
-
-  // Créer un alias
-  set(name: string, command: string): Promise<void>;
-
-  // Supprimer un alias
-  delete(name: string): Promise<void>;
-
-  // Lister tous les alias
-  list(): Promise<AliasEntry[]>;
-}
-
-type AliasEntry = {
-  name: string;
-  command: string;
-  description?: string;
-  createdAt: string;
-};
-
-type ResolvedAlias = {
-  original: string;
-  alias: string;
-  command: string;
-};
-```
-
----
-
-### 4.9. QualityGateEngine (futur)
-
-Validation automatisée des Quality Gates sur les transitions d'état.
-
-```typescript
-// Défini dans `quality/engine.ts`
-// Non implémenté en v1.0
-
-class QualityGateEngine {
-  constructor(private registry: RegistryReader);
-
-  // Évaluer les QG requis pour une transition
-  evaluate(from: string, to: string): Promise<QualityGateResult[]>;
-
-  // Exécuter un QG spécifique
-  execute(gateId: string): Promise<QualityGateResult>;
-}
-```
-
----
-
-## 5. Erreurs métier
-
-Toutes les erreurs du Core sont typées et exportées.
-
-```typescript
-class CoreError extends Error {
-  constructor(
-    message: string,
-    public code: ErrorCode,
-    public suggestion?: string
-  );
-}
-
-type ErrorCode =
+export interface Core {
   // Registry
-  | 'AGENT_NOT_FOUND'
-  | 'RULE_NOT_FOUND'
-  | 'CAPABILITY_NOT_FOUND'
-  | 'REGISTRY_LOAD_FAILED'
+  registry: RegistryReader;
+
   // State Machine
-  | 'INVALID_TRANSITION'
-  | 'STATE_NOT_FOUND'
-  | 'TRANSITION_DENIED'
-  | 'GATE_FAILED'
-  | 'STATE_FILE_CORRUPTED'
+  state: StateMachineEngine;
+
   // Search
-  | 'INDEX_NOT_BUILT'
-  | 'SEARCH_QUERY_EMPTY'
-  // Prompts
-  | 'AGENT_HAS_NO_PROMPT'
-  | 'PROMPT_BUILD_FAILED'
-  | 'PROMPT_NOT_FOUND'
-  | 'LLM_CALL_FAILED'
-  | 'UNSUPPORTED_LLM_PROVIDER'
-  // Logs
-  | 'LOG_DIR_NOT_FOUND'
-  | 'LOG_READ_FAILED'
+  search: SearchEngine;
+
+  // Prompts & AI
+  prompts: PromptEngine;
+
   // Doctor
-  | 'FIX_FAILED'
-  | 'CHECK_NOT_FOUND'
-  // Secrets
-  | 'SECRETS_FILE_NOT_FOUND'
-  | 'SECRETS_DECRYPT_FAILED'
-  | 'SECRETS_ENCRYPT_FAILED'
-  | 'SECRET_NOT_FOUND'
+  doctor: DoctorEngine;
+
+  // Logs
+  logs: LogReader;
+
   // Alias
-  | 'ALIAS_NOT_FOUND'
-  | 'ALIAS_ALREADY_EXISTS';
+  alias: AliasManager;
+
+  // Secrets
+  secrets: SecretManager;
+
+  // Quality (future)
+  // quality: QualityEngine;
+
+  // Metrics (future)
+  // metrics: MetricsEngine;
+
+  // Deploy (future)
+  // deploy: DeployEngine;
+}
+
+// Factory function to instantiate the Core
+export function createCore(options: CoreOptions): Core;
 ```
 
-**Exemple :**
+**Conventions :**
+- Chaque service expose des méthodes synchrones ou asynchrones (Promise).
+- Les méthodes qui lisent le filesystem acceptent un `projectRoot` (chemin absolu vers la racine du projet).
+- Les méthodes qui modifient l'état du projet renvoient l'objet modifié (immutabilité par conception).
+- Toutes les erreurs sont typées (voir `13-error-model.md`).
+
+---
+
+## 3. Modules du Core (détail)
+
+### 3.1. RegistryReader
+
+**Responsabilité** : Lire, valider et indexer le Registry (agents, règles, événements, QG, etc.).
+
+**Méthodes principales** :
 ```typescript
-import { CoreError } from '@akoris/core';
-throw new CoreError(
-  'Agent DEV-99 not found',
-  'AGENT_NOT_FOUND',
-  'Check registry/agents/ for available agents'
-);
+interface RegistryReader {
+  // Charge l'index complet du Registry (registry.json)
+  loadIndex(projectRoot: string): Promise<RegistryIndex>;
+
+  // Charge un agent spécifique (agent.json)
+  loadAgent(projectRoot: string, agentId: string): Promise<Agent>;
+
+  // Liste tous les agents (avec filtre domaine/statut)
+  listAgents(projectRoot: string, filter?: AgentFilter): Promise<Agent[]>;
+
+  // Valide l'intégrité du Registry (schémas JSON, références croisées)
+  validate(projectRoot: string): Promise<ValidationReport>;
+
+  // Surveille les changements du Registry (fs.watch)
+  watch(projectRoot: string, callback: (event: RegistryEvent) => void): () => void;
+}
 ```
 
----
+### 3.2. StateMachineEngine
 
-## 6. Point d'entrée public (`index.ts`)
+**Responsabilité** : Gérer le cycle de vie du projet.
 
+**Méthodes principales** :
 ```typescript
-// Moteurs
-export { RegistryReader } from './registry';
-export { StateMachineEngine } from './state';
-export { SearchEngine } from './search';
-export { PromptEngine } from './prompts';
-export { LogReader } from './logs';
-export { DoctorEngine } from './doctor';
-export { SecretManager } from './secrets';
-export { AliasManager } from './alias';
-export { QualityGateEngine } from './quality'; // futur
+interface StateMachineEngine {
+  // Charge la machine à états (state-machine.json)
+  loadMachine(projectRoot: string): Promise<StateMachine>;
 
-// Types partagés
-export type {
-  Agent, Rule, Capability, Deliverable, QualityGate, Registry
-} from './registry/types';
+  // État courant du projet (depuis .akoris/state.json)
+  getCurrentState(projectRoot: string): Promise<State>;
 
-export type {
-  ProjectState, Transition, TransitionResult, ValidationResult
-} from './state/types';
+  // Historique des transitions
+  getHistory(projectRoot: string): Promise<TransitionRecord[]>;
 
-export type {
-  SearchResults, SearchResult, SearchOptions, SearchFilters
-} from './search/types';
+  // Vérifie si une transition est autorisée (gates, autorisations)
+  canTransition(projectRoot: string, from: string, to: string): Promise<TransitionCheck>;
 
-export type {
-  ParsedPrompt, BuildOptions, LLMConfig, PromptTestResult, SavedPrompt
-} from './prompts/types';
+  // Exécute une transition (si possible)
+  transition(projectRoot: string, from: string, to: string, actor?: string): Promise<TransitionResult>;
 
-export type {
-  LogEntry, LogFilter, ReadRangeOptions
-} from './logs/types';
+  // Exporte un rapport d'état (Markdown, JSON, texte)
+  exportReport(projectRoot: string, format: 'markdown' | 'json' | 'text'): Promise<string>;
+}
+```
 
-export type {
-  DiagnosisReport, CheckResult, FixReport, FixResult
-} from './doctor/types';
+### 3.3. SearchEngine
 
-export type {
-  AliasEntry, ResolvedAlias
-} from './alias/types';
+**Responsabilité** : Indexer et rechercher dans toutes les sources.
 
-// Erreurs
-export { CoreError } from './shared/errors';
-export type { ErrorCode } from './shared/errors';
+**Méthodes principales** :
+```typescript
+interface SearchEngine {
+  // Recherche fédérée
+  search(projectRoot: string, query: string, options?: SearchOptions): Promise<SearchResult[]>;
+
+  // Indexe toutes les sources (agents, règles, ADR, logs, etc.)
+  index(projectRoot: string): Promise<void>;
+
+  // Filtres : type, limite, score minimum
+  searchWithFilters(projectRoot: string, query: string, filters: SearchFilters): Promise<SearchResult[]>;
+}
+```
+
+**Sources indexées :**
+- Agents (id, name, domain, tags)
+- Règles (id, name, description, severity)
+- ADRs (titre, statut, contenu)
+- Livrables (id, name, type)
+- Événements (id, name)
+- Capacités (id → agent associé)
+- Logs (agentId, action, details) — 100 dernières entrées.
+
+### 3.4. PromptEngine
+
+**Responsabilité** : Construire, tester et sauvegarder des prompts.
+
+**Méthodes principales** :
+```typescript
+interface PromptEngine {
+  // Construit un prompt à partir d'un agent, d'un contexte et de variables
+  buildPrompt(projectRoot: string, input: PromptInput): Promise<Prompt>;
+
+  // Injecte le contexte (ADR, Registry, logs, etc.) dans le prompt
+  injectContext(projectRoot: string, context: PromptContext): Promise<string>;
+
+  // Teste un prompt sur un LLM (OpenAI, Anthropic, etc.)
+  executePrompt(projectRoot: string, prompt: Prompt, provider: LLMProvider): Promise<LLMResponse>;
+
+  // Sauvegarde un prompt dans la bibliothèque (Prompt Library)
+  savePrompt(projectRoot: string, prompt: Prompt): Promise<void>;
+
+  // Liste les prompts sauvegardés
+  listPrompts(projectRoot: string): Promise<Prompt[]>;
+}
+```
+
+### 3.5. DoctorEngine
+
+**Responsabilité** : Diagnostiquer et réparer automatiquement le projet.
+
+**Méthodes principales** :
+```typescript
+interface DoctorEngine {
+  // Diagnostique le projet (liste les problèmes)
+  diagnose(projectRoot: string): Promise<DiagnosisReport>;
+
+  // Répare automatiquement les problèmes (création de dossiers, régénération de fichiers)
+  fix(projectRoot: string, options?: FixOptions): Promise<FixReport>;
+
+  // Vérifie l'intégrité du Core (état du Core lui-même)
+  selfCheck(): Promise<SelfCheckReport>;
+}
+```
+
+### 3.6. LogReader
+
+**Responsabilité** : Lire et streamer les logs.
+
+**Méthodes principales** :
+```typescript
+interface LogReader {
+  // Lit les logs statiques (filtres : agent, since, lines)
+  readLogs(projectRoot: string, filter?: LogFilter): Promise<LogEntry[]>;
+
+  // Stream en temps réel (tail -f)
+  watchLogs(projectRoot: string, filter?: LogFilter, onEntry?: (entry: LogEntry) => void): () => void;
+}
+```
+
+### 3.7. AliasManager
+
+**Responsabilité** : Gérer les alias de commandes.
+
+**Méthodes principales** :
+```typescript
+interface AliasManager {
+  // Liste tous les alias
+  listAliases(projectRoot: string): Promise<Alias[]>;
+
+  // Ajoute ou met à jour un alias
+  setAlias(projectRoot: string, name: string, command: string): Promise<void>;
+
+  // Supprime un alias
+  removeAlias(projectRoot: string, name: string): Promise<void>;
+
+  // Résout un alias (retourne la commande associée)
+  resolveAlias(projectRoot: string, name: string): Promise<string | null>;
+}
+```
+
+### 3.8. SecretManager
+
+**Responsabilité** : Chiffrer, stocker et déchiffrer les secrets.
+
+**Méthodes principales** :
+```typescript
+interface SecretManager {
+  // Définit un secret (chiffré et sauvegardé dans .akoris/secrets.enc)
+  setSecret(projectRoot: string, key: string, value: string): Promise<void>;
+
+  // Récupère un secret (déchiffré)
+  getSecret(projectRoot: string, key: string): Promise<string | null>;
+
+  // Liste toutes les clés de secrets
+  listSecrets(projectRoot: string): Promise<string[]>;
+
+  // Supprime un secret
+  removeSecret(projectRoot: string, key: string): Promise<void>;
+
+  // Vérifie la validité d'un secret (ex: token GitHub valide)
+  validateSecret(projectRoot: string, key: string, provider: string): Promise<boolean>;
+}
+```
+
+**Chiffrement** : AES-256-GCM, clé maîtresse stockée dans `.akoris/.secret.key` (générée automatiquement à la première utilisation).
+
+### 3.9. QualityEngine (future)
+
+**Responsabilité** : Évaluer les Quality Gates.
+
+**Méthodes principales** (esquisse) :
+```typescript
+interface QualityEngine {
+  // Évalue un Quality Gate
+  evaluateGate(projectRoot: string, gateId: string, context: GateContext): Promise<GateResult>;
+
+  // Vérifie tous les gates requis avant une transition
+  checkGates(projectRoot: string, transition: Transition): Promise<GateCheckReport>;
+}
 ```
 
 ---
 
-## 7. Règles d'utilisation
+## 4. Règles d'architecture du Core
 
-- **Le Core n'écrit jamais directement dans l'interface utilisateur** (pas de `console.log`, pas de `process.stdout`).
-- **Le Core ne gère pas les arguments CLI** (pas de `process.argv`).
-- **Le Core ne gère pas les requêtes HTTP** (pas de `req`, `res`).
-- **Le Core ne dépend d'aucun framework** (pas de Fastify, pas de React).
-- **Le Core est synchrone ou asynchrone** selon les besoins, mais toujours prédictible.
-- **Toutes les opérations filesystem sont explicitement paramétrées** (injection du chemin).
-
----
-
-## 8. Cohérence avec le Blueprint
-
-- Le Core est **unique et indépendant** (Vision, principe #1).
-- Le Core est **testable sans interface** (Architecture système).
-- Les moteurs sont **découplés** (monorepo, packages séparés).
-- Les erreurs sont **typées et listées** (cohérence API).
-- Le Core **ne fait pas d'accès direct** à l'UI (contrainte d'architecture).
+1. **Le Core ne dépend d'aucune bibliothèque externe** (hors Node.js). Pas de `commander`, `fastify`, `react`, `chalk`, `ora`, etc.
+2. **Le Core ne lit ni n'écrit directement dans le filesystem** (excepté via des méthodes de service dédiées). Toutes les interactions avec les fichiers passent par `fs/promises` encapsulées.
+3. **Le Core ne contient pas de logique de formatage** (couleurs, JSON, etc.). Ceci est délégué aux interfaces (output/format.ts pour le CLI, API pour le Dashboard).
+4. **Le Core est testé unitairement** sans mocks de fichiers (les mocks sont réservés aux tests d'intégration).
+5. **Les erreurs sont typées** (`CoreError` avec `code`, `message`, `suggestion`). Voir `13-error-model.md`.
+6. **Le Core est versionné** : son API publique suit SemVer, et chaque package qui le consomme déclare sa dépendance.
 
 ---
 
-## 9. Prochaine étape
+## 5. Cycle de vie et persistance
 
-Une fois ce document validé, nous rédigerons les **ADR manquants** (ADR-002 monorepo, ADR-003 core isolation, ADR-004 Fastify) puis les **diagrammes** (séquence, classes, composants détaillés).
+Le Core est **stateless** (il ne conserve pas d'état en mémoire entre les appels). Tout état est persistant sur le filesystem (`.akoris/state.json`, `registry/`, etc.).
+
+- **État du projet** : `.akoris/state.json`
+- **Alias** : `.akoris/aliases.json`
+- **Secrets** : `.akoris/secrets.enc`
+- **Registry** : `registry/` (versionné dans le dépôt)
+- **Logs** : `.akoris/logs/sessions/`
+- **Prompts (Library)** : `.akoris/prompts/` (futur)
+
+---
+
+## 6. Tests du Core
+
+| Type de test | Outil | Couverture visée |
+|--------------|-------|------------------|
+| Unitaires | Vitest | 90 % |
+| Intégration (avec fichiers temporaires) | Vitest | 80 % |
+| Performance (benchmark) | Vitest + custom | – |
+
+**Règle** : Aucune modification du Core ne peut être mergée sans que les tests unitaires soient verts.
+
+---
+
+## 7. Cohérence avec le Blueprint
+
+- Le Core est indépendant de toute interface (conformément à `01-system-architecture.md` et au principe #1 de `00-vision.md`).
+- Les interfaces du Core sont clairement définies (`03-core.md` vs `04-domain-model.md`).
+- Le Core est testable et versionné (principe de qualité).
+- Le Core prépare l'extensibilité (modules `quality`, `metrics`, `deploy` sont déjà esquissés).
+
+---
+
+## 8. Prochaine étape
+
+Avec `03-core.md`, la Phase A du Blueprint est **complète** :
+
+- [x] `00-vision.md` — **Approved**
+- [x] `01-system-architecture.md` — **Approved**
+- [x] `02-technical-architecture.md` — **Approved**
+- [x] `03-core.md` — **Draft** (prêt pour revue)
+
+La prochaine étape est la **Phase B** (Contrats) : `04-domain-model.md`, `05-api-contract.md`, `06-events.md`, `07-websocket.md`, `11-sdk.md`.
 
 ---
 
 ## Statut
 
-- `00-vision.md` : **Approved**
-- `01-system-architecture.md` : **Approved**
-- `02-technical-architecture.md` : **Approved**
-- `03-core.md` : **Draft** (prêt pour revue)
+- `00-vision.md` : ✅ **Approved**
+- `01-system-architecture.md` : ✅ **Approved**
+- `02-technical-architecture.md` : ✅ **Approved**
+- `03-core.md` : 🔍 **Draft** — prêt pour votre revue
 
-**Prochaine action** : Si vous validez ce document, je rédige les **ADR manquants** (ADR-002, ADR-003, ADR-004) et les **diagrammes de séquence détaillés**. Sinon, indiquez-moi les ajustements nécessaires.
+**Prochaine action** : Validez `03-core.md` (ou demandez des ajustements), puis nous passerons à `04-domain-model.md` (définition des entités métier).
