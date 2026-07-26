@@ -5,14 +5,32 @@ services:
       dockerfile: apps/api/Dockerfile
     ports:
       - "3000:3000"
+    volumes:
+      - registry-data:/app/registry
+      - akoris-data:/app/.akoris
     environment:
       - PORT=3000
+      - NODE_ENV=production
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/health',r=>{process.exit(r.statusCode===200?0:1)})"]
+      interval: 30s
+      timeout: 10s
+      start_period: 10s
+      retries: 3
 
   dashboard:
     build:
       context: .
       dockerfile: apps/dashboard/Dockerfile
     ports:
-      - "80:80"
+      - "8080:80"
     depends_on:
-      - api
+      api:
+        condition: service_healthy
+    environment:
+      - VITE_API_URL=/api
+      - VITE_WS_URL=ws://localhost:8080/ws
+
+volumes:
+  registry-data:
+  akoris-data:
