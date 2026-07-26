@@ -6,8 +6,9 @@ import { QualityModule } from './components/executive/quality-module';
 import { ReleaseModule } from './components/executive/release-module';
 import { StateMachineModule } from './components/project/state-machine-module';
 import { LogsViewer } from './components/logs/logs-viewer';
+import { AgentExplorer } from './components/registry/AgentExplorer';
 import { useCommandRegistry } from './hooks/useCommandRegistry';
-import { Activity, ShieldCheck, Rocket, GitBranch, ScrollText } from 'lucide-react';
+import { Activity, ShieldCheck, Rocket, GitBranch, ScrollText, Cable } from 'lucide-react';
 
 const qc = new QueryClient({
   defaultOptions: { queries: { retry: 1, staleTime: 10_000 } },
@@ -19,6 +20,7 @@ const views: Record<string, React.ReactNode> = {
   release: <ReleaseModule />,
   'state-machine': <StateMachineModule />,
   logs: <LogsViewer />,
+  registry: <AgentExplorer />,
 };
 
 const NAV_COMMANDS = [
@@ -27,10 +29,17 @@ const NAV_COMMANDS = [
   { id: 'nav-release', title: 'Release Dashboard', keywords: ['release', 'deploy', 'production'], handler: (_n: (v: string) => void) => () => _n('release'), icon: Rocket },
   { id: 'nav-state-machine', title: 'State Machine', keywords: ['state', 'transition', 'machine'], handler: (_n: (v: string) => void) => () => _n('state-machine'), icon: GitBranch },
   { id: 'nav-logs', title: 'Live Logs', keywords: ['logs', 'live', 'stream'], handler: (_n: (v: string) => void) => () => _n('logs'), icon: ScrollText },
+  { id: 'nav-registry', title: 'Registry Explorer', keywords: ['registry', 'agents', 'explorer'], handler: (_n: (v: string) => void) => () => _n('registry'), icon: Cable },
 ];
 
 export default function App() {
-  const [activeView, setActiveView] = useState('health');
+  const initialView = window.location.pathname.replace(/^\//, '') || 'health';
+  const [activeView, setActiveView] = useState(initialView);
+
+  useEffect(() => {
+    window.history.replaceState(null, '', `/${activeView}`);
+  }, [activeView]);
+
   const handleNavigate = useCallback((view: string) => setActiveView(view), []);
   const registry = useCommandRegistry();
 

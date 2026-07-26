@@ -2,7 +2,7 @@ import { cn } from '../../lib/utils';
 import { useUIStore } from '../../lib/store';
 import { Button } from '../ui/button';
 import { ScrollArea } from '../ui/scroll-area';
-import { LayoutDashboard, GitBranch, Activity, ShieldCheck, Rocket, ScrollText } from 'lucide-react';
+import { LayoutDashboard, GitBranch, Activity, ShieldCheck, Rocket, ScrollText, Cable } from 'lucide-react';
 
 const sections: { label: string; items: { id: string; label: string; icon: React.ReactNode }[] }[] = [
   {
@@ -17,6 +17,7 @@ const sections: { label: string; items: { id: string; label: string; icon: React
     label: 'Project',
     items: [
       { id: 'state-machine', label: 'State Machine', icon: <GitBranch className="h-4 w-4" /> },
+      { id: 'registry', label: 'Registry', icon: <Cable className="h-4 w-4" /> },
     ],
   },
   {
