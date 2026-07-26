@@ -161,4 +161,86 @@ export class StateMachineEngine {
     const machine = this.getMachine();
     return machine?.transitions || [];
   }
+
+  private getProjectName(): string {
+    try {
+      const manifestPath = join(this.projectPath, 'MANIFEST.json');
+      if (existsSync(manifestPath)) {
+        const manifest = JSON.parse(readFileSync(manifestPath, 'utf-8'));
+        return manifest.name || 'Projet AKORIS';
+      }
+    } catch {
+    }
+    return 'Projet AKORIS';
+  }
+
+  exportReport(format: 'markdown' | 'json' | 'text' = 'text'): string {
+    const currentState = this.getCurrentState();
+    const machine = this.getMachine();
+    const history = this.getHistory();
+    const available = this.getAvailableTransitions(currentState);
+    const allStates = this.getStates();
+    const projectName = this.getProjectName();
+
+    const data = {
+      project: projectName,
+      date: new Date().toISOString(),
+      version: machine?.version || '1.0.0',
+      currentState,
+      states: allStates,
+      transitions: this.getAllTransitions(),
+      history,
+      availableTransitions: available,
+    };
+
+    if (format === 'json') {
+      return JSON.stringify(data, null, 2);
+    }
+
+    if (format === 'markdown') {
+      let md = `# Rapport d'état — ${projectName}\n\n`;
+      md += `**Date** : ${new Date().toLocaleString('fr-FR')}\n\n`;
+      md += `## État actuel\n\n**${currentState}**\n\n`;
+
+      md += `## Historique des transitions\n\n`;
+      if (history.length === 0) {
+        md += `Aucune transition enregistrée.\n\n`;
+      } else {
+        md += `| État | Entré | Sorti |\n|------|-------|-------|\n`;
+        for (const h of history) {
+          const entered = new Date(h.enteredAt).toLocaleString('fr-FR');
+          const exited = h.exitedAt ? new Date(h.exitedAt).toLocaleString('fr-FR') : 'en cours';
+          md += `| ${h.state} | ${entered} | ${exited} |\n`;
+        }
+        md += `\n`;
+      }
+
+      md += `## Transitions possibles\n\n`;
+      if (available.length === 0) {
+        md += `Aucune transition disponible depuis **${currentState}**.\n\n`;
+      } else {
+        md += `| Vers | Gates requis | Autorisation |\n|------|--------------|--------------|\n`;
+        for (const t of available) {
+          md += `| ${t.to} | ${t.gates.join(', ') || '-'} | ${t.authorizedBy} |\n`;
+        }
+        md += `\n`;
+      }
+
+      md += `## États définis\n\n`;
+      for (const s of allStates) {
+        const marker = s.id === currentState ? ' ◀ courant' : '';
+        md += `- **${s.id}**${marker} : ${s.description}\n`;
+      }
+      md += `\n`;
+
+      md += `---\n*Rapport généré par AKORIS CLI*\n`;
+      return md;
+    }
+
+    let txt = `État du projet : ${currentState}\n`;
+    txt += `Date : ${new Date().toLocaleString('fr-FR')}\n`;
+    txt += `Transitions possibles : ${available.map(t => t.to).join(', ') || 'aucune'}\n`;
+    txt += `Historique : ${history.length} transition(s)\n`;
+    return txt;
+  }
 }

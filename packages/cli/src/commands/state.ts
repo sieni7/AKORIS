@@ -1,7 +1,8 @@
 import { Command } from 'commander';
+import { writeFileSync } from 'node:fs';
 import { RegistryReaderV2 } from '../services/registry-reader-v2.service.js';
 import { StateMachineEngine } from '../services/state-machine.service.js';
-import { shouldOutputJSON, printJSON, title, header, info, success, error, warn, log, isQuiet } from '../output/format.js';
+import { shouldOutputJSON, printJSON, title, header, info, success, error, warn, log, getOpts } from '../output/format.js';
 
 export const stateCommand = new Command('state')
   .description('Gère la machine à états du projet AKORIS');
@@ -126,6 +127,31 @@ stateCommand
       process.exitCode = 1;
     }
   });
+
+const exportCmd = new Command('export')
+  .description('Exporte l\'état du projet (Markdown, JSON, texte)')
+  .option('--format <format>', 'Format : markdown, json, text', 'text')
+  .action((options: { format?: string }) => {
+    const reader = new RegistryReaderV2();
+    const engine = new StateMachineEngine(reader);
+    const opts = getOpts();
+    const fmt = shouldOutputJSON() ? 'json' : (options.format || 'text') as 'markdown' | 'json' | 'text';
+    const report = engine.exportReport(fmt);
+
+    if (opts.output) {
+      writeFileSync(opts.output, report, 'utf-8');
+      success(`Rapport exporté dans ${opts.output}`);
+      return;
+    }
+
+    if (fmt === 'json') {
+      printJSON(JSON.parse(report));
+    } else {
+      log(`\n${report}`);
+    }
+  });
+
+stateCommand.addCommand(exportCmd);
 
 stateCommand
   .command('info')
