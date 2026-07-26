@@ -14,31 +14,54 @@ jobs:
         node-version: [20, 22]
     steps:
       - uses: actions/checkout@v4
-
       - uses: pnpm/action-setup@v2
         with:
-          version: 9
-
+          version: 11
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm build
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Lint
-        run: pnpm lint
-
-      - name: Build monorepo (includes type checking)
-        run: pnpm build
-
-      - name: Run Core tests with coverage
-        run: pnpm --filter @akoris/core exec vitest run --coverage
-
-      - name: Upload coverage (only for Node 20)
-        if: matrix.node-version == 20
-        uses: codecov/codecov-action@v3
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v2
         with:
-          files: ./packages/core/coverage/lcov.info
-          flags: core
+          version: 11
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm --filter @akoris/core test
+      - run: pnpm --filter api test
+      - run: pnpm --filter @akoris/sdk test
+
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 11
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: npx playwright install --with-deps
+      - run: pnpm test:e2e
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -f apps/api/Dockerfile -t akoris-api .
+      - run: docker build -f apps/dashboard/Dockerfile -t akoris-dashboard .

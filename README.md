@@ -50,6 +50,33 @@ akoris search "database"
 
 ---
 
+## Control Center
+
+Le Control Center est une interface web de pilotage et de supervision du projet AKORIS.
+
+### Installation
+
+Voir [Installation du Control Center](docs/control-center/installation.md).
+
+### Modules
+
+- [Executive](docs/control-center/usage.md#executive) — KPIs et santé du projet.
+- [Project](docs/control-center/usage.md#project) — Machine à états et transitions.
+- [Registry](docs/control-center/usage.md#registry) — Navigation dans les agents.
+- [Logs](docs/control-center/usage.md#logs) — Logs en temps réel.
+
+### Commandes utiles
+
+```bash
+pnpm dev:api
+pnpm dev:dashboard
+pnpm build
+pnpm test:e2e
+docker compose up -d
+```
+
+---
+
 ## Licence
 
 MIT © OULAÏ SIÉNI — [sieni7@gmail.com](mailto:sieni7@gmail.com)
