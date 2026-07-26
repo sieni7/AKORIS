@@ -1,5 +1,5 @@
 ---
-title: "AKORIS Control Center — System Architecture"
+title: "AKORIS Control Center — Système Architecture"
 version: "1.0"
 status: "Draft"
 owner: "AKORIS Core Team"
@@ -8,218 +8,242 @@ related:
   - "00-vision.md"
   - "02-technical-architecture.md"
   - "03-core.md"
+  - "ADR-001-control-center.md"
 ---
 
-# 01 — System Architecture
+# 01 — Système Architecture
 
-## 1. Architecture globale
+## 1. Vision de l'architecture
 
-Le Control Center suit une architecture **monorepo modulaire** avec séparation stricte entre le **Core** (logique métier) et les **interfaces** (API, Dashboard, CLI).
+L'architecture d'AKORIS Control Center repose sur une séparation stricte entre :
 
-```
-┌─────────────────────────────────────────────────────┐
-│                   apps/                             │
-│  ┌──────────┐  ┌──────────┐  ┌──────────────────┐  │
-│  │   CLI    │  │   API    │  │   Dashboard      │  │
-│  │ (actuel) │  │ (Fastify)│  │ (React + Vite)   │  │
-│  └────┬─────┘  └────┬─────┘  └────────┬─────────┘  │
-│       │             │                 │             │
-├───────┴─────────────┴─────────────────┴─────────────┤
-│                   packages/                          │
-│  ┌────────────────────────┐  ┌──────────────────┐   │
-│  │   core                 │  │   shared         │   │
-│  │ (RegistryReader,       │  │ (types, schemas, │   │
-│  │  StateMachineEngine,   │  │  constants)      │   │
-│  │  SearchEngine,         │  │                  │   │
-│  │  LogReader,            │  │                  │   │
-│  │  AliasManager,         │  │                  │   │
-│  │  DoctorEngine,         │  │                  │   │
-│  │  PromptEngine,         │  │                  │   │
-│  │  SecretManager)        │  │                  │   │
-│  └────────────────────────┘  └──────────────────┘   │
-└─────────────────────────────────────────────────────┘
-```
+- **Le Core Engine** : unique détenteur de la logique métier (règles, transitions, calculs, indexation). Indépendant de toute interface.
+- **Les interfaces** : CLI, API, Dashboard, SDK. Elles se contentent d'échanger avec le Core et de présenter les résultats.
+
+Cette séparation garantit que :
+
+- La logique métier est testable indépendamment des interfaces.
+- Les interfaces peuvent évoluer ou être remplacées sans impacter le Core.
+- Les règles de gouvernance sont uniques et centralisées.
 
 ---
 
-## 2. Bounded Contexts
+## 2. Bounded Contexts (Domaines métier)
 
-Le système est découpé en 5 contexts métier, chacun responsable d'un domaine cohérent.
+L'architecture fonctionnelle est découpée en **5 contextes métier** (Domain-Driven Design), chacun ayant une responsabilité claire et des frontières explicites.
 
-### 2.1 Context "Registry"
+| Contexte | Responsabilité | Modules associés | Événements produits |
+|----------|----------------|------------------|---------------------|
+| **Registry** | Gestion du référentiel de gouvernance (agents, règles, capacités, livrables, QG) | Registry Explorer, Agent Catalog | `RegistryReloaded`, `AgentUpdated` |
+| **State Machine** | Cycle de vie du projet : états, transitions, validation des Quality Gates | Project, Executive (état) | `StateChanged`, `TransitionDenied`, `GatePassed`, `GateFailed` |
+| **Search** | Indexation et recherche fédérée dans toutes les sources (agents, règles, ADR, logs) | Command Palette, Search Bar | `SearchCompleted` |
+| **AI Studio** | Construction de prompts, injection de contexte, test LLM, gestion des templates | AI Studio (modules) | `PromptExecuted`, `PromptSaved`, `LLMResponseReceived` |
+| **DevOps** | Gestion des secrets, supervision des services connectés, orchestration des déploiements | DevOps (modules) | `DeploymentStarted`, `DeploymentFinished`, `SecretUpdated` |
+| **Observability** | Logs, événements, notifications, timeline | Logs Live, Notifications, Timeline | `LogEmitted`, `NotificationCreated`, `TimelineUpdated` |
 
-- **Responsabilité** : Gérer le référentiel de gouvernance (agents, règles, événements, livrables, quality gates).
-- **Entités** : `Agent`, `Rule`, `Event`, `Deliverable`, `QualityGate`, `Capability`
-- **Service** : `RegistryReaderV2` (lecture, cache, validation)
-- **Sources** : `registry/` (fichiers JSON sur disque)
-- **Dépendances** : Aucune (c'est la racine du système)
+### Règles de frontières
 
-### 2.2 Context "State"
-
-- **Responsabilité** : Gérer le cycle de vie du projet (états, transitions, historique).
-- **Entités** : `State`, `Transition`, `HistoryEntry`
-- **Service** : `StateMachineEngine`
-- **Sources** : `registry/state-machine.json` + `.akoris/state.json`
-- **Dépendances** : Registry (lecture de la machine)
-
-### 2.3 Context "Observability"
-
-- **Responsabilité** : Collecter, stocker et exposer les logs d'exécution.
-- **Entités** : `LogEntry`, `LogFilter`
-- **Service** : `LogReader`
-- **Sources** : `.akoris/logs/sessions/*.json`
-- **Dépendances** : Aucune
-
-### 2.4 Context "AI Studio"
-
-- **Responsabilité** : Construire des prompts contextualisés, orchestrer les appels LLM.
-- **Entités** : `Prompt`, `ContextFragment`, `LLMResponse`
-- **Service** : `PromptEngine`
-- **Sources** : Registry, ADR, Logs (contexte injecté)
-- **Dépendances** : Registry, State, Observability (pour le contexte)
-
-### 2.5 Context "DevOps"
-
-- **Responsabilité** : Gérer les secrets, superviser les services connectés, piloter les déploiements.
-- **Entités** : `Secret`, `ConnectedService`, `Deployment`
-- **Service** : `SecretManager`
-- **Sources** : `.akoris/secrets.enc` (chiffré)
-- **Dépendances** : Registry (lecture des providers configurés)
+- **Un contexte ne dépend jamais d'un autre contexte** directement. Les interactions se font via des **événements** ou via le **Core**.
+- **Les données partagées** (ex: un agent) sont définies une seule fois dans le Registry et référencées partout.
+- **Un module peut appartenir à un seul contexte** (ex: `Registry Explorer` est dans `Registry`, `State Machine` est dans `State Machine`).
 
 ---
 
 ## 3. Flux métier principaux
 
-### 3.1 Exécution d'une commande
+### Flux 1 : Transition d'état (Dashboard)
 
 ```
-Utilisateur (Dashboard/CLI)
-  → app (API/CLI)
-    → core (service métier)
-      → lit les données (Registry, state.json, logs)
-      → exécute la logique (transition, search, audit)
-      → persiste si nécessaire (state.json)
-    ← retourne le résultat structuré
-  → formate et affiche (JSON / texte / composant React)
-← Utilisateur voit le résultat
+[Dashboard] → [Command Palette] → [API /state/transition] → [Core.StateMachine] → [Validation QG] → [Core.StateMachine] → [API Response] → [Dashboard]
+                                                                                     │
+                                                                                     ▼
+                                                                          [WebSocket /events]
+                                                                                     │
+                                                                                     ▼
+                                                                          [Dashboard] (Timeline, Notifications)
 ```
 
-**Règle** : Aucune logique métier dans `apps/`. Toute décision est dans `packages/core`.
+**Description** :
+1. L'utilisateur exécute une transition via la Command Palette (`state transition --from Draft --to Planned`).
+2. L'API transmet la demande au Core (StateMachineEngine).
+3. Le Core vérifie les Quality Gates requis.
+4. Si validé, la transition est exécutée, le nouvel état est persistant dans `.akoris/state.json`.
+5. Un événement `StateChanged` est émis via WebSocket.
+6. Le Dashboard met à jour l'affichage (machine à états, Timeline, notification).
 
-### 3.2 Transition d'état
+---
 
-```
-1. Dashboard : utilisateur clique "Planned → Active"
-2. Dashboard → SDK.command.run("state", ["transition", "--from", "Planned", "--to", "Active"])
-3. SDK → API POST /api/command { command: "state transition --from Planned --to Active" }
-4. API → Core.StateMachineEngine.transition("Planned", "Active")
-5. Core vérifie : état courant = Planned, transition valide, gates ok
-6. Core écrit dans .akoris/state.json
-7. API → LogReader.appendLog({ agentId: "CORE-01", action: "transition", details: "Planned → Active" })
-8. API → Dashboard (réponse + WebSocket notification)
-```
-
-### 3.3 Recherche fédérée
+### Flux 2 : Recherche fédérée (Dashboard)
 
 ```
-1. Dashboard : utilisateur tape "database" dans la Command Palette
-2. Dashboard → SDK.search.query("database")
-3. SDK → API GET /api/search?q=database
-4. API → Core.SearchEngine.search("database")
-5. Core interroge : agents, règles, capacités, livrables, événements, ADRs, logs
-6. Core retourne les résultats groupés par type
-7. API → Dashboard (JSON structuré)
-8. Dashboard affiche dans une liste groupée
+[Dashboard] → [Search Bar] → [API /search] → [Core.SearchEngine] → [Indexation en mémoire] → [API Response] → [Dashboard]
 ```
 
-### 3.4 Génération de prompt (AI Studio)
+**Description** :
+1. L'utilisateur saisit un terme de recherche dans la barre (ou la Command Palette).
+2. L'API appelle le SearchEngine du Core.
+3. Le SearchEngine parcourt les sources (agents, règles, ADR, logs, etc.) en mémoire.
+4. Les résultats sont regroupés par type et retournés au Dashboard.
+5. Le Dashboard affiche les résultats.
+
+---
+
+### Flux 3 : Génération de prompt (AI Studio)
 
 ```
-1. Dashboard : utilisateur sélectionne un agent + coche "ADR + Registry"
-2. Dashboard → SDK.prompts.build({ agentId: "DEV-01", context: ["adr", "registry"] })
-3. SDK → API POST /api/prompts/build { agentId, context }
-4. API → Core.PromptEngine.build({ agentId, context })
-5. Core injecte : contrat de l'agent, ADRs récents, règles associées
-6. Core retourne le prompt construit
-7. Dashboard : utilisateur modifie le prompt dans Monaco
-8. Dashboard → API POST /api/prompts/test { prompt, provider: "openai" }
-9. API → Core.PromptEngine.test(prompt, provider)
-10. Core appelle l'API LLM (OpenAI/Anthropic)
-11. Core retourne la réponse + métriques (tokens, temps)
-12. Dashboard : utilisateur sauvegarde le prompt
-13. Dashboard → API POST /api/prompts/save { prompt, name, agentId }
+[Dashboard] → [Sélection agent] → [Context Builder] → [Prompt Builder] → [LLM Playground] → [API /prompt/execute] → [Core.PromptEngine] → [Appel LLM] → [Core] → [API Response] → [Dashboard]
+```
+
+**Description** :
+1. L'utilisateur sélectionne un agent (ex: `DEV-04`).
+2. Il coche les éléments de contexte (ADR, Registry, Logs récents, etc.).
+3. Le PromptEngine génère un prompt structuré.
+4. L'utilisateur peut tester le prompt sur un LLM (OpenAI, Anthropic).
+5. La réponse est affichée dans l'interface.
+6. L'utilisateur peut sauvegarder le prompt dans la Prompt Library.
+
+---
+
+## 4. Dépendances
+
+### Diagramme des dépendances (Couches)
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                         Interfaces                                  │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌──────────┐ │
+│  │ Dashboard   │  │ CLI         │  │ SDK         │  │ API      │ │
+│  │ (React)     │  │ (Commander) │  │ (TypeScript)│  │ (Fastify)│ │
+│  └─────────────┘  └─────────────┘  └─────────────┘  └──────────┘ │
+│         │                │                │              │         │
+│         └────────────────┼────────────────┼──────────────┘         │
+│                          │                │                        │
+│                          ▼                ▼                        │
+│  ┌──────────────────────────────────────────────────────────────┐ │
+│  │                      Core Engine                             │ │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌───────────────────┐   │ │
+│  │  │ Registry    │  │ State       │  │ Search Engine     │   │ │
+│  │  │ Reader      │  │ Machine     │  │                   │   │ │
+│  │  └─────────────┘  └─────────────┘  └───────────────────┘   │ │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌───────────────────┐   │ │
+│  │  │ Prompt      │  │ Doctor      │  │ Secret Manager    │   │ │
+│  │  │ Engine      │  │ Engine      │  │                   │   │ │
+│  │  └─────────────┘  └─────────────┘  └───────────────────┘   │ │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌───────────────────┐   │ │
+│  │  │ Alias       │  │ Log Reader  │  │ Quality Engine    │   │ │
+│  │  │ Manager     │  │             │  │ (future)          │   │ │
+│  │  └─────────────┘  └─────────────┘  └───────────────────┘   │ │
+│  └──────────────────────────────────────────────────────────────┘ │
+│                          │                                        │
+│                          ▼                                        │
+│  ┌──────────────────────────────────────────────────────────────┐ │
+│  │                     Filesystem (Registry, .akoris/)          │ │
+│  └──────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### Règles de dépendances
+
+1. **Le Core ne dépend de rien** (sauf Node.js natif et le filesystem).
+2. **L'API dépend du Core**, du SDK (pour les types) et de Fastify.
+3. **Le Dashboard dépend du SDK** (et indirectement de l'API).
+4. **Le SDK dépend des types partagés** (`packages/shared`).
+5. **Le CLI dépend du Core** (et non plus de ses propres services).
+
+**Aucune interface ne peut accéder directement au filesystem.** Tout accès aux données doit passer par le Core.
+
+---
+
+## 5. Diagrammes
+
+### 5.1 Diagramme de composants (Mermaid)
+
+```mermaid
+graph TD
+    A[User] --> B[Dashboard]
+    A --> C[CLI]
+
+    B --> D[SDK]
+    D --> E[API]
+
+    C --> F[Core]
+
+    E --> F
+
+    F --> G[Registry]
+    F --> H[State Machine]
+    F --> I[Search Engine]
+    F --> J[Prompt Engine]
+    F --> K[Doctor Engine]
+    F --> L[Secret Manager]
+    F --> M[Log Reader]
+    F --> N[Quality Engine]
+
+    G --> O[Filesystem]
+    H --> O
+    I --> O
+    J --> O
+    K --> O
+    L --> O
+    M --> O
+    N --> O
+
+    E --> P[WebSocket]
+    P --> B
 ```
 
 ---
 
-## 4. Diagramme de dépendances entre packages
+### 5.2 Diagramme de flux (transition d'état)
 
-```
-shared       → (indépendant)
-core         → shared
-cli          → core, shared
-sdk          → shared
-api          → core, sdk, shared
-dashboard    → sdk, shared
-```
+```mermaid
+sequenceDiagram
+    participant User
+    participant Dashboard
+    participant API
+    participant Core
+    participant FS
 
-Tout package peut dépendre de `shared`. Rien ne dépend de `cli`. Le `core` ne dépend que de `shared`.
+    User->>Dashboard: Click "Transition"
+    Dashboard->>API: POST /state/transition
+    API->>Core: transition(from, to)
+    Core->>FS: Lire state.json
+    FS-->>Core: state.json
+    Core->>Core: Vérifier QG
+    Core->>Core: Exécuter transition
+    Core->>FS: Écrire state.json
+    FS-->>Core: OK
+    Core-->>API: Response
+    API-->>Dashboard: Response
+    Dashboard-->>User: Mise à jour UI
 
----
-
-## 5. Flux de données
-
-```
-┌──────────────┐     Registry JSON     ┌──────────────┐
-│              │ ◄──────────────────── │              │
-│   Core       │    state.json         │   File       │
-│   (mémoire)  │ ◄──────────────────── │   System     │
-│              │    logs/*.json        │   (disque)   │
-│              │ ◄──────────────────── │              │
-└──────┬───────┘                       └──────────────┘
-       │
-       │ API REST / WebSocket
-       ▼
-┌──────────────┐     TypeScript SDK    ┌──────────────┐
-│   API        │ ◄──────────────────── │   Dashboard  │
-│   (Fastify)  │ ────────────────────► │   (React)    │
-└──────────────┘      JSON/WS          └──────────────┘
+    Core--)WebSocket: Événement StateChanged
+    WebSocket--)Dashboard: Notify
 ```
 
 ---
 
-## 6. Déploiement (cible)
+## 6. Cohérence avec la Vision
 
-```
-┌────────────────────────────────────────────────────┐
-│                   Machine hôte                      │
-│                                                     │
-│  ┌────────────────────┐   ┌────────────────────┐   │
-│  │  API (Fastify)     │   │  Dashboard (Vite)  │   │
-│  │  Port 3001         │   │  Port 5173 (dev)   │   │
-│  │                    │   │  Port 80 (prod)    │   │
-│  └────────┬───────────┘   └────────┬───────────┘   │
-│           │                        │                │
-│           └──────────┬─────────────┘                │
-│                      │                              │
-│           ┌──────────▼──────────┐                   │
-│           │   File System       │                   │
-│           │   .akoris/          │                   │
-│           │   registry/         │                   │
-│           └─────────────────────┘                   │
-└────────────────────────────────────────────────────┘
-```
-
-Le déploiement est monolithique (pas de microservices). L'API et le Dashboard partagent le même filesystem local.
+- **Le Core est unique et indépendant** (conformément au principe #1 de la vision).
+- **Le Dashboard délègue toute action au Core** (principe #3).
+- **Les flux sont traçables** (principe #4).
+- **Les frontières sont claires** (principe #8).
+- **Le temps réel est utilisé** uniquement là où il apporte une valeur (logs, notifications) (principe #10).
 
 ---
 
-## 7. Contraintes
+## 7. Conclusion
 
-| Contrainte | Implication |
-|------------|-------------|
-| Pas de base de données externe | Tout est fichier JSON (git-friendly) |
-| Pas d'authentification en v1.0 | Usage local uniquement |
-| Le Core ne doit pas dépendre de Node.js spécifique | Écrire en TypeScript portable |
-| Les contrats API sont en Zod | Validation au runtime + typage statique |
-| Le Dashboard est une SPA statique | Servie par l'API ou un reverse proxy |
+Cette architecture répond aux exigences de la vision :
+
+- **Visibilité** : Le Dashboard offre une vue unifiée.
+- **Pilotage** : Les actions passent par le Core, garantissant l'intégrité des règles.
+- **Évolutivité** : De nouvelles interfaces peuvent être ajoutées sans toucher au Core.
+- **Maintenabilité** : La séparation des contextes permet des modifications ciblées.
+
+Les prochains documents (notamment `02-technical-architecture.md` et `03-core.md`) détailleront les choix techniques et les interfaces publiques.
+
+---
+
+**Prochaine étape** : Validation de `01-system-architecture.md`, puis rédaction de `02-technical-architecture.md`.
