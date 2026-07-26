@@ -1,90 +1,100 @@
-# Guide de démarrage rapide
+# Guide de démarrage rapide — AKORIS en 5 minutes
 
-**5 minutes pour installer AKORIS et exécuter vos premières commandes.**
+Ce guide vous permet d'installer AKORIS et d'exécuter vos premières commandes.
 
 ---
 
 ## 1. Installation
 
 ```bash
-# Via npm (recommandé)
 npm install -g @akoris/cli
-
-# Ou via npx (sans installation)
-npx @akoris/cli init mon-projet
-
-# Depuis les sources
-git clone https://github.com/sieni7/AKORIS.git
-cd AKORIS
-pnpm install && pnpm build
 ```
 
-## 2. Initialiser un projet
+Ou, si vous préférez un binaire autonome, téléchargez l'exécutable pour votre système depuis la page [Releases](https://github.com/sieni7/AKORIS/releases) et placez-le dans votre `PATH`.
+
+---
+
+## 2. Initialisation d'un projet
 
 ```bash
 akoris init mon-projet
+cd mon-projet
 ```
 
-Avec un template d'agents pré-activés :
+AKORIS crée un dossier `.akoris/` avec les fichiers `manifest.json` et `state.json`.
 
-```bash
-akoris init frontend --template fullstack
-# → 12 agents activés (CORE, DEV, QA, GOV)
-```
+---
 
-Templates disponibles : `fullstack`, `microservice`, `data-pipeline`.
-
-## 3. Voir l'état du projet
+## 3. Vérifier l'état du projet
 
 ```bash
 akoris state show
-# → État actuel, historique, transitions possibles
 ```
 
-## 4. Chercher dans le Registry
+Sortie attendue :
+
+```
+État courant : DRAFT
+Transitions possibles : Planned, Active
+Historique : aucune transition
+```
+
+---
+
+## 4. Créer un alias (raccourci)
 
 ```bash
+akoris alias set go "state transition --from Draft --to Planned"
+akoris go
+```
+
+Vous venez de passer le projet de l'état `DRAFT` à `PLANNED`.
+
+---
+
+## 5. Rechercher une capacité ou un agent
+
+```bash
+akoris capability find design_architecture
 akoris search "database"
-# → CORE-04 Database Architect
-akoris search "security" --verbose
-# → Agents, règles, capacités — avec détails
-akoris search "test" --type agent
-# → Filtre par type : agent uniquement
 ```
 
-## 5. Créer un alias
+La recherche fédérée interroge les agents, les règles, les ADRs et les logs.
 
-```bash
-akoris alias set go "state transition --from Draft --to Active"
-akoris go       # exécute la transition
-akoris alias list
-```
+---
 
-## 6. Diagnostiquer et réparer
+## 6. Diagnostiquer et réparer le projet
 
 ```bash
 akoris doctor
-# → Vérifie 6 points de santé
 akoris doctor --fix
-# → Crée automatiquement les dossiers et fichiers manquants
 ```
+
+`doctor --fix` crée les dossiers manquants et régénère les fichiers corrompus.
+
+---
 
 ## 7. Exporter un rapport d'état
 
 ```bash
 akoris state export --format markdown --output rapport.md
-akoris state export --format json
+cat rapport.md
 ```
 
-## 8. Suivre les logs en direct
+Vous obtenez un compte-rendu complet du projet (état, historique, transitions possibles).
+
+---
+
+## 8. Lire les logs en direct
 
 ```bash
 akoris logs --watch
-# → Ctrl+C pour arrêter
 ```
 
-## Prochaines étapes
+Les logs s'affichent en temps réel. Arrêtez avec `Ctrl+C`.
 
-- [Référence complète des commandes](cli.md)
-- [FAQ](faq.md)
-- [Documentation technique](../architecture/state-machine.md)
+---
+
+## Prochaine étape
+
+Consultez la [référence complète du CLI](cli.md) pour découvrir les 23 commandes et leurs options.

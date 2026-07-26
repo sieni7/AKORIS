@@ -1,4 +1,4 @@
-# FAQ — Questions fréquentes
+# FAQ — Questions fréquentes sur AKORIS CLI
 
 ---
 
@@ -10,136 +10,126 @@
 npm install -g @akoris/cli
 ```
 
-Vous pouvez aussi utiliser `npx` ou cloner depuis GitHub (voir le [README](../../README.md#installation)).
+Ou téléchargez le binaire depuis la page [Releases](https://github.com/sieni7/AKORIS/releases).
 
-### Node.js minimum requis ?
+### Puis-je l'utiliser sans Node.js ?
 
-Node.js 18 ou supérieur.
+Oui. Utilisez les binaires autonomes pour Windows, Linux ou macOS.
 
-### "Command not found" après installation ?
-
-Assurez-vous que le dossier `npm global` est dans votre `PATH` :
-
-```bash
-npm config get prefix
-# Unix : ajoutez <prefix>/bin au PATH
-# Windows : ajoutez <prefix> au PATH
-```
-
-### Puis-je utiliser AKORIS sans l'installer ?
-
-Oui : `npx @akoris/cli init mon-projet`.
-
----
-
-## Projet
-
-### "Le dossier .akoris/ est introuvable"
+### Que signifie l'erreur "Le dossier .akoris/ est introuvable" ?
 
 Le projet n'est pas initialisé. Lancez :
 
 ```bash
-akoris init mon-projet
-# ou
+akoris init
 akoris doctor --fix
 ```
 
-### "Aucun log trouvé"
+---
 
-Le projet n'a pas encore généré de logs. Les logs apparaissent quand des commandes comme `state transition` ou `activation suggest` sont exécutées.
+## Utilisation
 
-### "Template inconnu"
+### Comment connaître l'état de mon projet ?
 
 ```bash
-akoris init --help
-# Templates disponibles : fullstack, microservice, data-pipeline
+akoris state show
+```
+
+### Comment passer d'un état à un autre ?
+
+```bash
+akoris state transition --from Draft --to Planned
+akoris state transition --from Planned --to Active
+```
+
+### Comment créer un alias ?
+
+```bash
+akoris alias set go "state transition --from Draft --to Active"
+akoris go
+```
+
+### Comment rechercher une capacité ou un agent ?
+
+```bash
+akoris capability find design_architecture
+akoris search "database"
+```
+
+### Comment voir les logs en direct ?
+
+```bash
+akoris logs --watch
+```
+
+### Comment exporter un rapport d'état ?
+
+```bash
+akoris state export --format markdown --output rapport.md
 ```
 
 ---
 
-## Commandes
+## Dépannage
 
-### Quelle est la différence entre `--json` et `--output` ?
+### La commande `akoris` n'est pas reconnue
 
-- `--json` : la sortie est en JSON au lieu du texte.
-- `--output <fichier>` : la sortie (texte ou JSON) est écrite dans un fichier en plus de la console.
+- Si vous avez installé via npm : vérifiez que l'installation a réussi.
+- Si vous utilisez un binaire : vérifiez qu'il est dans votre `PATH`.
+- En développement : utilisez `npm link` ou `node dist/index.js`.
 
-Ils peuvent être combinés : `akoris search "test" --json --output resultat.json`.
+### `akoris doctor` détecte des problèmes
 
-### Puis-je chaîner des alias ?
+Exécutez `akoris doctor --fix` pour les résoudre automatiquement.
 
-Non. Un alias est résolu en une seule commande. Mais vous pouvez définir un alias qui lance `state transition` puis faire d'autres commandes manuellement après.
+### `akoris search` ne retourne rien
 
-### `akoris logs --watch` ne fonctionne pas avec `--json` ?
+Vérifiez que le Registry est présent :
 
-Correct. Le mode `--watch` affiche les entrées en continu en mode texte. Utilisez `--json` sans `--watch` pour une export ponctuelle.
-
----
-
-## Registry
-
-### Comment sont organisés les agents ?
-
-33 agents répartis en 5 domaines :
-
-| Domaine | Agents | Exemples |
-|---------|--------|---------|
-| CORE — Gouvernance | 8 | Orchestrator, Solution Architect, Product Owner |
-| DEV — Architecture & Développement | 8 | Frontend, Backend, API, UX |
-| QA — Qualité | 7 | Code Reviewer, Security Auditor |
-| EXP — Expertise | 7 | Data Engineer, Compliance Officer |
-| GOV — Gouvernance transverse | 3 | Methodology Guardian, Quality Gate Keeper |
-
-### Où sont stockées les données du projet ?
-
-Tout dans `.akoris/` :
-
+```bash
+akoris registry validate
 ```
-.akoris/
-├── state.json          # Machine à états
-├── agents.json         # Agents activés (template)
-├── aliases.json        # Alias personnalisés
-├── decisions/          # ADRs (Architecture Decision Records)
-├── logs/sessions/      # Logs d'exécution
-├── sprints/            # Sprints
-├── audits/             # Rapports d'audit
-├── metrics/            # Métriques
-└── knowledge/          # Base de connaissances
+
+### Les logs sont vides
+
+Assurez-vous que le dossier `.akoris/logs/sessions/` existe. Si ce n'est pas le cas :
+
+```bash
+akoris doctor --fix
 ```
 
 ---
 
 ## Contribution
 
-### Comment ajouter une commande ?
+### Puis-je ajouter mes propres agents ?
 
-Voir le [guide développeur](../contributing/developer.md).
+Oui. Créez un agent dans `registry/agents/` avec un ID au format `DOMAINE-XX-Nom`. Le CLI le détectera automatiquement.
 
-### Les règles de commit ?
+### Puis-je créer un alias global ?
 
-Voir les [conventions de code](../contributing/coding-style.md).
+Les alias sont stockés dans `.akoris/aliases.json` et sont spécifiques au projet. Pour un alias global, utilisez un script shell ou un alias de votre terminal.
+
+### Comment signaler un bug ?
+
+Ouvrez une issue sur GitHub avec :
+- la commande exécutée
+- la sortie obtenue
+- la sortie attendue
+- votre OS et version de Node.js
 
 ---
 
-## Dépannage
+## Support
 
-### L'alias n'est pas reconnu
+### Quelles versions de Node.js sont supportées ?
 
-```bash
-akoris alias list                    # Vérifiez qu'il existe
-akoris alias resolve go              # Vérifiez la commande résolue
-```
+Node.js ≥ 18.
 
-### La transition d'état est refusée
+### Quelles plateformes sont supportées ?
 
-```bash
-akoris state show                    # Voir l'état actuel
-akoris state info                    # Voir les transitions possibles
-```
+Windows, Linux, macOS (x64 et arm64 pour Linux/macOS).
 
-### La recherche ne retourne rien
+### Qu'est-ce que la politique de compatibilité ?
 
-```bash
-akoris search "mot" --verbose        # Voir la source des résultats
-akoris doctor --fix                  # Vérifier l'intégrité du projet
-```
+AKORIS s'engage à ne jamais casser un projet existant dans une version mineure ou un patch. Les changements incompatibles ne sont introduits qu'en version majeure.
