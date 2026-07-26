@@ -1,23 +1,17 @@
 import { Command } from 'commander';
-import { SearchEngine } from '../services/search.service.js';
-import { error, warn, info, title, printJSON, shouldOutputJSON, isVerbose } from '../output/format.js';
+import { SearchEngine } from '@akoris/core';
+import { getProjectRoot } from '../services/project.service.js';
+import { error, warn, info, title, printJSON, shouldOutputJSON, log } from '../output/format.js';
 
 export function searchCommand(): Command {
   return new Command('search')
     .description('Recherche unifiée dans le Registre AKORIS (agents, règles, ADRs, logs, capacités)')
     .argument('<query>', 'Terme de recherche')
-    .option('--type <type>', 'Type de résultat (agent, rule, adr, log, capability, deliverable, event)')
-    .option('--json', 'Sortie en JSON')
-    .option('--verbose', 'Détails de recherche')
-    .option('--quiet', 'Réduire la sortie')
-    .option('--no-color', 'Désactiver les couleurs')
-    .option('--output <file>', 'Exporter vers un fichier')
+    .option('--type <type>', 'Type de résultat')
     .action(async (query: string, options: { type?: string }) => {
-      const verbose = isVerbose();
-
-      const engine = new SearchEngine();
-      const types = options.type ? options.type.split(',') : undefined;
-      const results = engine.search(query, { types });
+      const projectRoot = getProjectRoot();
+      const engine = new SearchEngine(projectRoot);
+      const results = await engine.search(query);
 
       if (shouldOutputJSON()) {
         const byType: Record<string, typeof results> = {};
@@ -32,9 +26,6 @@ export function searchCommand(): Command {
       if (results.length === 0) {
         warn(`Aucun résultat pour "${query}"`);
         info('Essayez un terme plus général ou vérifiez l\'orthographe.');
-        if (options.type) {
-          info(`Types disponibles : agent, rule, adr, log, capability, deliverable, event`);
-        }
         return;
       }
 
@@ -48,19 +39,9 @@ export function searchCommand(): Command {
       }
 
       for (const [type, items] of groups) {
-        const label: Record<string, string> = {
-          agent: 'Agents', rule: 'Règles', capability: 'Capacités',
-          deliverable: 'Livrables', event: 'Événements',
-          adr: 'ADRs', log: 'Logs',
-        };
-        info(`\n${label[type] || type} (${items.length}) :`);
+        info(`\n${type} (${items.length}) :`);
         for (const item of items) {
-          const tagStr = item.tags.length ? ` [${item.tags.slice(0, 3).join(', ')}]` : '';
-          console.log(`  ${item.id}  ${item.name}${tagStr}`);
-          if (verbose) {
-            console.log(`       → ${item.description}`);
-            console.log(`       → source: ${item.source}`);
-          }
+          log(item.preview || `${item.id} (score: ${item.score})`);
         }
       }
     });

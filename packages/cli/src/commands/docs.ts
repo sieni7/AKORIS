@@ -17,9 +17,7 @@ export const docsCommand = new Command('docs')
       .action(async () => {
         try {
           const { ValidatorService } = await import('../services/validator.service.js');
-          const { RegistryService } = await import('../services/registry.service.js');
-          const registry = new RegistryService();
-          const validator = new ValidatorService(registry);
+          const validator = new ValidatorService(process.cwd());
           const checks = await validator.validateProjectStructure();
           const passed = checks.filter(c => c.passed).length;
           if (shouldOutputJSON()) {

@@ -32,7 +32,7 @@ import { activationCommand } from './commands/activation.js';
 import { capabilityCommand } from './commands/capability.js';
 import { aliasCommand } from './commands/alias.js';
 import { searchCommand } from './commands/search.js';
-import { resolveAlias } from './services/alias.service.js';
+import { AliasManager } from '@akoris/core';
 import { getProjectRoot } from './services/project.service.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -167,7 +167,8 @@ const firstArg = process.argv[2];
 if (firstArg && !['alias', 'search', 'help', '--help', '-h', '--version', '-V'].includes(firstArg)) {
   try {
     const projectRoot = getProjectRoot();
-    const resolved = resolveAlias(projectRoot, firstArg);
+    const manager = new AliasManager(projectRoot);
+    const resolved = await manager.resolveAlias(firstArg);
     if (resolved) {
       const resolvedParts = resolved.split(/\s+/);
       process.argv = [process.argv[0], process.argv[1], ...resolvedParts, ...process.argv.slice(3)];

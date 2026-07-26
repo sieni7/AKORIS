@@ -60,6 +60,7 @@ function readVersion(): { method: string; playbook: string } {
       };
     }
   } catch {
+    // ignore, return defaults
   }
   return { method: '1.0.0', playbook: 'core' };
 }

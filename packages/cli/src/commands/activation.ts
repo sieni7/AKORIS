@@ -1,46 +1,57 @@
 import { Command } from 'commander';
-import { RegistryReaderV2 } from '../services/registry-reader-v2.service.js';
-import { ActivationEngine } from '../services/activation.service.js';
-import { CapabilityResolver } from '../services/capability.service.js';
-import { shouldOutputJSON, printJSON, title, header, info, success, error, warn, log } from '../output/format.js';
+import { readFile, readdir } from 'node:fs/promises';
+import { join } from 'node:path';
+import { getProjectRoot } from '../services/project.service.js';
+import { shouldOutputJSON, printJSON, title, header, info, warn, log } from '../output/format.js';
 
 export const activationCommand = new Command('activation')
   .description('Gère l\'activation des agents par événement');
+
+interface ActivationEvent {
+  id: string;
+  description: string;
+  agents: string[];
+  frequency: string;
+  phase: string;
+}
+
+async function loadActivationMatrix(projectRoot: string): Promise<Record<string, ActivationEvent>> {
+  const path = join(projectRoot, 'registry', 'activation-matrix.json');
+  try {
+    const content = await readFile(path, 'utf-8');
+    const data = JSON.parse(content);
+    return data.events || data || {};
+  } catch {
+    return {};
+  }
+}
 
 activationCommand
   .command('suggest')
   .description('Suggère les agents à activer pour un événement')
   .requiredOption('-e, --event <eventId>', 'Identifiant de l\'événement (ex: SPRINT_START)')
-  .action((options: { event: string }) => {
-    const reader = new RegistryReaderV2();
-    const engine = new ActivationEngine(reader);
-    const resolver = new CapabilityResolver(reader);
-    const agents = engine.getAgentsForEvent(options.event);
+  .action(async (options: { event: string }) => {
+    const projectRoot = getProjectRoot();
+    const events = await loadActivationMatrix(projectRoot);
+    const ev = events[options.event];
 
-    if (agents.length === 0) {
+    if (!ev) {
       info(`Aucun agent trouvé pour l'événement "${options.event}"`);
-      log('   Utilisez "akoris activation list" pour voir les événements disponibles.');
+      info('Utilisez "akoris activation list" pour voir les événements disponibles.');
       return;
     }
 
-    const phase = engine.getPhase(options.event);
-    const frequency = engine.getFrequency(options.event);
-
     if (shouldOutputJSON()) {
-      printJSON({ event: options.event, phase, frequency, agents });
+      printJSON({ event: options.event, phase: ev.phase, frequency: ev.frequency, agents: ev.agents });
       return;
     }
 
     log(`Événement : ${options.event}`);
-    if (phase) log(`Phase      : ${phase}`);
-    if (frequency) log(`Fréquence  : ${frequency}`);
-    header(`Agents à activer (${agents.length})`);
-
-    for (const agent of agents) {
-      const caps = resolver.getCapabilities(agent);
-      const topCap = caps.slice(0, 3).join(', ');
+    log(`Phase      : ${ev.phase}`);
+    log(`Fréquence  : ${ev.frequency}`);
+    header(`Agents à activer (${ev.agents.length})`);
+    for (const agent of ev.agents) {
       log(`  ${agent}`);
-      if (topCap) log(`    Capacités : ${topCap}`);
     }
   });
 
@@ -48,19 +59,19 @@ activationCommand
   .command('list')
   .description('Liste tous les événements et leurs agents')
   .option('-p, --phase <phase>', 'Filtrer par phase')
-  .action((options: { phase?: string }) => {
-    const reader = new RegistryReaderV2();
-    const engine = new ActivationEngine(reader);
-    const events = engine.getAllEvents();
+  .action(async (options: { phase?: string }) => {
+    const projectRoot = getProjectRoot();
+    const events = await loadActivationMatrix(projectRoot);
+    const allEvents = Object.entries(events).map(([id, ev]) => ({ id, ...ev }));
 
-    if (events.length === 0) {
+    if (allEvents.length === 0) {
       warn('Aucun événement trouvé dans la matrice d\'activation');
       return;
     }
 
     const filtered = options.phase
-      ? events.filter(e => e.phase === options.phase)
-      : events;
+      ? allEvents.filter(e => e.phase === options.phase)
+      : allEvents;
 
     if (shouldOutputJSON()) {
       printJSON({ events: filtered, filter: options.phase || null });
@@ -92,24 +103,26 @@ activationCommand
   .command('events')
   .description('Liste les événements auxquels un agent participe')
   .requiredOption('-a, --agent <agentId>', 'Identifiant de l\'agent')
-  .action((options: { agent: string }) => {
-    const reader = new RegistryReaderV2();
-    const engine = new ActivationEngine(reader);
-    const events = engine.getEventsForAgent(options.agent);
+  .action(async (options: { agent: string }) => {
+    const projectRoot = getProjectRoot();
+    const events = await loadActivationMatrix(projectRoot);
+    const agentEvents = Object.entries(events)
+      .filter(([, ev]) => ev.agents.includes(options.agent))
+      .map(([id, ev]) => ({ event: id, ...ev }));
 
-    if (events.length === 0) {
+    if (agentEvents.length === 0) {
       info(`L'agent "${options.agent}" n'est activé par aucun événement`);
       return;
     }
 
     if (shouldOutputJSON()) {
-      printJSON({ agent: options.agent, events });
+      printJSON({ agent: options.agent, events: agentEvents });
       return;
     }
 
     log(`Agent : ${options.agent}`);
-    log(`Activé par ${events.length} événement(s) :`);
-    for (const ev of events) {
+    log(`Activé par ${agentEvents.length} événement(s) :`);
+    for (const ev of agentEvents) {
       log(`  ${ev.event}`);
       log(`    ${ev.description}`);
       log(`    Phase : ${ev.phase} | Fréquence : ${ev.frequency}`);

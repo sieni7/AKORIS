@@ -1,23 +1,28 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
+import { RegistryReader } from '@akoris/core';
 import type { CheckResult } from '../types/index.js';
 
 export class AuditService {
+  private projectRoot: string;
+
+  constructor(projectRoot?: string) {
+    this.projectRoot = projectRoot || process.cwd();
+  }
+
   async runSprintAudit(): Promise<{
     date: string;
     status: string;
     checks: CheckResult[];
     summary: { passed: number; failed: number; total: number };
   }> {
+    const registry = new RegistryReader(this.projectRoot);
     const { ValidatorService } = await import('./validator.service.js');
-    const { RegistryService } = await import('./registry.service.js');
-    const registry = new RegistryService();
-    const validator = new ValidatorService(registry);
+    const validator = new ValidatorService(this.projectRoot);
 
     const results = [
-      await validator.validateManifest(),
       ...await validator.validateProjectStructure(),
-      ...await validator.checkQualityGates(),
+      ...await validator.validateManifest().then(r => [r]),
     ];
 
     const passed = results.filter(r => r.passed).length;

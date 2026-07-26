@@ -1,14 +1,15 @@
 import { Command } from 'commander';
+import { RegistryReader } from '@akoris/core';
 import { ValidatorService } from '../services/validator.service.js';
-import { RegistryService } from '../services/registry.service.js';
+import { getProjectRoot } from '../services/project.service.js';
 import { success, error, warn, info, log, shouldOutputJSON, printJSON } from '../output/format.js';
 
 const architectureCommand = new Command('architecture')
   .description('Valide l\'architecture (structure des dossiers, ADRs)')
   .action(async () => {
     try {
-      const registry = new RegistryService();
-      const validator = new ValidatorService(registry);
+      const projectRoot = getProjectRoot();
+      const validator = new ValidatorService(projectRoot);
       info('Validation de l\'architecture...');
       const checks = await validator.validateProjectStructure();
       for (const check of checks) {
@@ -17,9 +18,9 @@ const architectureCommand = new Command('architecture')
       }
       const { existsSync, readdirSync } = await import('node:fs');
       const { join } = await import('node:path');
-      const adrDir = join(process.cwd(), '.akoris', 'decisions');
+      const adrDir = join(projectRoot, '.akoris', 'decisions');
       const hasAdrs = existsSync(adrDir) && readdirSync(adrDir).length > 0;
-      log(`${hasAdrs ? '✅' : '❌'} Décisions d\'architecture (ADRs)`);
+      log(`${hasAdrs ? '✅' : '❌'} Décisions d'architecture (ADRs)`);
       if (!hasAdrs) log('   Aucune décision dans .akoris/decisions/');
       const allPassed = checks.every(c => c.passed) && hasAdrs;
       if (shouldOutputJSON()) {
@@ -90,28 +91,32 @@ const securityCommand = new Command('security')
 
 const registrySubCommand = new Command('registry')
   .description('Valide les schémas et fichiers du Registry')
-  .action(() => {
+  .action(async () => {
     try {
-      const registry = new RegistryService();
-      info('Validation du Registry...');
-      const summary = registry.summary();
+      const projectRoot = getProjectRoot();
+      const reader = new RegistryReader(projectRoot);
+      const index = await reader.loadIndex();
+      const validation = await reader.validate();
+
       if (shouldOutputJSON()) {
-        printJSON(summary);
+        printJSON({ validation, index });
         return;
       }
-      log(`📦 Policies: ${summary.policies}`);
-      log(`🤖 Agents: ${summary.agents}`);
-      log(`📝 Contrats: ${summary.contracts}`);
-      log(`🔄 Workflows: ${summary.workflows}`);
-      log(`✅ Quality Gates: ${summary.qualityGates}`);
-      log(`📊 Metrics: ${summary.metrics}`);
-      log(`📋 Checklists: ${summary.checklists}`);
-      log(`📁 Templates: ${summary.templates}`);
-      const total = summary.policies + summary.agents + summary.contracts + summary.workflows;
-      if (total > 0) success(`Registry valide (${total} entrées)`);
-      else warn('Registry vide');
-      if (total === 0) {
-        log('   Aucun fichier trouvé dans le Registry');
+
+      info('Validation du Registry...');
+      if (index.components) {
+        for (const [name, comp] of Object.entries(index.components)) {
+          log(`   ${name.padEnd(15)} ${(comp as any).count}`);
+        }
+      }
+
+      if (validation.valid) {
+        success('Registry valide');
+      } else {
+        warn('Problèmes détectés');
+        for (const err of validation.errors) {
+          error(`  ${err.type}: ${err.message}`);
+        }
         process.exitCode = 1;
       }
     } catch (err: unknown) {

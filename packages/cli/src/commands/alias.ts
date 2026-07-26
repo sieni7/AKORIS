@@ -1,6 +1,6 @@
 import { Command } from 'commander';
+import { AliasManager } from '@akoris/core';
 import { getProjectRoot } from '../services/project.service.js';
-import { readAliases, setAlias, removeAlias, resolveAlias } from '../services/alias.service.js';
 import { success, error, warn, info, title, printJSON, shouldOutputJSON } from '../output/format.js';
 
 export function aliasCommand(): Command {
@@ -11,11 +11,11 @@ export function aliasCommand(): Command {
     .command('set <name> <command...>')
     .description('Crée ou met à jour un alias')
     .action(async (name: string, command: string[]) => {
-      const resolvedCmd = command.join(' ');
       const projectRoot = getProjectRoot();
       try {
-        setAlias(projectRoot, name, resolvedCmd);
-        success(`Alias "${name}" défini : ${resolvedCmd}`);
+        const manager = new AliasManager(projectRoot);
+        await manager.setAlias(name, command.join(' '));
+        success(`Alias "${name}" défini : ${command.join(' ')}`);
       } catch (err: any) {
         error(err.message);
         process.exit(1);
@@ -26,9 +26,10 @@ export function aliasCommand(): Command {
     .command('list')
     .description('Liste tous les alias')
     .option('--json', 'Sortie en JSON')
-    .action(async (opts) => {
+    .action(async () => {
       const projectRoot = getProjectRoot();
-      const aliases = readAliases(projectRoot);
+      const manager = new AliasManager(projectRoot);
+      const aliases = await manager.listAliases();
       const names = Object.keys(aliases);
 
       if (shouldOutputJSON()) {
@@ -51,7 +52,8 @@ export function aliasCommand(): Command {
     .description('Supprime un alias')
     .action(async (name: string) => {
       const projectRoot = getProjectRoot();
-      if (removeAlias(projectRoot, name)) {
+      const manager = new AliasManager(projectRoot);
+      if (await manager.removeAlias(name)) {
         success(`Alias "${name}" supprimé.`);
       } else {
         warn(`Alias "${name}" introuvable.`);
@@ -63,7 +65,8 @@ export function aliasCommand(): Command {
     .description('Affiche la commande résolue pour un alias')
     .action(async (name: string) => {
       const projectRoot = getProjectRoot();
-      const resolved = resolveAlias(projectRoot, name);
+      const manager = new AliasManager(projectRoot);
+      const resolved = await manager.resolveAlias(name);
       if (resolved) {
         console.log(resolved);
       } else {

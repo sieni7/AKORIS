@@ -1,18 +1,27 @@
 import { Command } from 'commander';
-import { RegistryService } from '../services/registry.service.js';
+import { RegistryReader } from '@akoris/core';
 import { ManifestService } from '../services/manifest.service.js';
+import { getProjectRoot } from '../services/project.service.js';
 import { shouldOutputJSON, printJSON, title, header, info, warn, log } from '../output/format.js';
 
 export const statusCommand = new Command('status')
   .description('Affiche l\'état global du projet AKORIS')
-  .action(() => {
-    const manifestService = new ManifestService();
-    const registry = new RegistryService();
+  .action(async () => {
+    const projectRoot = getProjectRoot();
+    const manifestService = new ManifestService(projectRoot);
+    const reader = new RegistryReader(projectRoot);
+
+    let index;
+    try {
+      index = await reader.loadIndex();
+    } catch {
+      index = null;
+    }
 
     if (shouldOutputJSON()) {
       printJSON({
         manifest: manifestService.exists() ? manifestService.read() : null,
-        registry: registry.summary(),
+        registry: index,
       });
       return;
     }
@@ -21,7 +30,7 @@ export const statusCommand = new Command('status')
 
     if (manifestService.exists()) {
       const manifest = manifestService.read();
-      log(`📄 Projet : ${manifest.name} v${manifest.version}`);
+      log(`Projet : ${manifest.name} v${manifest.version}`);
       log(`   Méthode : AKORIS ${manifest.akoris}`);
       log(`   Registry: v${manifest.registry.version}`);
       log(`   Playbook: ${manifest.playbook || 'aucun'}`);
@@ -30,14 +39,10 @@ export const statusCommand = new Command('status')
       warn('Aucun MANIFEST.json trouvé');
     }
 
-    const summary = registry.summary();
-    header('Registry');
-    log(`   ${summary.policies} policies`);
-    log(`   ${summary.agents} agents`);
-    log(`   ${summary.contracts} contrats`);
-    log(`   ${summary.workflows} workflows`);
-    log(`   ${summary.qualityGates} quality gates`);
-    log(`   ${summary.metrics} métriques`);
-    log(`   ${summary.checklists} checklists`);
-    log(`   ${summary.templates} templates`);
+    if (index && index.components) {
+      header('Registry');
+      for (const [name, comp] of Object.entries(index.components)) {
+        log(`   ${name.padEnd(15)} ${(comp as any).count}`);
+      }
+    }
   });

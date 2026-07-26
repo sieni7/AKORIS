@@ -1,26 +1,24 @@
 import { Command } from 'commander';
-import { RegistryReaderV2 } from '../services/registry-reader-v2.service.js';
+import { RegistryReader, DoctorEngine } from '@akoris/core';
 import { ManifestService } from '../services/manifest.service.js';
-import { StateMachineEngine } from '../services/state-machine.service.js';
-import { ensureProjectDirectories } from '../services/project.service.js';
+import { getProjectRoot } from '../services/project.service.js';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { shouldOutputJSON, printJSON, title, success, error, warn, info, log, isVerbose } from '../output/format.js';
+import { shouldOutputJSON, printJSON, title, success, error, warn, info, log } from '../output/format.js';
 
 export const doctorCommand = new Command('doctor')
   .description('Diagnostique et répare l\'état du projet AKORIS')
   .option('--fix', 'Tente de corriger automatiquement les problèmes')
   .action(async (options?: { fix?: boolean }) => {
-    const projectRoot = process.cwd();
+    const projectRoot = getProjectRoot();
     const issues: string[] = [];
     const fixes: string[] = [];
     const results: Record<string, any> = {};
 
-    const reader = new RegistryReaderV2();
+    const doctor = new DoctorEngine(projectRoot);
     const manifestService = new ManifestService(projectRoot);
-    const stateEngine = new StateMachineEngine(reader, projectRoot);
 
-    log('🔍 Diagnostic AKORIS en cours...\n');
+    log('Diagnostic AKORIS en cours...\n');
 
     // 1. Dossier .akoris/
     const akorisPath = join(projectRoot, '.akoris');
@@ -30,9 +28,8 @@ export const doctorCommand = new Command('doctor')
     if (!hasAkoris) {
       issues.push('Dossier .akoris/ manquant');
       if (options?.fix) {
-        const created = ensureProjectDirectories(projectRoot);
-        fixes.push(`.akoris/ créé (${created.length} sous-dossiers)`);
-        results.akoris.created = created;
+        const result = await doctor.fix();
+        fixes.push(...result.fixes);
       }
     }
 
@@ -69,20 +66,9 @@ export const doctorCommand = new Command('doctor')
     if (!hasState) {
       issues.push('Fichier state.json manquant');
       if (options?.fix) {
-        stateEngine.ensureStateFile();
-        fixes.push('state.json créé avec l\'état Draft');
+        const result = await doctor.fix();
+        fixes.push(...result.fixes.filter(f => f.includes('state')));
         results.state.fixed = true;
-      }
-    } else {
-      try {
-        stateEngine.getCurrentState();
-      } catch {
-        issues.push('state.json corrompu');
-        if (options?.fix) {
-          stateEngine.ensureStateFile();
-          fixes.push('state.json régénéré avec l\'état Draft');
-          results.state.fixed = true;
-        }
       }
     }
 
@@ -94,33 +80,30 @@ export const doctorCommand = new Command('doctor')
     if (!hasLogs) {
       issues.push('Dossier logs/sessions/ manquant');
       if (options?.fix) {
-        ensureProjectDirectories(projectRoot);
+        await doctor.fix();
         fixes.push('Dossier logs/sessions/ créé');
         results.logs.fixed = true;
       }
     }
 
-    // 6. Registry v2
-    const v2ok = reader.validate();
-    results.registry = { valid: v2ok.valid, errors: v2ok.errors };
-    if (reader.getIndex()) {
-      const index = reader.getIndex()!;
-      log(`\n📦 Registry v2 :`);
-      log(`   Agents     : ${index.components.agents.count}`);
-      log(`   Policies   : ${index.components.policies.count}`);
-      log(`   Contrats   : ${index.components.contracts.count}`);
-      log(`   Workflows  : ${index.components.workflows.count}`);
-      log(`   QualityGates : ${index.components.qualityGates.count}`);
-      log(`   Événements : ${index.components.events.count}`);
-      log(`   Règles     : ${index.components.rules.count}`);
-      log(`   Livrables  : ${index.components.deliverables.count}`);
-    }
-    log(v2ok.valid ? '✅ Registry v2 valide' : '❌ Registry v2 : problèmes détectés');
-    if (!v2ok.valid) {
-      issues.push(`Registry v2 : ${v2ok.errors.length} erreur(s)`);
-      if (options?.fix) {
-        fixes.push('⚠️ Le Registry ne peut pas être réparé automatiquement. Vérifiez registry/registry.json');
+    // 6. Registry
+    try {
+      const reader = new RegistryReader(projectRoot);
+      const index = await reader.loadIndex();
+      log(`\nRegistry v${index.version} :`);
+      log(`   Agents : ${index.components?.agents?.count || 0}`);
+      if (index.components) {
+        for (const [name, comp] of Object.entries(index.components)) {
+          log(`   ${name} : ${(comp as any).count}`);
+        }
       }
+      const validation = await reader.validate();
+      log(validation.valid ? '✅ Registry valide' : '❌ Registry : problèmes détectés');
+      if (!validation.valid) {
+        issues.push(`Registry : ${validation.errors.length} erreur(s)`);
+      }
+    } catch {
+      issues.push('Registry injoignable');
     }
 
     if (shouldOutputJSON()) {
@@ -142,16 +125,12 @@ export const doctorCommand = new Command('doctor')
       log(`  - ${issue}`);
     }
 
-    if (options?.fix) {
-      if (fixes.length > 0) {
-        success(`${fixes.length} correction(s) appliquée(s) :`);
-        for (const fix of fixes) {
-          log(`  - ${fix}`);
-        }
-      } else {
-        warn('Aucune correction automatique disponible pour les problèmes restants.');
+    if (options?.fix && fixes.length > 0) {
+      success(`${fixes.length} correction(s) appliquée(s) :`);
+      for (const fix of fixes) {
+        log(`  - ${fix}`);
       }
-    } else {
+    } else if (!options?.fix) {
       info('\n💡 Pour corriger automatiquement :  akoris doctor --fix');
     }
   });

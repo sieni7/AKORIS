@@ -8,7 +8,7 @@ export const initCommand = new Command('init')
   .argument('[name]', 'Nom du projet')
   .option('-t, --type <type>', 'Type de projet (app, saas, api, lib)', 'app')
   .option('-p, --path <path>', 'Chemin du projet', process.cwd())
-  .option('--template <name>', `Template d\'agents à pré-activer (${getTemplateNames().join(', ')})`)
+  .option('--template <name>', `Template d'agents à pré-activer (${getTemplateNames().join(', ')})`)
   .action(async (name?: string, options?: { type: string; path: string; template?: string }) => {
     const generator = new GeneratorService();
     const projectName = name || 'mon-projet';

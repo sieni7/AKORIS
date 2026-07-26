@@ -1,4 +1,4 @@
-import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
+import { writeFileSync, mkdirSync, existsSync, cpSync } from 'node:fs';
 import { join } from 'node:path';
 import { ManifestService } from './manifest.service.js';
 import type { Manifest } from '../types/index.js';
@@ -39,9 +39,8 @@ export class GeneratorService {
   }
 
   async installPlaybook(playbookPath: string, projectPath: string): Promise<void> {
-    const { copySync } = await import('fs-extra');
     if (existsSync(playbookPath)) {
-      copySync(playbookPath, join(projectPath, '.akoris'));
+      cpSync(playbookPath, join(projectPath, '.akoris'), { recursive: true });
     }
   }
 }

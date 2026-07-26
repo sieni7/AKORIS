@@ -1,29 +1,12 @@
-import { RegistryService } from './registry.service.js';
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
 import type { CheckResult } from '../types/index.js';
 
 export class ValidatorService {
-  private registry: RegistryService;
+  private projectRoot: string;
 
-  constructor(registry: RegistryService) {
-    this.registry = registry;
-  }
-
-  async checkQualityGates(): Promise<CheckResult[]> {
-    const gates = this.registry.getQualityGates();
-    if (!gates) return [];
-
-    const results: CheckResult[] = [];
-
-    for (const gate of gates.gates) {
-      results.push({
-        gate: gate.id,
-        name: gate.name,
-        passed: true,
-        details: `Vérification automatisée : ${gate.check || 'non définie'}`,
-      });
-    }
-
-    return results;
+  constructor(projectRoot?: string) {
+    this.projectRoot = projectRoot || process.cwd();
   }
 
   async validateProjectStructure(): Promise<CheckResult[]> {
@@ -31,9 +14,7 @@ export class ValidatorService {
 
     const requiredDirs = ['.akoris', 'docs'];
     for (const dir of requiredDirs) {
-      const { existsSync } = await import('node:fs');
-      const { join } = await import('node:path');
-      const exists = existsSync(join(process.cwd(), dir));
+      const exists = existsSync(join(this.projectRoot, dir));
       results.push({
         gate: `structure-${dir}`,
         name: `Dossier ${dir}`,
@@ -47,7 +28,7 @@ export class ValidatorService {
 
   async validateManifest(): Promise<CheckResult> {
     const { ManifestService } = await import('./manifest.service.js');
-    const manifestService = new ManifestService();
+    const manifestService = new ManifestService(this.projectRoot);
     const { valid, errors } = manifestService.validate();
 
     return {

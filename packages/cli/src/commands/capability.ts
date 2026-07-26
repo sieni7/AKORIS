@@ -1,32 +1,47 @@
 import { Command } from 'commander';
-import { RegistryReaderV2 } from '../services/registry-reader-v2.service.js';
-import { CapabilityResolver } from '../services/capability.service.js';
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
+import { RegistryReader } from '@akoris/core';
+import { getProjectRoot } from '../services/project.service.js';
 import { shouldOutputJSON, printJSON, title, header, info, warn, log } from '../output/format.js';
 
 export const capabilityCommand = new Command('capability')
   .description('Recherche et résolution des capacités des agents');
 
+async function loadCapabilityRegistry(projectRoot: string): Promise<Record<string, string[]>> {
+  const path = join(projectRoot, 'registry', 'capabilities.json');
+  try {
+    const content = await readFile(path, 'utf-8');
+    const data = JSON.parse(content);
+    return data.capabilities || data || {};
+  } catch {
+    return {};
+  }
+}
+
 capabilityCommand
   .command('find')
   .description('Trouve les agents possédant une capacité')
   .argument('<capability>', 'Nom de la capacité (ex: design_database)')
-  .action((capability: string) => {
-    const reader = new RegistryReaderV2();
-    const resolver = new CapabilityResolver(reader);
-    const agents = resolver.findAgents(capability);
+  .action(async (capability: string) => {
+    const projectRoot = getProjectRoot();
+    const caps = await loadCapabilityRegistry(projectRoot);
+    const agents = caps[capability] || [];
+    const similar = Object.entries(caps)
+      .filter(([key]) => key.includes(capability) || capability.includes(key))
+      .slice(0, 5);
 
     if (shouldOutputJSON()) {
-      printJSON({ capability, agents });
+      printJSON({ capability, agents, similar: similar.map(([k, v]) => ({ [k]: v })) });
       return;
     }
 
     if (agents.length === 0) {
       info(`Aucun agent trouvé pour la capacité "${capability}"`);
-      const similar = resolver.searchCapabilities(capability);
       if (similar.length > 0) {
         header('Capacités similaires');
-        for (const s of similar.slice(0, 5)) {
-          log(`  ${s.capability} → ${s.agents.join(', ')}`);
+        for (const [name, agentList] of similar) {
+          log(`  ${name} → ${agentList.join(', ')}`);
         }
       }
       return;
@@ -35,10 +50,7 @@ capabilityCommand
     log(`Capacité : ${capability}`);
     log(`Agents disponibles (${agents.length}) :`);
     for (const agent of agents) {
-      const caps = resolver.getCapabilities(agent);
-      const allCaps = caps.join(', ');
       log(`  ${agent}`);
-      log(`    Capacités : ${allCaps}`);
     }
   });
 
@@ -46,10 +58,12 @@ capabilityCommand
   .command('search')
   .description('Recherche des capacités par mot-clé')
   .argument('<query>', 'Mot-clé de recherche')
-  .action((query: string) => {
-    const reader = new RegistryReaderV2();
-    const resolver = new CapabilityResolver(reader);
-    const results = resolver.searchCapabilities(query);
+  .action(async (query: string) => {
+    const projectRoot = getProjectRoot();
+    const caps = await loadCapabilityRegistry(projectRoot);
+    const results = Object.entries(caps)
+      .filter(([key]) => key.toLowerCase().includes(query.toLowerCase()))
+      .map(([capability, agentList]) => ({ capability, agents: agentList }));
 
     if (shouldOutputJSON()) {
       printJSON({ query, results });
@@ -72,10 +86,19 @@ capabilityCommand
   .command('team')
   .description('Construit une équipe d\'agents pour une liste de tâches')
   .argument('<tasks...>', 'Liste des tâches (ex: design_api optimize_queries)')
-  .action((tasks: string[]) => {
-    const reader = new RegistryReaderV2();
-    const resolver = new CapabilityResolver(reader);
-    const team = resolver.findTeam(tasks);
+  .action(async (tasks: string[]) => {
+    const projectRoot = getProjectRoot();
+    const caps = await loadCapabilityRegistry(projectRoot);
+    const team = new Map<string, string[]>();
+
+    for (const task of tasks) {
+      const agents = caps[task] || [];
+      for (const agent of agents) {
+        const existing = team.get(agent) || [];
+        existing.push(task);
+        team.set(agent, existing);
+      }
+    }
 
     if (shouldOutputJSON()) {
       const obj: Record<string, string[]> = {};
@@ -94,14 +117,9 @@ capabilityCommand
       log(`    Tâches : ${agentTasks.join(', ')}`);
     }
 
-    const totalAll = tasks.length;
-    const covered = new Set<string>();
-    for (const agentTasks of team.values()) {
-      for (const t of agentTasks) covered.add(t);
-    }
-
-    log(`Couverture : ${covered.size}/${totalAll} tâches`);
-    if (covered.size < totalAll) {
+    const covered = new Set(team.values().reduce((acc, t) => [...acc, ...t], [] as string[]));
+    log(`Couverture : ${covered.size}/${tasks.length} tâches`);
+    if (covered.size < tasks.length) {
       const missing = tasks.filter(t => !covered.has(t));
       warn(`Tâches non couvertes : ${missing.join(', ')}`);
       log('Utilisez "akoris capability find <capacité>" pour chercher des agents.');
@@ -112,40 +130,37 @@ capabilityCommand
   .command('list')
   .description('Liste toutes les capacités disponibles')
   .option('-a, --agent <agentId>', 'Filtrer par agent')
-  .action((options: { agent?: string }) => {
-    const reader = new RegistryReaderV2();
-    const resolver = new CapabilityResolver(reader);
+  .action(async (options: { agent?: string }) => {
+    const projectRoot = getProjectRoot();
+    const caps = await loadCapabilityRegistry(projectRoot);
 
     if (options.agent) {
-      const caps = resolver.getCapabilities(options.agent);
-      if (caps.length === 0) {
+      const agentCaps = Object.entries(caps)
+        .filter(([, agents]) => agents.includes(options.agent!))
+        .map(([cap]) => cap);
+
+      if (agentCaps.length === 0) {
         info(`Aucune capacité trouvée pour l'agent "${options.agent}"`);
         return;
       }
       if (shouldOutputJSON()) {
-        printJSON({ agent: options.agent, capabilities: caps });
+        printJSON({ agent: options.agent, capabilities: agentCaps });
         return;
       }
       header(`Capacités de ${options.agent}`);
-      for (const cap of caps) {
+      for (const cap of agentCaps) {
         log(`  ${cap}`);
       }
       return;
     }
 
-    const allCaps = resolver.getAllCapabilities();
     if (shouldOutputJSON()) {
-      const obj: Record<string, string[]> = {};
-      for (const cap of allCaps) {
-        obj[cap] = resolver.findAgents(cap);
-      }
-      printJSON({ capabilities: obj });
+      printJSON({ capabilities: caps });
       return;
     }
 
-    header(`Registre des capacités (${allCaps.length} capacités)`);
-    for (const cap of allCaps) {
-      const agents = resolver.findAgents(cap);
+    header(`Registre des capacités (${Object.keys(caps).length} capacités)`);
+    for (const [cap, agents] of Object.entries(caps)) {
       log(`  ${cap} → ${agents.join(', ')}`);
     }
   });

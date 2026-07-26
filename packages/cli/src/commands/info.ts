@@ -1,13 +1,14 @@
 import { Command } from 'commander';
+import { RegistryReader } from '@akoris/core';
 import { ManifestService } from '../services/manifest.service.js';
-import { RegistryService } from '../services/registry.service.js';
+import { getProjectRoot } from '../services/project.service.js';
 import { shouldOutputJSON, printJSON, title, header, info, warn, log } from '../output/format.js';
 
 export const infoCommand = new Command('info')
   .description('Show AKORIS project information')
-  .action(() => {
-    const manifestService = new ManifestService();
-    const registry = new RegistryService();
+  .action(async () => {
+    const projectRoot = getProjectRoot();
+    const manifestService = new ManifestService(projectRoot);
 
     if (!manifestService.exists()) {
       warn('No MANIFEST.json found in current directory');
@@ -15,10 +16,16 @@ export const infoCommand = new Command('info')
     }
 
     const manifest = manifestService.read();
-    const summary = registry.summary();
+    const reader = new RegistryReader(projectRoot);
+    let index;
+    try {
+      index = await reader.loadIndex();
+    } catch {
+      index = null;
+    }
 
     if (shouldOutputJSON()) {
-      printJSON({ manifest, registrySummary: summary });
+      printJSON({ manifest, registry: index });
       return;
     }
 
@@ -38,13 +45,12 @@ export const infoCommand = new Command('info')
       }
     }
 
-    header('Registry Summary');
-    log(`  Policies:        ${summary.policies}`);
-    log(`  Agents:          ${summary.agents}`);
-    log(`  Contracts:       ${summary.contracts}`);
-    log(`  Workflows:       ${summary.workflows}`);
-    log(`  Quality Gates:   ${summary.qualityGates}`);
-    log(`  Metrics:         ${summary.metrics}`);
-    log(`  Checklists:      ${summary.checklists}`);
-    log(`  Templates:       ${summary.templates}`);
+    if (index) {
+      header('Registry Summary');
+      if (index.components) {
+        for (const [name, comp] of Object.entries(index.components)) {
+          log(`  ${name.padEnd(15)} ${(comp as any).count}`);
+        }
+      }
+    }
   });
