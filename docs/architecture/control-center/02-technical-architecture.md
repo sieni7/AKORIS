@@ -5,317 +5,354 @@ status: "Draft"
 owner: "AKORIS Core Team"
 last-updated: "2026-07-26"
 related:
+  - "00-vision.md"
   - "01-system-architecture.md"
   - "03-core.md"
-  - "ADR-001-control-center.md"
+  - "ADR-002-monorepo.md"
+  - "ADR-004-fastify.md"
 ---
 
 # 02 — Technical Architecture
 
-## 1. Stack technologique
+## 1. Objectif
 
-| Couche | Technologie | Justification |
-|--------|-------------|---------------|
-| **Monorepo** | pnpm workspaces | Standardisation, déjà utilisé par le CLI |
-| **Langage** | TypeScript 5.x (strict) | Typage fort, partagé entre toutes les couches |
-| **Core** | TypeScript natif (0 dépendance externe) | Portabilité, testabilité, indépendance |
-| **API** | Fastify 5.x | Performance, validation native (Zod), WebSocket, plugins |
-| **Schema/Validation** | Zod 3.x | Typage statique + validation runtime, partageable |
-| **Dashboard** | React 19 + Vite 6 | Standard, HMR rapide, écosystème riche |
-| **UI Components** | shadcn/ui + Tailwind CSS 4 | Composants accessibles, personnalisables, copiés pas hérités |
-| **WebSocket** | Fastify WebSocket (@fastify/websocket) | Streaming logs, événements temps réel |
-| **SDK** | TypeScript natif (fetch) | 0 dépendance, compatible Node/browser |
-| **Secrets** | crypto (AES-256-GCM) natif Node.js | Pas de dépendance externe |
-| **Build** | tsc (Core, API, SDK), Vite (Dashboard) | Simplicité, pas de bundler lourd |
-| **Lint** | Biome | Rapide, unified (lint + format), remplace ESLint + Prettier |
-| **Test** | Vitest | Rapide, compatible ESM, déjà utilisé |
-| **CI** | GitHub Actions | Intégration native avec le dépôt |
+Ce document définit les **choix technologiques**, l'organisation du monorepo, la chaîne de build, la CI/CD, et les outils de développement utilisés pour implémenter l'architecture système définie dans `01-system-architecture.md`.
 
-### Pourquoi pas ?
-
-| Technologie | Raison du rejet |
-|-------------|-----------------|
-| **NestJS** | Trop opinionated pour l'API ; Fastify nous donne le contrôle |
-| **Express** | Moins performant, pas de validation native |
-| **Next.js** | Trop lourd pour un dashboard statique ; Vite suffit |
-| **tRPC** | Nécessite un client côté Dashboard ; REST + SDK est plus universel |
-| **Prisma** | Pas de base de données ; tout est fichier JSON |
-| **Redis** | Pas nécessaire en v1.0 (le Core charge tout en mémoire) |
+Tous les choix sont guidés par les principes du Blueprint :
+- **Simplicité** : éviter les surcouches inutiles.
+- **Évolutivité** : faciliter l'ajout de nouveaux modules ou interfaces.
+- **Portabilité** : pouvoir exécuter le projet sur n'importe quelle machine.
+- **Maintenabilité** : privilégier les technologies largement adoptées et documentées.
 
 ---
 
-## 2. Structure du monorepo
+## 2. Stack principale
+
+| Composant | Technologie | Justification |
+|-----------|-------------|---------------|
+| **Monorepo** | pnpm workspaces | Légèreté, rapidité d'installation, isolation des dépendances. |
+| **Langage** | TypeScript 5.6+ | Typage fort, adopté par le CLI existant, facilite le partage de code. |
+| **Backend API** | Fastify + Zod | Performant, validation native, excellente intégration TypeScript, WebSocket intégré. |
+| **Frontend** | React 19 + Vite | Maturité, écosystème riche, Vite pour la rapidité de développement. |
+| **UI Components** | shadcn/ui + Tailwind CSS | Composants accessibles, personnalisables, légers, cohérence visuelle. |
+| **Graphiques** | Recharts | Basé sur D3, simple à intégrer, bien adapté aux dashboards. |
+| **State Management** | TanStack Query (server state) + Zustand (UI state) | Query gère le cache et la synchronisation avec l'API ; Zustand gère l'état local (modale, filtres). |
+| **Routing** | TanStack Router | Type-safe, support des routes imbriquées, parfait pour une SPA. |
+| **Formulaires** | React Hook Form + Zod | Validation cohérente avec le backend. |
+| **Éditeur de code** | Monaco Editor (VS Code) | Intégration idéale pour le Prompt Builder. |
+| **WebSocket** | ws (intégré à Fastify) | Simple, efficace, compatible avec le frontend. |
+| **Tests** | Vitest (unitaires) + Playwright (E2E) | Vitest rapide pour les unitaires, Playwright pour les tests cross-browser. |
+| **Linting / Format** | ESLint + Prettier | Standards de code, automatisation. |
+| **CI/CD** | GitHub Actions | Intégration native avec le dépôt. |
+| **Conteneurisation** | Docker + docker-compose | Simplifie le déploiement de l'API et du Dashboard en production. |
+
+---
+
+## 3. Structure du monorepo
 
 ```
 akoris/
-├── pnpm-workspace.yaml
-├── package.json               # Racine (scripts, devDeps communes)
-├── tsconfig.base.json         # Config TypeScript de base
-├── biome.json                 # Lint + format global
-│
-├── packages/
-│   ├── shared/                # Types, schémas Zod, constantes
-│   │   ├── src/
-│   │   │   ├── index.ts
-│   │   │   ├── types/         # Agent, State, LogEntry, Prompt, etc.
-│   │   │   ├── schemas/       # Schémas Zod (request/response API)
-│   │   │   └── constants.ts
-│   │   ├── package.json
-│   │   └── tsconfig.json
-│   │
-│   └── core/                  # Logique métier (0 dépendance)
-│       ├── src/
-│       │   ├── index.ts       # Barillet d'export
-│       │   ├── registry/      # RegistryReader, validations
-│       │   ├── state/         # StateMachineEngine
-│       │   ├── search/        # SearchEngine
-│       │   ├── logs/          # LogReader
-│       │   ├── alias/         # AliasManager
-│       │   ├── doctor/        # DoctorEngine
-│       │   ├── prompts/       # PromptEngine
-│       │   └── secrets/       # SecretManager
-│       ├── tests/
-│       ├── package.json
-│       └── tsconfig.json
-│
 ├── apps/
-│   ├── cli/                   # CLI actuel, adapté pour consommer le Core
-│   │   └── ...
-│   │
-│   ├── api/                   # API Fastify
+│   ├── api/                         # Backend Fastify
 │   │   ├── src/
-│   │   │   ├── index.ts       # Entry point
-│   │   │   ├── routes/        # state.ts, search.ts, logs.ts, prompts.ts, ...
-│   │   │   ├── websocket/     # logs.ts, events.ts
-│   │   │   ├── middleware/    # error-handler.ts, cors.ts
-│   │   │   └── plugins/       # swagger.ts, sensible.ts
+│   │   │   ├── routes/              # Endpoints REST (health, state, registry, logs, command, prompts, secrets)
+│   │   │   ├── websocket/           # Canaux WebSocket (logs, notifications, events)
+│   │   │   ├── services/            # Services spécifiques à l'API (call Core, transformations)
+│   │   │   ├── plugins/             # Plugins Fastify (CORS, rate-limit, auth)
+│   │   │   └── index.ts             # Point d'entrée
 │   │   ├── package.json
-│   │   └── tsconfig.json
+│   │   ├── tsconfig.json
+│   │   └── Dockerfile
 │   │
-│   └── dashboard/             # React + Vite
+│   └── dashboard/                   # Frontend React
 │       ├── src/
-│       │   ├── App.tsx
-│       │   ├── routes/        # executive/, project/, registry/, ai-studio/, devops/
-│       │   ├── components/    # ui/ (shadcn), shared/
-│       │   ├── hooks/         # useWebSocket, useCommandPalette, useSearch
-│       │   ├── lib/           # SDK wrapper, utils
-│       │   └── styles/        # globals.css (Tailwind)
+│       │   ├── routes/              # Pages principales : executive, project, ai-studio, devops, registry
+│       │   ├── components/          # Composants réutilisables (CommandPalette, Notifications, Timeline)
+│       │   ├── lib/                 # Connexion SDK, WebSocket, hooks
+│       │   ├── styles/              # Tailwind, global.css
+│       │   └── App.tsx
 │       ├── package.json
 │       ├── vite.config.ts
+│       ├── tailwind.config.js
+│       └── Dockerfile
+│
+├── packages/
+│   ├── core/                        # Moteur métier (aucune dépendance externe, seulement Node.js)
+│   │   ├── src/
+│   │   │   ├── registry/            # RegistryReader, validation
+│   │   │   ├── state/               # StateMachineEngine, transitions
+│   │   │   ├── search/              # SearchEngine, indexation
+│   │   │   ├── prompts/             # PromptEngine, contexte
+│   │   │   ├── doctor/              # DoctorEngine
+│   │   │   ├── secrets/             # SecretManager (chiffrement AES)
+│   │   │   ├── logs/                # LogReader, watch
+│   │   │   ├── alias/               # AliasManager
+│   │   │   ├── quality/             # QualityGateEngine (futur)
+│   │   │   ├── types/               # Types internes du Core
+│   │   │   └── index.ts             # Point d'entrée public du Core
+│   │   ├── package.json
+│   │   └── tsconfig.json
+│   │
+│   ├── sdk/                         # Client TypeScript pour l'API
+│   │   ├── src/
+│   │   │   ├── client.ts            # Client HTTP (fetch)
+│   │   │   ├── websocket.ts         # Connexion WebSocket
+│   │   │   ├── hooks/               # Hooks React (useState, useLogs...)
+│   │   │   ├── errors.ts            # Gestion des erreurs
+│   │   │   └── index.ts
+│   │   ├── package.json
+│   │   └── tsconfig.json
+│   │
+│   ├── shared/                      # Types, schémas, constantes partagés
+│   │   ├── src/
+│   │   │   ├── types/               # Agent, State, LogEntry, Event, etc.
+│   │   │   ├── schemas/             # Schémas Zod (validation)
+│   │   │   ├── constants/           # Enums, codes d'erreur
+│   │   │   └── index.ts
+│   │   ├── package.json
+│   │   └── tsconfig.json
+│   │
+│   └── ui/                          # Composants UI réutilisables (shadcn personnalisés)
+│       ├── src/
+│       │   ├── components/          # Button, Card, Badge, etc.
+│       │   ├── themes/              # Thèmes Tailwind
+│       │   └── index.ts
+│       ├── package.json
 │       └── tsconfig.json
 │
-└── sdk/                       # (optionnel, peut être dans packages/)
-    └── src/
-        ├── client.ts          # HTTP client (fetch)
-        ├── state.ts           # state.get(), state.transition()
-        ├── search.ts          # search.query()
-        ├── logs.ts            # logs.list(), logs.watch() (WS)
-        ├── prompts.ts         # prompts.build(), prompts.test(), prompts.save()
-        └── types.ts           # Réexport de shared
+├── registry/                        # Référentiel de gouvernance (existant)
+├── docs/                            # Documentation (Blueprint, guides)
+├── package.json                     # Racine du monorepo
+├── pnpm-workspace.yaml
+├── tsconfig.base.json              # Configuration TypeScript partagée
+├── .eslintrc.js
+├── .prettierrc
+├── vitest.config.ts
+└── README.md
 ```
+
+**Règles du monorepo :**
+- Chaque package expose une API publique via son `index.ts`.
+- Aucun package ne dépend directement d'un autre package sauf via son `index.ts`.
+- Les dépendances partagées (React, Tailwind, etc.) sont installées à la racine pour éviter les doublons.
 
 ---
 
-## 3. Règles de build
+## 4. Build et packaging
 
-```bash
-# Installer toutes les dépendances
-pnpm install
-
-# Build tout le monorepo (ordre : shared → core → api → sdk → dashboard)
-pnpm build
-
-# Build un seul package
-pnpm --filter @akoris/core build
-
-# Tests
-pnpm test                          # Tout le monorepo
-pnpm --filter @akoris/core test    # Core uniquement
-
-# Lint
-pnpm lint
-
-# Dev (API + Dashboard)
-pnpm dev                           # Lance API et Dashboard en parallèle
-```
-
-**Ordre de build explicite :** `shared → core → api → sdk → dashboard`
-
-Chaque package déclare ses dépendances dans `package.json` :
+### 4.1. Scripts racine (`package.json` racine)
 
 ```json
-// packages/core/package.json
 {
-  "name": "@akoris/core",
-  "dependencies": {
-    "@akoris/shared": "workspace:*"
+  "scripts": {
+    "dev": "pnpm -r dev",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "test:e2e": "pnpm -r test:e2e",
+    "lint": "eslint . --ext .ts,.tsx",
+    "format": "prettier --write .",
+    "clean": "pnpm -r clean"
   }
 }
+```
+
+### 4.2. Build des packages
+
+- **Core** : `tsup` (build en CJS et ESM).
+- **API** : `tsup` (build ESM, avec `fastify` et `ws` en production).
+- **Dashboard** : `vite build` (production static).
+- **SDK** : `tsup` (build ESM).
+- **Shared** : `tsup` (build CJS/ESM).
+- **UI** : `tsup` (build ESM, avec CSS générée par Tailwind).
+
+### 4.3. Docker (production)
+
+**`apps/api/Dockerfile`** :
+```dockerfile
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package.json pnpm-lock.yaml ./
+RUN npm install -g pnpm && pnpm install --frozen-lockfile
+COPY . .
+RUN pnpm build
+
+FROM node:20-alpine
+WORKDIR /app
+COPY --from=builder /app/apps/api/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+EXPOSE 3000
+CMD ["node", "dist/index.js"]
+```
+
+**`apps/dashboard/Dockerfile`** :
+```dockerfile
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package.json pnpm-lock.yaml ./
+RUN npm install -g pnpm && pnpm install --frozen-lockfile
+COPY . .
+RUN pnpm build
+
+FROM nginx:alpine
+COPY --from=builder /app/apps/dashboard/dist /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+```
+
+**`docker-compose.yml`** (racine) :
+```yaml
+version: "3.8"
+services:
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./registry:/app/registry
+      - ./.akoris:/app/.akoris
+    environment:
+      - NODE_ENV=production
+
+  dashboard:
+    build:
+      context: .
+      dockerfile: apps/dashboard/Dockerfile
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
 ```
 
 ---
 
-## 4. API Design
+## 5. CI/CD (GitHub Actions)
 
-### Principes
-
-- **RESTful** pour les opérations CRUD et les commandes
-- **WebSocket** pour les événements temps réel (logs, notifications)
-- **Versionnement** par préfixe : `/api/v1/...`
-- **Validation** : tous les endpoints valident les entrées avec Zod
-- **Erreurs** : format standardisé (code, message, suggestion)
-
-### Structure des routes
-
-```
-GET    /api/v1/health                  # Santé du service
-GET    /api/v1/state                   # État courant
-GET    /api/v1/state/history           # Historique des transitions
-POST   /api/v1/state/transition        # Exécuter une transition
-
-GET    /api/v1/search?q={query}&type={type}
-
-GET    /api/v1/registry/agents         # Liste des agents
-GET    /api/v1/registry/agents/:id     # Détail d'un agent
-GET    /api/v1/registry/rules          # Liste des règles
-GET    /api/v1/registry/capabilities   # Liste des capacités
-
-GET    /api/v1/logs?lines=20&agent=CORE-01
-WS     /ws/v1/logs                     # Streaming des logs
-
-POST   /api/v1/prompts/build           # Construire un prompt
-POST   /api/v1/prompts/test            # Tester un prompt (LLM)
-POST   /api/v1/prompts/save            # Sauvegarder un prompt
-GET    /api/v1/prompts                 # Liste des prompts sauvegardés
-
-GET    /api/v1/command                 # Exécuter une commande CLI
-```
-
-### Format de réponse standard
-
-```typescript
-// Succès
-{
-  "success": true,
-  "data": { ... },        // Données spécifiques à l'endpoint
-  "meta": {
-    "timestamp": "2026-07-26T12:00:00Z",
-    "duration": 42        // ms
-  }
-}
-
-// Erreur
-{
-  "success": false,
-  "error": {
-    "code": "STATE_TRANSITION_DENIED",
-    "message": "Transition \"Draft → Active\" non définie",
-    "suggestion": "Transitions possibles : Planned",
-    "details": { ... }    // Optionnel
-  },
-  "meta": {
-    "timestamp": "2026-07-26T12:00:00Z",
-    "duration": 5
-  }
-}
-```
-
----
-
-## 5. WebSocket
-
-### Connexion
-
-```
-WS /ws/v1/logs
-```
-
-### Format des messages
-
-```typescript
-// Serveur → Client
-{
-  "type": "log:entry",
-  "data": {
-    "timestamp": "2026-07-26T12:00:00Z",
-    "agentId": "CORE-01",
-    "action": "transition",
-    "details": "Draft → Planned"
-  }
-}
-
-// Événements système
-{
-  "type": "state:changed",
-  "data": {
-    "from": "Draft",
-    "to": "Planned",
-    "at": "2026-07-26T12:00:00Z"
-  }
-}
-```
-
----
-
-## 6. Sécurité
-
-| Point | Mesure |
-|-------|--------|
-| **Secrets** | Chiffrement AES-256-GCM via `crypto` natif, fichier `.akoris/secrets.enc` |
-| **CORS** | Configuré pour l'origine du Dashboard (localhost:5173 en dev) |
-| **Headers** | Helmet-like via `@fastify/helmet` (ou équivalent) |
-| **Validation** | Tous les endpoints valident les entrées avec Zod |
-| **Authentification** | Hors périmètre v1.0 (usage local uniquement) |
-
----
-
-## 7. CI/CD (GitHub Actions)
+**Fichier** : `.github/workflows/ci.yml`
 
 ```yaml
-# .github/workflows/ci.yml
 name: CI
 
 on:
   push:
-    branches: [master]
+    branches: [main, develop]
   pull_request:
-    branches: [master]
+    branches: [main]
 
 jobs:
-  build:
+  lint:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [18, 20, 22]
-
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 20
           cache: 'pnpm'
-
       - run: pnpm install
       - run: pnpm lint
+      - run: pnpm format:check
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+      - run: pnpm install
+      - run: pnpm build
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+      - run: pnpm install
+      - run: pnpm test
+      - run: pnpm test:e2e
+```
+
+**Fichier** : `.github/workflows/release.yml`
+
+```yaml
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+          registry-url: 'https://registry.npmjs.org'
+      - run: pnpm install
       - run: pnpm build
       - run: pnpm test
+      - run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 ```
 
 ---
 
-## 8. Contraintes techniques
+## 6. Outils de développement
 
-| Contrainte | Décision |
-|------------|----------|
-| **Node.js** | >= 18 (Aligned avec le CLI) |
-| **Port API** | 3001 |
-| **Port Dashboard (dev)** | 5173 (Vite par défaut) |
-| **Pas de BDD** | Tout est fichier JSON (git-friendly) |
-| **Pas d'auth** | v1.0 en local uniquement |
-| **Temps réel** | WebSocket, pas de polling |
-| **Dashboard** | SPA statique, servie par l'API ou un reverse proxy |
+| Outil | Rôle |
+|-------|------|
+| **ESLint** | Linting TypeScript/React (Airbnb config adaptée). |
+| **Prettier** | Formatage automatique. |
+| **Vitest** | Tests unitaires et d'intégration. |
+| **Playwright** | Tests E2E (Dashboard). |
+| **Husky** | Git hooks : lint et format avant commit. |
+| **commitlint** | Validation des messages de commit (Conventional Commits). |
+| **tsup** | Build rapide des packages. |
+| **Vite** | Build du Dashboard. |
 
 ---
 
-**Prochaine étape** : Validation de `02-technical-architecture.md`, puis rédaction de `03-core.md` (API publique du Core).
+## 7. Cohérence avec le Blueprint
+
+- Le **Core** est indépendant, ne dépend d'aucun framework (Fastify/React), comme défini dans `01-system-architecture.md`.
+- Le **monorepo** facilite la séparation des responsabilités (principe de modularité).
+- **Docker** assure la portabilité (principe de remplaçabilité des interfaces).
+- **Les tests** sont organisés en pyramide : unitaires (Vitest) + E2E (Playwright), conformément aux exigences de qualité.
+
+---
+
+## 8. Prochaine étape
+
+Une fois ce document validé, nous rédigerons `03-core.md` (les interfaces publiques du Core Engine), qui détaillera exactement les services que le Core expose au CLI, à l'API et au SDK.
+
+---
+
+## Statut
+
+- `00-vision.md` : **Approved**
+- `01-system-architecture.md` : **Approved** (validation implicite)
+- `02-technical-architecture.md` : **Draft** (prêt pour revue)
+
+**Prochaine action** : Si vous validez ce document, je passe à `03-core.md` (définition des interfaces du Core Engine). Sinon, indiquez-moi les ajustements nécessaires.
