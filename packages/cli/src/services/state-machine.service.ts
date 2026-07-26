@@ -157,6 +157,25 @@ export class StateMachineEngine {
     };
   }
 
+  ensureStateFile(): boolean {
+    const statePath = this.getStatePath();
+    if (!existsSync(statePath)) {
+      const defaultState = { current: this.getInitialState() || 'Draft', history: [] };
+      const stateDir = join(this.projectPath, '.akoris');
+      if (!existsSync(stateDir)) mkdirSync(stateDir, { recursive: true });
+      writeFileSync(statePath, JSON.stringify(defaultState, null, 2) + '\n');
+      return true;
+    }
+    try {
+      JSON.parse(readFileSync(statePath, 'utf-8'));
+      return false;
+    } catch {
+      const defaultState = { current: this.getInitialState() || 'Draft', history: [] };
+      writeFileSync(statePath, JSON.stringify(defaultState, null, 2) + '\n');
+      return true;
+    }
+  }
+
   getAllTransitions(): Array<{ from: string; to: string; gates: string[]; authorizedBy: string; description?: string }> {
     const machine = this.getMachine();
     return machine?.transitions || [];
