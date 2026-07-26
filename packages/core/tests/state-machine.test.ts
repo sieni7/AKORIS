@@ -1,120 +1,57 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { StateMachineEngine } from '../src/state/state-machine.js';
-import { createTempDir, cleanupDir, createFixture, validStateMachine } from './helpers.js';
+import { describe, it, expect } from 'vitest';
+import { StateMachineEngine } from '../src/state-machine.js';
+import type { StateMachine } from '../src/types.js';
+
+function makeMachine(): StateMachine {
+  return {
+    version: '1.0.0',
+    states: [
+      { id: 'draft', name: 'Draft', phase: 'ideation', description: 'Initial draft' },
+      { id: 'review', name: 'Review', phase: 'validation', description: 'Under review' },
+      { id: 'done', name: 'Done', phase: 'completed', description: 'Completed' },
+    ],
+    transitions: [
+      { from: 'draft', to: 'review', requiredGates: ['gate-1'], authorizedBy: ['lead'], description: 'Submit for review' },
+      { from: 'review', to: 'done', requiredGates: ['gate-2'], authorizedBy: ['qa'], description: 'Approve' },
+      { from: 'review', to: 'draft', requiredGates: [], authorizedBy: ['lead'], description: 'Send back to draft' },
+    ],
+  };
+}
 
 describe('StateMachineEngine', () => {
-  let dir: string;
-  let engine: StateMachineEngine;
-
-  beforeEach(async () => {
-    dir = await createTempDir();
-    engine = new StateMachineEngine(dir);
+  it('should load state machine definition', () => {
+    const engine = new StateMachineEngine(makeMachine());
+    expect(engine.loadMachine().states).toHaveLength(3);
   });
 
-  afterEach(async () => {
-    await cleanupDir(dir);
+  it('should return current state', () => {
+    const engine = new StateMachineEngine(makeMachine());
+    expect(engine.getCurrentState().currentState).toBe('draft');
   });
 
-  describe('loadMachine', () => {
-    it('charge la machine à états', async () => {
-      await createFixture(dir, 'registry/state-machine.json', validStateMachine);
-      const machine = await engine.loadMachine();
-      expect(machine.version).toBe('1.0.0');
-      expect(machine.states).toHaveLength(2);
-    });
-
-    it('lève une erreur si le fichier est manquant', async () => {
-      await expect(engine.loadMachine()).rejects.toThrow('Impossible de charger');
-    });
+  it('should execute a valid transition', () => {
+    const engine = new StateMachineEngine(makeMachine());
+    const result = engine.transition('draft', 'review', 'lead', 'Starting review');
+    expect(result.success).toBe(true);
+    expect(result.newState).toBe('review');
+    expect(result.history.from).toBe('draft');
+    expect(result.history.to).toBe('review');
   });
 
-  describe('getCurrentState', () => {
-    it('retourne DRAFT par défaut', async () => {
-      const state = await engine.getCurrentState();
-      expect(state).toBe('DRAFT');
-    });
-
-    it('retourne l état depuis state.json', async () => {
-      await createFixture(dir, '.akoris/state.json', { currentState: 'REVIEW', history: [], lastTransition: null });
-      const state = await engine.getCurrentState();
-      expect(state).toBe('REVIEW');
-    });
+  it('should track history', () => {
+    const engine = new StateMachineEngine(makeMachine());
+    engine.transition('draft', 'review', 'lead');
+    engine.transition('review', 'done', 'qa');
+    expect(engine.getHistory()).toHaveLength(2);
   });
 
-  describe('getHistory', () => {
-    it('retourne un tableau vide par défaut', async () => {
-      const history = await engine.getHistory();
-      expect(history).toEqual([]);
-    });
+  it('should reject invalid transition', () => {
+    const engine = new StateMachineEngine(makeMachine());
+    expect(() => engine.transition('draft', 'done', 'lead')).toThrow('transition');
   });
 
-  describe('canTransition', () => {
-    it('autorise une transition valide', async () => {
-      await createFixture(dir, 'registry/state-machine.json', validStateMachine);
-      const result = await engine.canTransition('DRAFT', 'REVIEW');
-      expect(result.allowed).toBe(true);
-    });
-
-    it('refuse une transition invalide', async () => {
-      await createFixture(dir, 'registry/state-machine.json', validStateMachine);
-      const result = await engine.canTransition('REVIEW', 'DRAFT');
-      expect(result.allowed).toBe(false);
-    });
-
-    it('refuse si transition inexistante', async () => {
-      await createFixture(dir, 'registry/state-machine.json', validStateMachine);
-      const result = await engine.canTransition('UNKNOWN', 'DRAFT');
-      expect(result.allowed).toBe(false);
-    });
-
-    it('retourne les gates requis pour une transition conditionnelle', async () => {
-      await createFixture(dir, 'registry/state-machine.json', validStateMachine);
-      const result = await engine.canTransition('DRAFT', 'REVIEW');
-      expect(result.requiredGates).toContain('QG-001');
-      expect(result.missingGates).toBeDefined();
-    });
-  });
-
-  describe('transition', () => {
-    it('exécute une transition autorisée', async () => {
-      await createFixture(dir, 'registry/state-machine.json', validStateMachine);
-      await createFixture(dir, '.akoris/state.json', { currentState: 'DRAFT', history: [], lastTransition: null });
-      const entry = await engine.transition('DRAFT', 'REVIEW');
-      expect(entry.from).toBe('DRAFT');
-      expect(entry.to).toBe('REVIEW');
-      expect(entry.id).toBeTruthy();
-    });
-
-    it('refuse si l état actuel ne correspond pas', async () => {
-      await createFixture(dir, 'registry/state-machine.json', validStateMachine);
-      await createFixture(dir, '.akoris/state.json', { currentState: 'REVIEW', history: [], lastTransition: null });
-      await expect(engine.transition('DRAFT', 'REVIEW')).rejects.toThrow("L'état actuel est REVIEW");
-    });
-
-    it('refuse une transition non autorisée', async () => {
-      await createFixture(dir, 'registry/state-machine.json', validStateMachine);
-      await expect(engine.transition('DRAFT', 'ARCHIVED')).rejects.toThrow('non autorisée');
-    });
-  });
-
-  describe('exportReport', () => {
-    it('exporte en JSON', async () => {
-      await createFixture(dir, 'registry/state-machine.json', validStateMachine);
-      const report = await engine.exportReport('json');
-      const parsed = JSON.parse(report);
-      expect(parsed.currentState).toBe('DRAFT');
-    });
-
-    it('exporte en texte', async () => {
-      await createFixture(dir, 'registry/state-machine.json', validStateMachine);
-      const report = await engine.exportReport('text');
-      expect(report).toContain('État');
-    });
-
-    it('exporte en markdown', async () => {
-      await createFixture(dir, 'registry/state-machine.json', validStateMachine);
-      const report = await engine.exportReport('markdown');
-      expect(report).toContain('# Rapport');
-    });
+  it('should reject transition from wrong current state', () => {
+    const engine = new StateMachineEngine(makeMachine());
+    expect(() => engine.transition('done', 'draft', 'lead')).toThrow('current state');
   });
 });

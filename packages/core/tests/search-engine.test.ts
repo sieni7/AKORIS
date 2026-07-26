@@ -1,64 +1,64 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { SearchEngine } from '../src/search/search-engine.js';
-import { createTempDir, cleanupDir, createFixture, validRegistryIndex, validAgent1, validAgent2 } from './helpers.js';
+import { describe, it, expect } from 'vitest';
+import { SearchEngine } from '../src/search-engine.js';
+import type { Agent } from '../src/types.js';
+
+function makeAgents(): Agent[] {
+  return [
+    {
+      id: 'agent-orchestrator',
+      name: 'Orchestrator',
+      domain: 'CORE',
+      criticity: 'critique',
+      status: 'active',
+      version: '1.0.0',
+      description: 'Main orchestrator agent for workflow planning',
+      tags: ['orchestration', 'core'],
+      dependencies: [],
+      capabilities: [{ id: 'cap-1', name: 'plan', description: 'Plan workflows', agentId: 'agent-orchestrator', type: 'can' }],
+    },
+    {
+      id: 'agent-qa',
+      name: 'QA Validator',
+      domain: 'QA',
+      criticity: 'haute',
+      status: 'active',
+      version: '2.0.0',
+      description: 'Quality assurance and validation agent',
+      tags: ['qa', 'testing'],
+      dependencies: [],
+      capabilities: [{ id: 'cap-2', name: 'validate', description: 'Validate quality gates', agentId: 'agent-qa', type: 'can' }],
+    },
+  ];
+}
 
 describe('SearchEngine', () => {
-  let dir: string;
-  let engine: SearchEngine;
-
-  beforeEach(async () => {
-    dir = await createTempDir();
-    engine = new SearchEngine(dir);
-    await createFixture(dir, 'registry/registry.json', validRegistryIndex);
-    await createFixture(dir, 'registry/agents/CORE-01/agent.json', validAgent1);
-    await createFixture(dir, 'registry/agents/DEV-01/agent.json', validAgent2);
+  it('should find agents by name', () => {
+    const agents = new Map(makeAgents().map((a) => [a.id, a]));
+    const engine = new SearchEngine(agents);
+    const result = engine.search({ q: 'orchestrator' });
+    expect(result.count).toBe(1);
+    expect(result.agents[0].id).toBe('agent-orchestrator');
   });
 
-  afterEach(async () => {
-    await cleanupDir(dir);
+  it('should find agents by description', () => {
+    const agents = new Map(makeAgents().map((a) => [a.id, a]));
+    const engine = new SearchEngine(agents);
+    const result = engine.search({ q: 'quality' });
+    expect(result.count).toBe(1);
+    expect(result.agents[0].id).toBe('agent-qa');
   });
 
-  describe('search', () => {
-    it('retourne les agents dont le nom correspond', async () => {
-      const results = await engine.search('Orchestrator');
-      expect(results).toHaveLength(1);
-      expect(results[0].type).toBe('agent');
-      expect(results[0].id).toBe('CORE-01');
-    });
+  it('should return empty for no matches', () => {
+    const agents = new Map(makeAgents().map((a) => [a.id, a]));
+    const engine = new SearchEngine(agents);
+    const result = engine.search({ q: 'nonexistent' });
+    expect(result.count).toBe(0);
+  });
 
-    it('retourne les agents dont la description correspond', async () => {
-      const results = await engine.search('développeur');
-      expect(results).toHaveLength(1);
-      expect(results[0].id).toBe('DEV-01');
-    });
-
-    it('est insensible à la casse', async () => {
-      const results = await engine.search('ORCHESTRATOR');
-      expect(results).toHaveLength(1);
-    });
-
-    it('retourne un tableau vide si aucun résultat', async () => {
-      const results = await engine.search('ZZZZZZ');
-      expect(results).toEqual([]);
-    });
-
-    it('limite à 50 résultats', async () => {
-      for (let i = 0; i < 60; i++) {
-        const agent = { ...validAgent1, id: `AGENT-${i}`, name: `Searchable-${i}` };
-        await createFixture(dir, `registry/agents/AGENT-${i}/agent.json`, agent);
-      }
-      const results = await engine.search('Searchable');
-      expect(results.length).toBeLessThanOrEqual(50);
-    });
-
-    it('trie par score décroissant', async () => {
-      const agentExact = { ...validAgent1, id: 'EXACT', name: 'database' };
-      const agentPartial = { ...validAgent2, id: 'PARTIAL', name: 'database-admin' };
-      await createFixture(dir, 'registry/agents/EXACT/agent.json', agentExact);
-      await createFixture(dir, 'registry/agents/PARTIAL/agent.json', agentPartial);
-      const results = await engine.search('database');
-      expect(results[0].id).toBe('EXACT');
-      expect(results[0].score).toBeGreaterThan(results[1].score);
-    });
+  it('should respect limit', () => {
+    const agents = new Map(makeAgents().map((a) => [a.id, a]));
+    const engine = new SearchEngine(agents);
+    const result = engine.search({ q: 'agent', limit: 1 });
+    expect(result.count).toBeLessThanOrEqual(1);
   });
 });

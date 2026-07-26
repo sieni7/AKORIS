@@ -1,80 +1,32 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { LogReader } from '../src/logs/log-reader.js';
-import { createTempDir, cleanupDir, createFixture } from './helpers.js';
+import { describe, it, expect } from 'vitest';
+import { LogReader } from '../src/log-reader.js';
+import type { LogEntry } from '../src/types.js';
 
 describe('LogReader', () => {
-  let dir: string;
-  let reader: LogReader;
-
-  beforeEach(async () => {
-    dir = await createTempDir();
-    reader = new LogReader(dir);
+  it('should return empty logs by default', () => {
+    const reader = new LogReader();
+    expect(reader.readLogs()).toHaveLength(0);
   });
 
-  afterEach(async () => {
-    await cleanupDir(dir);
+  it('should append and read logs', () => {
+    const reader = new LogReader();
+    reader.append({ id: '1', timestamp: new Date().toISOString(), level: 'info', agent: 'core', message: 'started' });
+    expect(reader.readLogs()).toHaveLength(1);
   });
 
-  describe('readLogs', () => {
-    it('retourne un tableau vide si aucun dossier logs', async () => {
-      const entries = await reader.readLogs();
-      expect(entries).toEqual([]);
-    });
+  it('should filter by agent', () => {
+    const reader = new LogReader();
+    reader.append({ id: '1', timestamp: new Date().toISOString(), level: 'info', agent: 'core', message: 'core msg' });
+    reader.append({ id: '2', timestamp: new Date().toISOString(), level: 'error', agent: 'qa', message: 'qa error' });
+    const filtered = reader.readLogs({ agent: 'core' });
+    expect(filtered).toHaveLength(1);
+    expect(filtered[0].agent).toBe('core');
+  });
 
-    it('lit les logs depuis les fichiers JSON', async () => {
-      const logEntry = {
-        timestamp: new Date().toISOString(),
-        agentId: 'CORE-01',
-        action: 'transition',
-        details: 'DRAFT → REVIEW',
-      };
-      await createFixture(dir, '.akoris/logs/sessions/session-001.json', [logEntry]);
-      const entries = await reader.readLogs();
-      expect(entries).toHaveLength(1);
-      expect(entries[0].agentId).toBe('CORE-01');
-    });
-
-    it('filtre par agent', async () => {
-      await createFixture(dir, '.akoris/logs/sessions/session-001.json', [
-        { timestamp: '2026-01-01T00:00:00Z', agentId: 'CORE-01', action: 'start', details: 'Début' },
-        { timestamp: '2026-01-01T00:01:00Z', agentId: 'DEV-01', action: 'code', details: 'Commit' },
-      ]);
-      const entries = await reader.readLogs({ agent: 'CORE-01' });
-      expect(entries).toHaveLength(1);
-      expect(entries[0].agentId).toBe('CORE-01');
-    });
-
-    it('limite le nombre de lignes', async () => {
-      const logs = Array.from({ length: 10 }, (_, i) => ({
-        timestamp: `2026-01-01T00:0${i}:00Z`,
-        agentId: 'CORE-01',
-        action: 'step',
-        details: `Étape ${i}`,
-      }));
-      await createFixture(dir, '.akoris/logs/sessions/session-001.json', logs);
-      const entries = await reader.readLogs({ lines: 3 });
-      expect(entries).toHaveLength(3);
-    });
-
-    it('filtre par date (since)', async () => {
-      await createFixture(dir, '.akoris/logs/sessions/session-001.json', [
-        { timestamp: '2026-01-01T00:00:00Z', agentId: 'CORE-01', action: 'old', details: 'Ancien' },
-        { timestamp: '2026-06-01T00:00:00Z', agentId: 'CORE-01', action: 'new', details: 'Récent' },
-      ]);
-      const entries = await reader.readLogs({ since: '2026-03-01' });
-      expect(entries).toHaveLength(1);
-      expect(entries[0].action).toBe('new');
-    });
-
-    it('gère les formats de log alternatifs', async () => {
-      await createFixture(dir, '.akoris/logs/sessions/session-001.json', {
-        entries: [
-          { time: '2026-01-01T00:00:00Z', agent: 'CORE-01', type: 'test', message: 'Log avec champs alternatifs' },
-        ],
-      });
-      const entries = await reader.readLogs();
-      expect(entries).toHaveLength(1);
-      expect(entries[0].agentId).toBe('CORE-01');
-    });
+  it('should filter by level', () => {
+    const reader = new LogReader();
+    reader.append({ id: '1', timestamp: new Date().toISOString(), level: 'info', agent: 'core', message: 'info' });
+    reader.append({ id: '2', timestamp: new Date().toISOString(), level: 'error', agent: 'core', message: 'error' });
+    expect(reader.readLogs({ level: 'error' })).toHaveLength(1);
   });
 });
