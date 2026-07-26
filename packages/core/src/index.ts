@@ -13,3 +13,4 @@ export { SecretManager } from './secret-manager.js';
 export { AliasManager } from './alias-manager.js';
 export { QualityGateEngine } from './quality-gate-engine.js';
 export type { GateEvaluator, GateContext } from './quality-gate-engine.js';
+export { PromptEngine } from './prompt-engine.js';

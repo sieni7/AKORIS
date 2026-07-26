@@ -6,6 +6,7 @@ import {
   DoctorEngine,
   SecretManager,
   AliasManager,
+  PromptEngine,
 } from '@akoris/core';
 
 import type { Agent, StateMachine } from '@akoris/core';
@@ -136,8 +137,9 @@ export function createCoreService() {
   });
   const secrets = new SecretManager();
   const aliases = new AliasManager();
+  const prompts = new PromptEngine(registry, stateMachine, logReader);
 
-  return { registry, stateMachine, searchEngine, logReader, doctor, secrets, aliases };
+  return { registry, stateMachine, searchEngine, logReader, doctor, secrets, aliases, prompts };
 }
 
 export type CoreService = ReturnType<typeof createCoreService>;

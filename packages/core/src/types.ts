@@ -98,3 +98,51 @@ export interface Alias {
   command: string;
   description: string;
 }
+
+export interface PromptVariableDef {
+  key: string;
+  label: string;
+  source: 'agent' | 'state' | 'logs' | 'system';
+  required?: boolean;
+  defaultValue?: string;
+}
+
+export interface PromptTemplate {
+  id: string;
+  name: string;
+  description: string;
+  tags: string[];
+  template: string;
+  variables: PromptVariableDef[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ResolvedPrompt {
+  templateId: string;
+  templateName: string;
+  original: string;
+  resolved: string;
+  variables: Record<string, string>;
+  tokenEstimate: number;
+}
+
+export interface LLMRequest {
+  prompt: string;
+  model?: string;
+  temperature?: number;
+  maxTokens?: number;
+}
+
+export interface LLMResponse {
+  content: string;
+  model: string;
+  usage: {
+    promptTokens: number;
+    completionTokens: number;
+    totalTokens: number;
+  };
+  cost: number;
+  latencyMs: number;
+  timestamp: string;
+}

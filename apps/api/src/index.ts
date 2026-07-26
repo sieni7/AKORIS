@@ -9,6 +9,7 @@ import registryRoutes from './routes/registry.js';
 import searchRoutes from './routes/search.js';
 import logsRoutes from './routes/logs.js';
 import doctorRoutes from './routes/doctor.js';
+import promptRoutes from './routes/prompts.js';
 import { createCoreService } from './services/core.service.js';
 import './types/index.js';
 
@@ -35,6 +36,7 @@ export async function buildApp() {
   await fastify.register(searchRoutes);
   await fastify.register(logsRoutes);
   await fastify.register(doctorRoutes);
+  await fastify.register(promptRoutes);
 
   return fastify;
 }
