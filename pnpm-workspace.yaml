@@ -2,6 +2,7 @@ packages:
   - "packages/contracts"
   - "packages/core"
   - "packages/sdk"
+  - "packages/cli"
   - "apps/*"
 allowBuilds:
   esbuild: true
