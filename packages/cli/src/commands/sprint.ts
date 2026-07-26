@@ -2,6 +2,7 @@ import { Command } from 'commander';
 import { mkdirSync, writeFileSync, readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { AuditService } from '../services/audit.service.js';
+import { success, error, warn, info, log, shouldOutputJSON, printJSON } from '../output/format.js';
 
 export const sprintCommand = new Command('sprint')
   .description('Gère les sprints AKORIS');
@@ -14,14 +15,14 @@ sprintCommand
     const sprintNum = parseInt(number, 10);
 
     if (isNaN(sprintNum) || sprintNum <= 0) {
-      console.error('❌ Le numéro de sprint doit être un entier positif');
+      error('Le numéro de sprint doit être un entier positif');
       process.exit(1);
     }
 
     const sprintDir = join(process.cwd(), '.akoris', 'sprints', `sprint-${sprintNum}`);
 
     if (existsSync(sprintDir)) {
-      console.error(`❌ Le sprint ${sprintNum} existe déjà (${sprintDir})`);
+      error(`Le sprint ${sprintNum} existe déjà (${sprintDir})`);
       process.exit(1);
     }
 
@@ -47,8 +48,13 @@ sprintCommand
       JSON.stringify(sprintManifest, null, 2) + '\n',
     );
 
-    console.log(`🚀 Sprint ${sprintNum} démarré`);
-    console.log(`📁 ${sprintDir}`);
+    if (shouldOutputJSON()) {
+      printJSON(sprintManifest);
+      return;
+    }
+
+    success(`Sprint ${sprintNum} démarré`);
+    info(sprintDir);
   });
 
 sprintCommand
@@ -59,19 +65,19 @@ sprintCommand
     const sprintNum = parseInt(number, 10);
 
     if (isNaN(sprintNum) || sprintNum <= 0) {
-      console.error('❌ Le numéro de sprint doit être un entier positif');
+      error('Le numéro de sprint doit être un entier positif');
       process.exit(1);
     }
 
     const sprintDir = join(process.cwd(), '.akoris', 'sprints', `sprint-${sprintNum}`);
 
     if (!existsSync(sprintDir)) {
-      console.error(`❌ Sprint ${sprintNum} introuvable`);
+      error(`Sprint ${sprintNum} introuvable`);
       process.exit(1);
     }
 
     try {
-      console.log(`📊 Génération du rapport pour le sprint ${sprintNum}...\n`);
+      info(`Génération du rapport pour le sprint ${sprintNum}...`);
 
       const auditService = new AuditService();
       const report = await auditService.runSprintAudit();
@@ -84,15 +90,20 @@ sprintCommand
       writeFileSync(reportPath, JSON.stringify(report, null, 2));
 
       for (const check of report.checks) {
-        console.log(`${check.passed ? '✅' : '❌'} ${check.name}`);
+        log(`${check.passed ? '✅' : '❌'} ${check.name}`);
       }
 
-      console.log(`\n📊 Résumé : ${report.summary.passed}/${report.summary.total} checks passés`);
-      console.log(`📁 Rapport sauvegardé : ${filename}`);
-      console.log(`📁 Rapport sprint : ${reportPath}`);
+      if (shouldOutputJSON()) {
+        printJSON(report);
+        return;
+      }
+
+      log(`\n📊 Résumé : ${report.summary.passed}/${report.summary.total} checks passés`);
+      info(`Rapport sauvegardé : ${filename}`);
+      info(`Rapport sprint : ${reportPath}`);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Erreur inconnue';
-      console.error(`❌ Erreur : ${message}`);
+      error(`Erreur : ${message}`);
       process.exit(1);
     }
   });
@@ -105,7 +116,7 @@ sprintCommand
     const sprintNum = parseInt(number, 10);
 
     if (isNaN(sprintNum) || sprintNum <= 0) {
-      console.error('❌ Le numéro de sprint doit être un entier positif');
+      error('Le numéro de sprint doit être un entier positif');
       process.exit(1);
     }
 
@@ -113,14 +124,14 @@ sprintCommand
     const sprintFile = join(sprintDir, 'sprint.json');
 
     if (!existsSync(sprintFile)) {
-      console.error(`❌ Sprint ${sprintNum} introuvable`);
+      error(`Sprint ${sprintNum} introuvable`);
       process.exit(1);
     }
 
     const manifest = JSON.parse(readFileSync(sprintFile, 'utf-8'));
 
     if (manifest.status === 'closed') {
-      console.log(`⚠️  Le sprint ${sprintNum} est déjà clôturé`);
+      warn(`Le sprint ${sprintNum} est déjà clôturé`);
       return;
     }
 
@@ -129,8 +140,13 @@ sprintCommand
 
     writeFileSync(sprintFile, JSON.stringify(manifest, null, 2) + '\n');
 
-    console.log(`✅ Sprint ${sprintNum} clôturé`);
-    console.log(`📁 ${sprintFile}`);
+    if (shouldOutputJSON()) {
+      printJSON(manifest);
+      return;
+    }
+
+    success(`Sprint ${sprintNum} clôturé`);
+    info(sprintFile);
   });
 
 sprintCommand
@@ -140,7 +156,7 @@ sprintCommand
     const auditsDir = join(process.cwd(), '.akoris', 'audits');
 
     if (!existsSync(auditsDir)) {
-      console.log('ℹ️  Aucun historique d\'audit trouvé');
+      info('Aucun historique d\'audit trouvé');
       return;
     }
 
@@ -150,11 +166,24 @@ sprintCommand
       .reverse();
 
     if (files.length === 0) {
-      console.log('ℹ️  Aucun rapport d\'audit trouvé');
+      info('Aucun rapport d\'audit trouvé');
       return;
     }
 
-    console.log('📜 Historique des audits :\n');
+    if (shouldOutputJSON()) {
+      const history = files.map(file => {
+        try {
+          const content = JSON.parse(readFileSync(join(auditsDir, file), 'utf-8'));
+          return { file, ...content };
+        } catch {
+          return { file, error: 'impossible de lire' };
+        }
+      });
+      printJSON(history);
+      return;
+    }
+
+    log('📜 Historique des audits :');
 
     for (const file of files) {
       try {
@@ -167,10 +196,10 @@ sprintCommand
           ? `${content.summary.passed}/${content.summary.total}`
           : 'N/A';
 
-        console.log(`   ${status} ${file.replace('.json', '')}`);
-        console.log(`      Date : ${date} | Checks : ${summary}`);
+        log(`   ${status} ${file.replace('.json', '')}`);
+        log(`      Date : ${date} | Checks : ${summary}`);
       } catch {
-        console.log(`   ⚠️  ${file} (impossible de lire)`);
+        log(`   ⚠️  ${file} (impossible de lire)`);
       }
     }
   });

@@ -2,33 +2,28 @@ import { Command } from 'commander';
 import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { AuditService } from '../services/audit.service.js';
+import { success, error, warn, info, log, shouldOutputJSON, printJSON } from '../output/format.js';
 
 const sharedOptions = (cmd: Command) =>
   cmd
     .option('--strict', 'Fail on any warning')
-    .option('--json', 'Output as JSON')
-    .option('--markdown', 'Output as Markdown')
     .option('--output <path>', 'Save report to path');
 
-function handleResult(report: any, options?: { strict?: boolean; json?: boolean; markdown?: boolean; output?: string }) {
-  if (options?.json) {
-    console.log(JSON.stringify(report, null, 2));
-    return;
-  }
-  if (options?.markdown) {
-    console.log(`# Audit Report\n\n| Check | Status |\n|-------|--------|\n${report.checks.map((c: any) => `| ${c.name} | ${c.passed ? '✅' : '❌'} |`).join('\n')}`);
+function handleResult(report: any, options?: { strict?: boolean; output?: string }) {
+  if (shouldOutputJSON()) {
+    printJSON(report);
     return;
   }
   for (const check of report.checks) {
-    console.log(`${check.passed ? '✅' : '❌'} ${check.name}`);
-    if (check.details) console.log(`   ${check.details}`);
+    log(`${check.passed ? '✅' : '❌'} ${check.name}`);
+    if (check.details) log(`   ${check.details}`);
   }
-  console.log(`\n📊 ${report.summary.passed}/${report.summary.total} checks passed`);
+  log(`\n📊 ${report.summary.passed}/${report.summary.total} checks passed`);
   if (options?.output) {
     const dir = dirname(options.output);
     if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
     writeFileSync(options.output, JSON.stringify(report, null, 2));
-    console.log(`📁 Report saved to ${options.output}`);
+    info(`Report saved to ${options.output}`);
   }
   if (report.status !== 'passed') process.exitCode = 1;
 }
@@ -38,17 +33,17 @@ export const auditCommand = new Command('audit')
   .addCommand(
     sharedOptions(new Command('sprint'))
       .description('Run a sprint audit')
-      .action(async (options?: { strict?: boolean; json?: boolean; markdown?: boolean; output?: string }) => {
+      .action(async (options?: { strict?: boolean; output?: string }) => {
         try {
           const auditService = new AuditService();
-          console.log('📋 Sprint audit in progress...\n');
+          info('Sprint audit in progress...');
           const report = await auditService.runSprintAudit();
           const filename = auditService.saveReport(report);
           handleResult(report, options);
-          console.log(`📁 Audit saved: .akoris/audits/${filename}`);
+          info(`Audit saved: .akoris/audits/${filename}`);
         } catch (err: unknown) {
           const message = err instanceof Error ? err.message : 'Unknown error';
-          console.error(`❌ ${message}`);
+          error(`${message}`);
           process.exit(1);
         }
       }),
@@ -56,17 +51,17 @@ export const auditCommand = new Command('audit')
   .addCommand(
     sharedOptions(new Command('project'))
       .description('Run a full project audit')
-      .action(async (options?: { strict?: boolean; json?: boolean; markdown?: boolean; output?: string }) => {
+      .action(async (options?: { strict?: boolean; output?: string }) => {
         try {
           const auditService = new AuditService();
-          console.log('📋 Project audit in progress...\n');
+          info('Project audit in progress...');
           const report = await auditService.runSprintAudit();
           const filename = auditService.saveReport(report);
           handleResult(report, options);
-          console.log(`📁 Audit saved: .akoris/audits/${filename}`);
+          info(`Audit saved: .akoris/audits/${filename}`);
         } catch (err: unknown) {
           const message = err instanceof Error ? err.message : 'Unknown error';
-          console.error(`❌ ${message}`);
+          error(`${message}`);
           process.exit(1);
         }
       }),
@@ -74,17 +69,17 @@ export const auditCommand = new Command('audit')
   .addCommand(
     sharedOptions(new Command('release'))
       .description('Run a release audit')
-      .action(async (options?: { strict?: boolean; json?: boolean; markdown?: boolean; output?: string }) => {
+      .action(async (options?: { strict?: boolean; output?: string }) => {
         try {
           const auditService = new AuditService();
-          console.log('📋 Release audit in progress...\n');
+          info('Release audit in progress...');
           const report = await auditService.runSprintAudit();
           const filename = auditService.saveReport(report);
           handleResult(report, options);
-          console.log(`📁 Release audit saved: .akoris/audits/${filename}`);
+          info(`Release audit saved: .akoris/audits/${filename}`);
         } catch (err: unknown) {
           const message = err instanceof Error ? err.message : 'Unknown error';
-          console.error(`❌ ${message}`);
+          error(`${message}`);
           process.exit(1);
         }
       }),
@@ -92,7 +87,7 @@ export const auditCommand = new Command('audit')
   .addCommand(
     sharedOptions(new Command('architecture'))
       .description('Validate architecture decisions')
-      .action(async (options?: { strict?: boolean; json?: boolean; markdown?: boolean; output?: string }) => {
+      .action(async (options?: { strict?: boolean; output?: string }) => {
         try {
           const { ValidatorService } = await import('../services/validator.service.js');
           const { RegistryService } = await import('../services/registry.service.js');
@@ -108,7 +103,7 @@ export const auditCommand = new Command('audit')
           handleResult(report, options);
         } catch (err: unknown) {
           const message = err instanceof Error ? err.message : 'Unknown error';
-          console.error(`❌ ${message}`);
+          error(`${message}`);
           process.exit(1);
         }
       }),
@@ -116,7 +111,7 @@ export const auditCommand = new Command('audit')
   .addCommand(
     sharedOptions(new Command('documentation'))
       .description('Validate documentation completeness')
-      .action(async (options?: { strict?: boolean; json?: boolean; markdown?: boolean; output?: string }) => {
+      .action(async (options?: { strict?: boolean; output?: string }) => {
         try {
           const { ValidatorService } = await import('../services/validator.service.js');
           const { RegistryService } = await import('../services/registry.service.js');
@@ -133,7 +128,7 @@ export const auditCommand = new Command('audit')
           handleResult(report, options);
         } catch (err: unknown) {
           const message = err instanceof Error ? err.message : 'Unknown error';
-          console.error(`❌ ${message}`);
+          error(`${message}`);
           process.exit(1);
         }
       }),

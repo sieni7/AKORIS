@@ -1,5 +1,6 @@
 import { Command } from 'commander';
 import { GeneratorService } from '../services/generator.service.js';
+import { success, error, info, shouldOutputJSON, printJSON } from '../output/format.js';
 
 export const initCommand = new Command('init')
   .description('Initialise un nouveau projet AKORIS')
@@ -13,14 +14,18 @@ export const initCommand = new Command('init')
 
     try {
       await generator.init(projectPath, projectName, options?.type || 'app');
-      console.log(`✅ Projet AKORIS initialisé : ${projectName}`);
-      console.log(`📁 ${projectPath}`);
-      console.log('\n📋 Prochaines étapes :');
-      console.log('   a koris install <playbook>  - Installer un playbook');
-      console.log('   a koris doctor             - Diagnostiquer le projet');
+      if (shouldOutputJSON()) {
+        printJSON({ projectName, projectPath, type: options?.type || 'app' });
+        return;
+      }
+      success(`Projet AKORIS initialisé : ${projectName}`);
+      info(projectPath);
+      info('\nProchaines étapes :');
+      info('   akoris install <playbook>  - Installer un playbook');
+      info('   akoris doctor             - Diagnostiquer le projet');
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Erreur inconnue';
-      console.error(`❌ Erreur : ${message}`);
+      error(`Erreur : ${message}`);
       process.exit(1);
     }
   });

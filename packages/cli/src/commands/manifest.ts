@@ -1,5 +1,6 @@
 import { Command } from 'commander';
 import { ManifestService } from '../services/manifest.service.js';
+import { success, error, warn, shouldOutputJSON, printJSON, log } from '../output/format.js';
 
 const showCommand = new Command('show')
   .description('Affiche le contenu du MANIFEST.json')
@@ -7,13 +8,17 @@ const showCommand = new Command('show')
     try {
       const manifestService = new ManifestService();
       if (!manifestService.exists()) {
-        console.error('❌ MANIFEST.json introuvable');
+        error('MANIFEST.json introuvable');
         process.exit(1);
       }
-      console.log(JSON.stringify(manifestService.read(), null, 2));
+      if (shouldOutputJSON()) {
+        printJSON(manifestService.read());
+        return;
+      }
+      log(JSON.stringify(manifestService.read(), null, 2));
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Erreur inconnue';
-      console.error(`❌ Erreur : ${message}`);
+      error(`Erreur : ${message}`);
       process.exit(1);
     }
   });
@@ -29,7 +34,7 @@ const updateCommand = new Command('update')
     try {
       const manifestService = new ManifestService();
       if (!manifestService.exists()) {
-        console.error('❌ MANIFEST.json introuvable');
+        error('MANIFEST.json introuvable');
         process.exit(1);
       }
       const manifest = manifestService.read();
@@ -39,32 +44,40 @@ const updateCommand = new Command('update')
       if (options?.playbook) manifest.playbook = options.playbook;
       if (options?.projectType) manifest.projectType = options.projectType;
       manifestService.write(manifest);
-      console.log('✅ MANIFEST.json mis à jour');
+      if (shouldOutputJSON()) {
+        printJSON({ updated: true, manifest });
+        return;
+      }
+      success('MANIFEST.json mis à jour');
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Erreur inconnue';
-      console.error(`❌ Erreur : ${message}`);
+      error(`Erreur : ${message}`);
       process.exit(1);
     }
   });
 
-const validateCommand = new Command('validate')
+const validateSubCommand = new Command('validate')
   .description('Valide la structure du MANIFEST.json')
   .action(() => {
     try {
       const manifestService = new ManifestService();
       const { valid, errors } = manifestService.validate();
+      if (shouldOutputJSON()) {
+        printJSON({ valid, errors });
+        return;
+      }
       if (valid) {
-        console.log('✅ MANIFEST.json valide');
+        success('MANIFEST.json valide');
       } else {
-        console.log('❌ MANIFEST.json invalide :');
+        error('MANIFEST.json invalide :');
         for (const err of errors) {
-          console.log(`   - ${err}`);
+          log(`   - ${err}`);
         }
         process.exitCode = 1;
       }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Erreur inconnue';
-      console.error(`❌ Erreur : ${message}`);
+      error(`Erreur : ${message}`);
       process.exit(1);
     }
   });
@@ -73,4 +86,4 @@ export const manifestCommand = new Command('manifest')
   .description('Gère le MANIFEST.json du projet')
   .addCommand(showCommand)
   .addCommand(updateCommand)
-  .addCommand(validateCommand);
+  .addCommand(validateSubCommand);

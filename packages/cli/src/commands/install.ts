@@ -2,6 +2,7 @@ import { Command } from 'commander';
 import { writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { resolve, join } from 'node:path';
 import { GeneratorService } from '../services/generator.service.js';
+import { success, error, info, log, shouldOutputJSON, printJSON } from '../output/format.js';
 
 const playbookCommand = new Command('playbook')
   .description('Installe un playbook depuis le dossier playbooks/')
@@ -11,10 +12,14 @@ const playbookCommand = new Command('playbook')
       const generator = new GeneratorService();
       const playbookPath = resolve(process.cwd(), 'playbooks', name);
       await generator.installPlaybook(playbookPath, process.cwd());
-      console.log(`✅ Playbook "${name}" installé`);
+      if (shouldOutputJSON()) {
+        printJSON({ installed: name });
+        return;
+      }
+      success(`Playbook "${name}" installé`);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Erreur inconnue';
-      console.error(`❌ Erreur : ${message}`);
+      error(`Erreur : ${message}`);
       process.exit(1);
     }
   });
@@ -23,8 +28,12 @@ const expertCommand = new Command('expert')
   .description('Installe un agent expert (placeholder)')
   .argument('<name>', 'Nom de l\'expert')
   .action((name: string) => {
-    console.log(`🔧 Installation de l'expert "${name}"...`);
-    console.log('ℹ️  Fonctionnalité à implémenter dans une version ultérieure');
+    if (shouldOutputJSON()) {
+      printJSON({ expert: name, status: 'placeholder' });
+      return;
+    }
+    info(`Installation de l'expert "${name}"...`);
+    info('Fonctionnalité à implémenter dans une version ultérieure');
   });
 
 const connectorCommand = new Command('connector')
@@ -34,17 +43,20 @@ const connectorCommand = new Command('connector')
     const supported = ['github', 'supabase', 'netlify'];
     const normalized = name.toLowerCase();
     if (!supported.includes(normalized)) {
-      console.error(`❌ Connecteur "${name}" non supporté`);
-      console.log(`   Connecteurs disponibles : ${supported.join(', ')}`);
+      error(`Connecteur "${name}" non supporté`);
+      log(`   Connecteurs disponibles : ${supported.join(', ')}`);
       process.exit(1);
     }
     try {
-      console.log(`🔌 Installation du connecteur "${normalized}"...`);
-      console.log(`ℹ️  Contrat ${normalized} à ajouter au Registry`);
-      console.log('ℹ️  Fonctionnalité à implémenter dans une version ultérieure');
+      if (shouldOutputJSON()) {
+        printJSON({ connector: normalized, status: 'placeholder' });
+        return;
+      }
+      info(`Installation du connecteur "${normalized}"...`);
+      info('Fonctionnalité à implémenter dans une version ultérieure');
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Erreur inconnue';
-      console.error(`❌ Erreur : ${message}`);
+      error(`Erreur : ${message}`);
       process.exit(1);
     }
   });
@@ -56,8 +68,8 @@ const adapterCommand = new Command('adapter')
     const supported = ['opencode', 'cursor', 'claude-code', 'codex'];
     const normalized = name.toLowerCase();
     if (!supported.includes(normalized)) {
-      console.error(`❌ Adaptateur "${name}" non supporté`);
-      console.log(`   Adaptateurs disponibles : ${supported.join(', ')}`);
+      error(`Adaptateur "${name}" non supporté`);
+      log(`   Adaptateurs disponibles : ${supported.join(', ')}`);
       process.exit(1);
     }
     try {
@@ -70,10 +82,14 @@ const adapterCommand = new Command('adapter')
         version: '1.0.0',
         installedAt: new Date().toISOString(),
       }, null, 2));
-      console.log(`✅ Adaptateur "${normalized}" installé`);
+      if (shouldOutputJSON()) {
+        printJSON({ adapter: normalized, path: join(adapterDir, `${normalized}.json`) });
+        return;
+      }
+      success(`Adaptateur "${normalized}" installé`);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Erreur inconnue';
-      console.error(`❌ Erreur : ${message}`);
+      error(`Erreur : ${message}`);
       process.exit(1);
     }
   });

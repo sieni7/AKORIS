@@ -1,6 +1,7 @@
 import { Command } from 'commander';
 import { RegistryService } from '../services/registry.service.js';
 import { ManifestService } from '../services/manifest.service.js';
+import { shouldOutputJSON, printJSON, title, header, info, warn, log } from '../output/format.js';
 
 export const statusCommand = new Command('status')
   .description('Affiche l\'état global du projet AKORIS')
@@ -8,27 +9,35 @@ export const statusCommand = new Command('status')
     const manifestService = new ManifestService();
     const registry = new RegistryService();
 
-    console.log('📊 État AKORIS\n');
+    if (shouldOutputJSON()) {
+      printJSON({
+        manifest: manifestService.exists() ? manifestService.read() : null,
+        registry: registry.summary(),
+      });
+      return;
+    }
+
+    title('État AKORIS');
 
     if (manifestService.exists()) {
       const manifest = manifestService.read();
-      console.log(`📄 Projet : ${manifest.name} v${manifest.version}`);
-      console.log(`   Méthode : AKORIS ${manifest.akoris}`);
-      console.log(`   Registry: v${manifest.registry.version}`);
-      console.log(`   Playbook: ${manifest.playbook || 'aucun'}`);
-      console.log(`   Type    : ${manifest.projectType || 'non défini'}`);
+      log(`📄 Projet : ${manifest.name} v${manifest.version}`);
+      log(`   Méthode : AKORIS ${manifest.akoris}`);
+      log(`   Registry: v${manifest.registry.version}`);
+      log(`   Playbook: ${manifest.playbook || 'aucun'}`);
+      log(`   Type    : ${manifest.projectType || 'non défini'}`);
     } else {
-      console.log('⚠️  Aucun MANIFEST.json trouvé');
+      warn('Aucun MANIFEST.json trouvé');
     }
 
     const summary = registry.summary();
-    console.log(`\n📦 Registry :`);
-    console.log(`   ${summary.policies} policies`);
-    console.log(`   ${summary.agents} agents`);
-    console.log(`   ${summary.contracts} contrats`);
-    console.log(`   ${summary.workflows} workflows`);
-    console.log(`   ${summary.qualityGates} quality gates`);
-    console.log(`   ${summary.metrics} métriques`);
-    console.log(`   ${summary.checklists} checklists`);
-    console.log(`   ${summary.templates} templates`);
+    header('Registry');
+    log(`   ${summary.policies} policies`);
+    log(`   ${summary.agents} agents`);
+    log(`   ${summary.contracts} contrats`);
+    log(`   ${summary.workflows} workflows`);
+    log(`   ${summary.qualityGates} quality gates`);
+    log(`   ${summary.metrics} métriques`);
+    log(`   ${summary.checklists} checklists`);
+    log(`   ${summary.templates} templates`);
   });

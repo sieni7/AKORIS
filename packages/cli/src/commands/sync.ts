@@ -1,5 +1,6 @@
 import { Command } from 'commander';
 import { SyncService } from '../services/sync.service.js';
+import { success, warn, info, log, shouldOutputJSON, printJSON } from '../output/format.js';
 
 export const syncCommand = new Command('sync')
   .description('Synchronise le Registry avec le projet')
@@ -8,12 +9,18 @@ export const syncCommand = new Command('sync')
     const registryPath = options?.registry || 'registry';
     const syncService = new SyncService(registryPath);
 
-    console.log('🔄 Synchronisation du Registry...\n');
+    if (shouldOutputJSON()) {
+      const result = syncService.syncRegistry();
+      printJSON(result);
+      return;
+    }
+
+    info('Synchronisation du Registry...');
 
     const result = syncService.syncRegistry();
-    console.log(`✅ ${result.updated} fichiers synchronisés`);
+    success(`${result.updated} fichiers synchronisés`);
     if (result.skipped > 0) {
-      console.log(`⚠️  ${result.skipped} fichiers ignorés`);
+      warn(`${result.skipped} fichiers ignorés`);
     }
-    console.log('📁 Destination : .akoris/');
+    log('📁 Destination : .akoris/');
   });

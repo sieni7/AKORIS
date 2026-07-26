@@ -1,6 +1,7 @@
 import { Command } from 'commander';
 import { existsSync, readdirSync, readFileSync, writeFileSync, mkdirSync, copyFileSync } from 'node:fs';
 import { join, resolve, basename } from 'node:path';
+import { success, error, info, log, shouldOutputJSON, printJSON } from '../output/format.js';
 
 export const knowledgeCommand = new Command('knowledge')
   .description('Manage project knowledge base')
@@ -11,25 +12,33 @@ export const knowledgeCommand = new Command('knowledge')
       .action((query: string) => {
         const knowledgeDir = resolve(process.cwd(), '.akoris', 'knowledge');
         if (!existsSync(knowledgeDir)) {
-          console.log('No .akoris/knowledge/ directory found');
+          info('No .akoris/knowledge/ directory found');
           return;
         }
         const files = readdirSync(knowledgeDir).filter(f => f.endsWith('.md'));
-        console.log(`🔍 Searching for "${query}"...\n`);
+        info(`Searching for "${query}"...`);
         let found = 0;
+        const results: { file: string; title: string }[] = [];
         for (const file of files) {
           const content = readFileSync(join(knowledgeDir, file), 'utf-8');
           if (content.toLowerCase().includes(query.toLowerCase())) {
             const lines = content.split('\n');
             const title = lines[0]?.replace(/^#\s*/, '') || file;
-            console.log(`  📄 ${file} - ${title}`);
+            results.push({ file, title });
             found++;
           }
         }
+        if (shouldOutputJSON()) {
+          printJSON({ query, results, count: found });
+          return;
+        }
         if (found === 0) {
-          console.log('No results found');
+          info('No results found');
         } else {
-          console.log(`\n${found} file(s) matched`);
+          for (const r of results) {
+            log(`  📄 ${r.file} - ${r.title}`);
+          }
+          log(`\n${found} file(s) matched`);
         }
       }),
   )
@@ -41,7 +50,7 @@ export const knowledgeCommand = new Command('knowledge')
         try {
           const knowledgeDir = resolve(process.cwd(), '.akoris', 'knowledge');
           if (!existsSync(knowledgeDir)) {
-            console.log('No .akoris/knowledge/ directory found');
+            info('No .akoris/knowledge/ directory found');
             return;
           }
           const outputDir = options?.output || resolve(process.cwd(), '.akoris', 'knowledge-export');
@@ -50,10 +59,14 @@ export const knowledgeCommand = new Command('knowledge')
           for (const file of files) {
             copyFileSync(join(knowledgeDir, file), join(outputDir, file));
           }
-          console.log(`✅ ${files.length} file(s) exported to ${outputDir}`);
+          if (shouldOutputJSON()) {
+            printJSON({ exported: files.length, to: outputDir });
+            return;
+          }
+          success(`${files.length} file(s) exported to ${outputDir}`);
         } catch (err: unknown) {
           const message = err instanceof Error ? err.message : 'Unknown error';
-          console.error(`❌ ${message}`);
+          error(`${message}`);
           process.exit(1);
         }
       }),
@@ -66,17 +79,21 @@ export const knowledgeCommand = new Command('knowledge')
         try {
           const source = resolve(process.cwd(), path);
           if (!existsSync(source)) {
-            console.error(`❌ File not found: ${path}`);
+            error(`File not found: ${path}`);
             process.exit(1);
           }
           const knowledgeDir = resolve(process.cwd(), '.akoris', 'knowledge');
           if (!existsSync(knowledgeDir)) mkdirSync(knowledgeDir, { recursive: true });
           const dest = join(knowledgeDir, basename(source));
           copyFileSync(source, dest);
-          console.log(`✅ Knowledge imported to ${dest}`);
+          if (shouldOutputJSON()) {
+            printJSON({ imported: dest });
+            return;
+          }
+          success(`Knowledge imported to ${dest}`);
         } catch (err: unknown) {
           const message = err instanceof Error ? err.message : 'Unknown error';
-          console.error(`❌ ${message}`);
+          error(`${message}`);
           process.exit(1);
         }
       }),

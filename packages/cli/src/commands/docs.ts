@@ -1,5 +1,6 @@
 import { Command } from 'commander';
 import { GeneratorService } from '../services/generator.service.js';
+import { success, error, info, log, warn, shouldOutputJSON, printJSON } from '../output/format.js';
 
 export const docsCommand = new Command('docs')
   .description('Manage project documentation')
@@ -7,7 +8,7 @@ export const docsCommand = new Command('docs')
     new Command('generate')
       .description('Generate documentation from templates (placeholder)')
       .action(() => {
-        console.log('📄 Documentation generation - placeholder');
+        info('Documentation generation - placeholder');
       }),
   )
   .addCommand(
@@ -21,15 +22,19 @@ export const docsCommand = new Command('docs')
           const validator = new ValidatorService(registry);
           const checks = await validator.validateProjectStructure();
           const passed = checks.filter(c => c.passed).length;
-          console.log('📋 Documentation Validation\n');
-          for (const check of checks) {
-            console.log(`${check.passed ? '✅' : '❌'} ${check.name}`);
-            if (check.details) console.log(`   ${check.details}`);
+          if (shouldOutputJSON()) {
+            printJSON({ checks, summary: { passed, total: checks.length } });
+            return;
           }
-          console.log(`\n📊 ${passed}/${checks.length} checks passed`);
+          log('📋 Documentation Validation\n');
+          for (const check of checks) {
+            log(`${check.passed ? '✅' : '❌'} ${check.name}`);
+            if (check.details) log(`   ${check.details}`);
+          }
+          log(`\n📊 ${passed}/${checks.length} checks passed`);
         } catch (err: unknown) {
           const message = err instanceof Error ? err.message : 'Unknown error';
-          console.error(`❌ ${message}`);
+          error(`${message}`);
           process.exit(1);
         }
       }),
@@ -41,9 +46,13 @@ export const docsCommand = new Command('docs')
       .action((format: string) => {
         const valid = ['pdf', 'html', 'markdown'];
         if (!valid.includes(format)) {
-          console.error(`❌ Invalid format. Use: ${valid.join(', ')}`);
+          error(`Invalid format. Use: ${valid.join(', ')}`);
           process.exit(1);
         }
-        console.log(`📦 Documentation export to ${format} - placeholder`);
+        if (shouldOutputJSON()) {
+          printJSON({ format, status: 'placeholder' });
+          return;
+        }
+        info(`Documentation export to ${format} - placeholder`);
       }),
   );

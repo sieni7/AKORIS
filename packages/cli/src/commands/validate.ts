@@ -1,6 +1,7 @@
 import { Command } from 'commander';
 import { ValidatorService } from '../services/validator.service.js';
 import { RegistryService } from '../services/registry.service.js';
+import { success, error, warn, info, log, shouldOutputJSON, printJSON } from '../output/format.js';
 
 const architectureCommand = new Command('architecture')
   .description('Valide l\'architecture (structure des dossiers, ADRs)')
@@ -8,24 +9,29 @@ const architectureCommand = new Command('architecture')
     try {
       const registry = new RegistryService();
       const validator = new ValidatorService(registry);
-      console.log('🔍 Validation de l\'architecture...\n');
+      info('Validation de l\'architecture...');
       const checks = await validator.validateProjectStructure();
       for (const check of checks) {
-        console.log(`${check.passed ? '✅' : '❌'} ${check.name}`);
-        if (!check.passed) console.log(`   ${check.details}`);
+        log(`${check.passed ? '✅' : '❌'} ${check.name}`);
+        if (!check.passed) log(`   ${check.details}`);
       }
       const { existsSync, readdirSync } = await import('node:fs');
       const { join } = await import('node:path');
       const adrDir = join(process.cwd(), '.akoris', 'decisions');
       const hasAdrs = existsSync(adrDir) && readdirSync(adrDir).length > 0;
-      console.log(`${hasAdrs ? '✅' : '❌'} Décisions d\'architecture (ADRs)`);
-      if (!hasAdrs) console.log('   Aucune décision dans .akoris/decisions/');
+      log(`${hasAdrs ? '✅' : '❌'} Décisions d\'architecture (ADRs)`);
+      if (!hasAdrs) log('   Aucune décision dans .akoris/decisions/');
       const allPassed = checks.every(c => c.passed) && hasAdrs;
-      console.log(`\n${allPassed ? '✅' : '⚠️'} Validation terminée`);
+      if (shouldOutputJSON()) {
+        printJSON({ checks, hasAdrs, valid: allPassed });
+        return;
+      }
+      if (allPassed) success('Validation terminée');
+      else warn('Validation terminée avec des avertissements');
       if (!allPassed) process.exitCode = 1;
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Erreur inconnue';
-      console.error(`❌ Erreur : ${message}`);
+      error(`Erreur : ${message}`);
       process.exit(1);
     }
   });
@@ -36,28 +42,33 @@ const documentationCommand = new Command('documentation')
     try {
       const { existsSync, readdirSync } = await import('node:fs');
       const { join } = await import('node:path');
-      console.log('🔍 Vérification de la documentation...\n');
+      info('Vérification de la documentation...');
       const requiredDirs = ['docs/architecture', 'docs/guides', 'docs/api'];
       let allPassed = true;
       for (const dir of requiredDirs) {
         const fullPath = join(process.cwd(), dir);
         const exists = existsSync(fullPath);
         const hasContent = exists && readdirSync(fullPath).length > 0;
-        console.log(`${hasContent ? '✅' : '❌'} ${dir}/`);
+        log(`${hasContent ? '✅' : '❌'} ${dir}/`);
         if (!hasContent) {
-          console.log(`   ${exists ? 'Dossier vide' : 'Dossier manquant'}`);
+          log(`   ${exists ? 'Dossier vide' : 'Dossier manquant'}`);
           allPassed = false;
         }
       }
       const readmePath = join(process.cwd(), 'README.md');
       const hasReadme = existsSync(readmePath);
-      console.log(`${hasReadme ? '✅' : '❌'} README.md`);
+      log(`${hasReadme ? '✅' : '❌'} README.md`);
       if (!hasReadme) allPassed = false;
-      console.log(`\n${allPassed ? '✅' : '⚠️'} Validation de la documentation terminée`);
+      if (shouldOutputJSON()) {
+        printJSON({ allPassed, hasReadme });
+        return;
+      }
+      if (allPassed) success('Validation de la documentation terminée');
+      else warn('Validation de la documentation terminée avec des avertissements');
       if (!allPassed) process.exitCode = 1;
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Erreur inconnue';
-      console.error(`❌ Erreur : ${message}`);
+      error(`Erreur : ${message}`);
       process.exit(1);
     }
   });
@@ -65,38 +76,47 @@ const documentationCommand = new Command('documentation')
 const securityCommand = new Command('security')
   .description('Valide les politiques de sécurité (placeholder)')
   .action(() => {
-    console.log('🔒 Validation de sécurité...\n');
-    console.log('⚠️  Fonctionnalité à implémenter dans une version ultérieure');
-    console.log('   Vérifications prévues :');
-    console.log('   - Politiques de sécurité appliquées');
-    console.log('   - Dépendances sécurisées');
-    console.log('   - Variables d\'environnement protégées');
+    info('Validation de sécurité...');
+    if (shouldOutputJSON()) {
+      printJSON({ status: 'placeholder', message: 'Fonctionnalité à implémenter dans une version ultérieure' });
+      return;
+    }
+    warn('Fonctionnalité à implémenter dans une version ultérieure');
+    log('   Vérifications prévues :');
+    log('   - Politiques de sécurité appliquées');
+    log('   - Dépendances sécurisées');
+    log('   - Variables d\'environnement protégées');
   });
 
-const registryCommand = new Command('registry')
+const registrySubCommand = new Command('registry')
   .description('Valide les schémas et fichiers du Registry')
   .action(() => {
     try {
       const registry = new RegistryService();
-      console.log('🔍 Validation du Registry...\n');
+      info('Validation du Registry...');
       const summary = registry.summary();
-      console.log(`📦 Policies: ${summary.policies}`);
-      console.log(`🤖 Agents: ${summary.agents}`);
-      console.log(`📝 Contrats: ${summary.contracts}`);
-      console.log(`🔄 Workflows: ${summary.workflows}`);
-      console.log(`✅ Quality Gates: ${summary.qualityGates}`);
-      console.log(`📊 Metrics: ${summary.metrics}`);
-      console.log(`📋 Checklists: ${summary.checklists}`);
-      console.log(`📁 Templates: ${summary.templates}`);
+      if (shouldOutputJSON()) {
+        printJSON(summary);
+        return;
+      }
+      log(`📦 Policies: ${summary.policies}`);
+      log(`🤖 Agents: ${summary.agents}`);
+      log(`📝 Contrats: ${summary.contracts}`);
+      log(`🔄 Workflows: ${summary.workflows}`);
+      log(`✅ Quality Gates: ${summary.qualityGates}`);
+      log(`📊 Metrics: ${summary.metrics}`);
+      log(`📋 Checklists: ${summary.checklists}`);
+      log(`📁 Templates: ${summary.templates}`);
       const total = summary.policies + summary.agents + summary.contracts + summary.workflows;
-      console.log(`\n${total > 0 ? '✅' : '⚠️'} Registry valide (${total} entrées)`);
+      if (total > 0) success(`Registry valide (${total} entrées)`);
+      else warn('Registry vide');
       if (total === 0) {
-        console.log('   Aucun fichier trouvé dans le Registry');
+        log('   Aucun fichier trouvé dans le Registry');
         process.exitCode = 1;
       }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Erreur inconnue';
-      console.error(`❌ Erreur : ${message}`);
+      error(`Erreur : ${message}`);
       process.exit(1);
     }
   });
@@ -106,4 +126,4 @@ export const validateCommand = new Command('validate')
   .addCommand(architectureCommand)
   .addCommand(documentationCommand)
   .addCommand(securityCommand)
-  .addCommand(registryCommand);
+  .addCommand(registrySubCommand);

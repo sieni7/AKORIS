@@ -1,6 +1,7 @@
 import { Command } from 'commander';
 import { readFileSync, existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
+import { title, log, header, shouldOutputJSON, printJSON } from '../output/format.js';
 
 const VISION = `AKORIS is a formal governance system for human and artificial organizations.
 It establishes a structured framework ensuring coherence, traceability, and
@@ -59,7 +60,6 @@ function readVersion(): { method: string; playbook: string } {
       };
     }
   } catch {
-    // fallback to defaults
   }
   return { method: '1.0.0', playbook: 'core' };
 }
@@ -69,22 +69,27 @@ export const aboutCommand = new Command('about')
   .action(() => {
     const versions = readVersion();
 
-    console.log('AKORIS - Adaptive Knowledge & Orchestrated Review for Intelligent Software\n');
-    console.log('Vision\n');
-    console.log(`  ${VISION}\n`);
-    console.log('Three Engagements\n');
+    if (shouldOutputJSON()) {
+      printJSON({ vision: VISION, engagements: ENGAGEMENTS, principles: PRINCIPLES, versions, license: LICENSE_INFO, contribution: CONTRIBUTION_INFO });
+      return;
+    }
+
+    title('AKORIS - Adaptive Knowledge & Orchestrated Review for Intelligent Software');
+    header('Vision');
+    log(`  ${VISION}`);
+    header('Three Engagements');
     for (const e of ENGAGEMENTS) {
-      console.log(`  - ${e}`);
+      log(`  - ${e}`);
     }
-    console.log('\nTen Founding Principles\n');
+    header('Ten Founding Principles');
     for (const p of PRINCIPLES) {
-      console.log(`  ${p}`);
+      log(`  ${p}`);
     }
-    console.log('\nVersions\n');
-    console.log(`  Method Version:   ${versions.method}`);
-    console.log(`  CLI Version:      1.0.0`);
-    console.log(`  Registry Version: 1.0.0`);
-    console.log(`  Playbook:         ${versions.playbook}`);
-    console.log(`\nLicense\n\n${LICENSE_INFO}\n`);
-    console.log(`Contribution\n\n${CONTRIBUTION_INFO}`);
+    header('Versions');
+    log(`  Method Version:   ${versions.method}`);
+    log(`  CLI Version:      1.0.0`);
+    log(`  Registry Version: 1.0.0`);
+    log(`  Playbook:         ${versions.playbook}`);
+    log(`\nLicense\n\n${LICENSE_INFO}`);
+    log(`\nContribution\n\n${CONTRIBUTION_INFO}`);
   });

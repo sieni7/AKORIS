@@ -2,6 +2,7 @@ import { Command } from 'commander';
 import { existsSync, readdirSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
 import { RegistryService } from '../services/registry.service.js';
+import { success, error, info, log, shouldOutputJSON, printJSON } from '../output/format.js';
 
 export const metricsCommand = new Command('metrics')
   .description('Show and manage project metrics')
@@ -13,18 +14,22 @@ export const metricsCommand = new Command('metrics')
           const registry = new RegistryService();
           const metricsDef = registry.getMetrics();
           if (!metricsDef) {
-            console.log('No metrics defined in the Registry');
+            info('No metrics defined in the Registry');
             return;
           }
-          console.log('📊 Current Metrics\n');
+          if (shouldOutputJSON()) {
+            printJSON(metricsDef);
+            return;
+          }
+          log('📊 Current Metrics\n');
           for (const metric of metricsDef.metrics) {
-            console.log(`  📈 ${metric.name}`);
-            console.log(`     Type: ${metric.type}`);
-            console.log(`     ${metric.description}\n`);
+            log(`  📈 ${metric.name}`);
+            log(`     Type: ${metric.type}`);
+            log(`     ${metric.description}\n`);
           }
         } catch (err: unknown) {
           const message = err instanceof Error ? err.message : 'Unknown error';
-          console.error(`❌ ${message}`);
+          error(`${message}`);
           process.exit(1);
         }
       }),
@@ -36,28 +41,35 @@ export const metricsCommand = new Command('metrics')
         try {
           const metricsDir = resolve(process.cwd(), '.akoris', 'metrics');
           if (!existsSync(metricsDir)) {
-            console.log('No .akoris/metrics/ directory found');
+            info('No .akoris/metrics/ directory found');
             return;
           }
           const files = readdirSync(metricsDir).filter(f => f.endsWith('.json')).sort();
           if (files.length === 0) {
-            console.log('No metrics history found');
+            info('No metrics history found');
             return;
           }
-          console.log('📊 Metrics History\n');
+          if (shouldOutputJSON()) {
+            const history = files.map(file => ({
+              file,
+              data: JSON.parse(readFileSync(join(metricsDir, file), 'utf-8')),
+            }));
+            printJSON(history);
+            return;
+          }
+          log('📊 Metrics History\n');
           for (const file of files) {
             const data = JSON.parse(readFileSync(join(metricsDir, file), 'utf-8'));
-            console.log(`  📁 ${file}`);
+            log(`  📁 ${file}`);
             if (data.metrics) {
               for (const m of data.metrics) {
-                console.log(`     ${m.name}: ${m.value}`);
+                log(`     ${m.name}: ${m.value}`);
               }
             }
-            console.log();
           }
         } catch (err: unknown) {
           const message = err instanceof Error ? err.message : 'Unknown error';
-          console.error(`❌ ${message}`);
+          error(`${message}`);
           process.exit(1);
         }
       }),
@@ -71,17 +83,21 @@ export const metricsCommand = new Command('metrics')
           const registry = new RegistryService();
           const metricsDef = registry.getMetrics();
           if (!metricsDef) {
-            console.log('No metrics defined in the Registry');
+            info('No metrics defined in the Registry');
             return;
           }
           const output = options?.output || join(process.cwd(), '.akoris', 'metrics', 'export.json');
           const dir = dirname(output);
           if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
           writeFileSync(output, JSON.stringify(metricsDef, null, 2));
-          console.log(`✅ Metrics exported to ${output}`);
+          if (shouldOutputJSON()) {
+            printJSON({ exported: true, path: output });
+            return;
+          }
+          success(`Metrics exported to ${output}`);
         } catch (err: unknown) {
           const message = err instanceof Error ? err.message : 'Unknown error';
-          console.error(`❌ ${message}`);
+          error(`${message}`);
           process.exit(1);
         }
       }),

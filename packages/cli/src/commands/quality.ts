@@ -1,6 +1,7 @@
 import { Command } from 'commander';
 import { QualityService } from '../services/quality.service.js';
 import { RegistryService } from '../services/registry.service.js';
+import { success, error, warn, info, log, shouldOutputJSON, printJSON } from '../output/format.js';
 
 export const qualityCommand = new Command('quality')
   .description('Run quality checks and manage quality gates')
@@ -10,17 +11,22 @@ export const qualityCommand = new Command('quality')
       .action(async () => {
         try {
           const qualityService = new QualityService();
-          console.log('🔍 Running quality checks...\n');
+          info('Running quality checks...');
           const result = await qualityService.runAllChecks();
-          for (const gate of result.gates) {
-            console.log(`${gate.passed ? '✅' : '❌'} ${gate.name}`);
-            if (gate.details) console.log(`   ${gate.details}`);
+          if (shouldOutputJSON()) {
+            printJSON(result);
+            return;
           }
-          console.log(`\n📊 ${result.summary.passed}/${result.summary.total} gates passed`);
-          console.log(`\n${result.overall === 'passed' ? '✅' : '⚠️'} Overall quality: ${result.overall}`);
+          for (const gate of result.gates) {
+            log(`${gate.passed ? '✅' : '❌'} ${gate.name}`);
+            if (gate.details) log(`   ${gate.details}`);
+          }
+          log(`\n📊 ${result.summary.passed}/${result.summary.total} gates passed`);
+          if (result.overall === 'passed') success(`Overall quality: ${result.overall}`);
+          else warn(`Overall quality: ${result.overall}`);
         } catch (err: unknown) {
           const message = err instanceof Error ? err.message : 'Unknown error';
-          console.error(`❌ ${message}`);
+          error(`${message}`);
           process.exit(1);
         }
       }),
@@ -33,19 +39,22 @@ export const qualityCommand = new Command('quality')
           const qualityService = new QualityService();
           const gates = qualityService.getGateDefinitions();
           if (!gates) {
-            console.log('No quality gates defined in the Registry');
+            info('No quality gates defined in the Registry');
             return;
           }
-          console.log('📋 Quality Gates\n');
+          if (shouldOutputJSON()) {
+            printJSON(gates);
+            return;
+          }
+          log('📋 Quality Gates\n');
           for (const gate of gates.gates) {
-            console.log(`  ${gate.critical ? '🔴' : '🟡'} ${gate.name}`);
-            console.log(`     ${gate.description}`);
-            console.log(`     Type: ${gate.type} | Critical: ${gate.critical}`);
-            console.log();
+            log(`  ${gate.critical ? '🔴' : '🟡'} ${gate.name}`);
+            log(`     ${gate.description}`);
+            log(`     Type: ${gate.type} | Critical: ${gate.critical}`);
           }
         } catch (err: unknown) {
           const message = err instanceof Error ? err.message : 'Unknown error';
-          console.error(`❌ ${message}`);
+          error(`${message}`);
           process.exit(1);
         }
       }),
@@ -56,22 +65,25 @@ export const qualityCommand = new Command('quality')
       .action(async () => {
         try {
           const qualityService = new QualityService();
-          console.log('🔍 Validating project against all gates...\n');
+          info('Validating project against all gates...');
           const result = await qualityService.runAllChecks();
-          for (const gate of result.gates) {
-            console.log(`${gate.passed ? '✅' : '❌'} ${gate.name}`);
-            if (gate.details) console.log(`   ${gate.details}`);
+          if (shouldOutputJSON()) {
+            printJSON(result);
+            return;
           }
-          console.log(`\n📊 ${result.summary.passed}/${result.summary.total} gates passed`);
-          if (result.overall === 'passed') {
-            console.log('\n✅ All gates passed');
-          } else {
-            console.log('\n⚠️ Some gates failed');
+          for (const gate of result.gates) {
+            log(`${gate.passed ? '✅' : '❌'} ${gate.name}`);
+            if (gate.details) log(`   ${gate.details}`);
+          }
+          log(`\n📊 ${result.summary.passed}/${result.summary.total} gates passed`);
+          if (result.overall === 'passed') success('All gates passed');
+          else {
+            warn('Some gates failed');
             process.exitCode = 1;
           }
         } catch (err: unknown) {
           const message = err instanceof Error ? err.message : 'Unknown error';
-          console.error(`❌ ${message}`);
+          error(`${message}`);
           process.exit(1);
         }
       }),
@@ -84,26 +96,29 @@ export const qualityCommand = new Command('quality')
           const registry = new RegistryService();
           const metricsDef = registry.getMetrics();
           if (!metricsDef) {
-            console.log('No quality metrics defined');
+            info('No quality metrics defined');
             return;
           }
           const qualityMetrics = metricsDef.metrics.filter((m: any) =>
             /quality|coverage|gate|test/i.test(m.name),
           );
           if (qualityMetrics.length === 0) {
-            console.log('No quality-related metrics found');
+            info('No quality-related metrics found');
             return;
           }
-          console.log('📊 Quality Metrics\n');
+          if (shouldOutputJSON()) {
+            printJSON(qualityMetrics);
+            return;
+          }
+          log('📊 Quality Metrics\n');
           for (const metric of qualityMetrics) {
-            console.log(`  📈 ${metric.name}`);
-            console.log(`     Type: ${metric.type}`);
-            console.log(`     ${metric.description}`);
-            console.log();
+            log(`  📈 ${metric.name}`);
+            log(`     Type: ${metric.type}`);
+            log(`     ${metric.description}`);
           }
         } catch (err: unknown) {
           const message = err instanceof Error ? err.message : 'Unknown error';
-          console.error(`❌ ${message}`);
+          error(`${message}`);
           process.exit(1);
         }
       }),
