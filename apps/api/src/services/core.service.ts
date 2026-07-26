@@ -125,7 +125,15 @@ export function createCoreService() {
   const searchEngine = new SearchEngine(new Map(agents.map((a) => [a.id, a])));
   const logReader = new LogReader();
   seedLogs(logReader);
+  stateMachine.setLogs(logReader.readLogs());
   const doctor = new DoctorEngine();
+  doctor.setContext({
+    logs: logReader.readLogs(),
+    history: stateMachine.getHistory(),
+    currentState: stateMachine.getCurrentState().currentState,
+    secretsCount: 0,
+    agentsCount: agents.length,
+  });
   const secrets = new SecretManager();
   const aliases = new AliasManager();
 

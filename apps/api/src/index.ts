@@ -2,6 +2,7 @@ import Fastify from 'fastify';
 import corsPlugin from './plugins/cors.js';
 import errorHandlerPlugin from './plugins/error-handler.js';
 import openapiPlugin from './plugins/openapi.js';
+import websocketPlugin from './plugins/websocket.js';
 import healthRoutes from './routes/health.js';
 import stateRoutes from './routes/state.js';
 import registryRoutes from './routes/registry.js';
@@ -26,6 +27,7 @@ export async function buildApp() {
   await fastify.register(corsPlugin);
   await fastify.register(errorHandlerPlugin);
   await fastify.register(openapiPlugin);
+  await fastify.register(websocketPlugin);
 
   await fastify.register(healthRoutes);
   await fastify.register(stateRoutes);

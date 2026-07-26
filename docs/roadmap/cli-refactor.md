@@ -411,6 +411,7 @@ Chaque commit correspond à une étape réversible. Aucun commit de rupture n'es
 | **Rupture de la sortie `--json` pour les consommateurs automation** | La sortie JSON est un contrat stable. Toute évolution passe par un versionnement explicite. Le mode automation est testé en CI. |
 | **Dégradation de l'expérience en environnement CI** | L'implémentation de la section 6bis (non-TTY / `NO_COLOR`) est un critère de validation obligatoire de la Phase 1. Des tests CI vérifient le comportement. |
 
+
 ## 12. Critères de réussite
 
 Le refactor est terminé quand :

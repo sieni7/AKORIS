@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAKORIS } from '../../lib/sdk';
 import { useCurrentState, useStateMachine, useStateHistory, useTransition } from '@akoris/sdk';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
@@ -6,6 +6,8 @@ import { Badge } from '../ui/badge';
 import { Skeleton } from '../ui/skeleton';
 import { TransitionModal } from './transition-modal';
 import { HistoryList } from './history-list';
+import { useCommandRegistry } from '../../hooks/useCommandRegistry';
+import { ArrowRightLeft } from 'lucide-react';
 
 interface StateNode { id: string; x: number; y: number }
 
@@ -29,6 +31,24 @@ export function StateMachineModule() {
   const history = useStateHistory(api.client);
   const transition = useTransition(api.client);
   const [selectedTransition, setSelectedTransition] = useState<{ from: string; to: string } | null>(null);
+  const registry = useCommandRegistry();
+
+  useEffect(() => {
+    registry.register({
+      id: 'action-transition',
+      title: 'Execute State Transition',
+      keywords: ['transition', 'state', 'change status'],
+      icon: <ArrowRightLeft className="h-4 w-4" />,
+      handler: () => {
+        const stateData = machine.data as any;
+        const currentState = current.data?.currentState;
+        if (!stateData?.transitions || !currentState) return;
+        const first = (stateData.transitions as any[]).find((t: any) => t.from === currentState);
+        if (first) setSelectedTransition({ from: first.from, to: first.to });
+      },
+    });
+    return () => registry.unregister('action-transition');
+  }, [machine.data, current.data]);
 
   const handleConfirm = async (from: string, to: string) => {
     const safeTransition = api.withNotifications(

@@ -5,4 +5,9 @@ export default async function doctorRoutes(fastify: FastifyInstance, _opts: unkn
   const core: CoreService = fastify.core;
 
   fastify.get('/doctor', async () => core.doctor.diagnose());
+
+  fastify.post<{ Body: { issueIds?: string[] } }>('/doctor/fix', async (request) => {
+    const { issueIds } = request.body;
+    return core.doctor.fix(issueIds);
+  });
 }

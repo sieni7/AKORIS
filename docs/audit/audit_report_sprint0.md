@@ -2,7 +2,7 @@
 
 **Date :** 22 juillet 2026
 **Sprint audité :** Sprint 0 — Mise en place du projet
-**Auditeur :** Agent AQA (Forge AI v2)
+**Auditeur :** Agent AQA 
 
 ---
 

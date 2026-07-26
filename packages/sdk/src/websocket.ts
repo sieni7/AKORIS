@@ -186,3 +186,8 @@ export class WSClient {
     this._connected = false;
   }
 }
+
+export function createWSClient(baseUrl: string): WSClient {
+  const wsUrl = baseUrl.replace(/^http/, 'ws') + '/ws/logs';
+  return new WSClient({ url: wsUrl });
+}

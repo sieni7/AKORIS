@@ -3,4 +3,5 @@ export { useStateMachine, useCurrentState, useStateHistory, useTransition } from
 export { useRegistryIndex, useAgentList, useAgent } from './useRegistry';
 export { useSearch } from './useSearch';
 export { useLogs } from './useLogs';
+export { useLiveLogs } from './useLiveLogs';
 export { useDiagnose, useFix } from './useDoctor';

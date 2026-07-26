@@ -8,5 +8,8 @@ export type { SearchQuery, SearchResult } from './search-engine.js';
 export { LogReader } from './log-reader.js';
 export type { LogFilter } from './log-reader.js';
 export { DoctorEngine } from './doctor-engine.js';
+export type { DoctorContext } from './doctor-engine.js';
 export { SecretManager } from './secret-manager.js';
 export { AliasManager } from './alias-manager.js';
+export { QualityGateEngine } from './quality-gate-engine.js';
+export type { GateEvaluator, GateContext } from './quality-gate-engine.js';

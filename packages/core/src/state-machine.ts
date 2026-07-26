@@ -1,17 +1,25 @@
-import type { StateMachine, TransitionDef, TransitionHistoryItem, TransitionResult, GateStatus } from './types.js';
+import type { StateMachine, TransitionDef, TransitionHistoryItem, TransitionResult, LogEntry } from './types.js';
 import { TransitionError } from './errors.js';
+import { QualityGateEngine } from './quality-gate-engine.js';
 
 export class StateMachineEngine {
   private machine: StateMachine;
   private currentStateId: string;
   private history: TransitionHistoryItem[] = [];
+  private gateEngine: QualityGateEngine;
+  private logs: LogEntry[] = [];
 
-  constructor(machine: StateMachine, initialStateId?: string) {
+  constructor(machine: StateMachine, initialStateId?: string, gateEngine?: QualityGateEngine) {
     this.machine = machine;
     this.currentStateId = initialStateId ?? machine.states[0]?.id ?? '';
     if (!this.currentStateId) {
       throw new Error('State machine must have at least one state');
     }
+    this.gateEngine = gateEngine ?? new QualityGateEngine();
+  }
+
+  setLogs(logs: LogEntry[]): void {
+    this.logs = logs;
   }
 
   loadMachine(): StateMachine {
@@ -36,11 +44,18 @@ export class StateMachineEngine {
       throw new TransitionError(from, to, 'no valid transition exists between these states');
     }
 
-    const gatesStatus: GateStatus[] = transitionDef.requiredGates.map((gateId) => ({
-      gateId,
-      status: 'PASS' as const,
-      details: 'Gate passed automatically',
-    }));
+    const gatesStatus = transitionDef.requiredGates.length > 0
+      ? this.gateEngine.evaluate(transitionDef.requiredGates, {
+          logs: this.logs,
+          history: this.history,
+          currentState: this.currentStateId,
+        })
+      : [];
+
+    const failedGates = gatesStatus.filter((g) => g.status === 'FAIL');
+    if (failedGates.length > 0) {
+      throw new TransitionError(from, to, `required gates failed: ${failedGates.map((g) => g.gateId).join(', ')}`);
+    }
 
     const historyItem: TransitionHistoryItem = {
       id: crypto.randomUUID(),

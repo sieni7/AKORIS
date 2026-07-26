@@ -7,4 +7,9 @@ export default async function stateRoutes(fastify: FastifyInstance, _opts: unkno
   fastify.get('/state/machine', async () => core.stateMachine.loadMachine());
   fastify.get('/state/current', async () => core.stateMachine.getCurrentState());
   fastify.get('/state/history', async () => core.stateMachine.getHistory());
+
+  fastify.post<{ Body: { from: string; to: string; comment?: string } }>('/state/transition', async (request) => {
+    const { from, to, comment } = request.body;
+    return core.stateMachine.transition(from, to, 'user', comment);
+  });
 }

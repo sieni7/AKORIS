@@ -9,13 +9,20 @@ export interface LogFilter {
 
 export class LogReader {
   private logs: LogEntry[] = [];
+  private listeners: Set<(entry: LogEntry) => void> = new Set();
 
   constructor(seedLogs?: LogEntry[]) {
     if (seedLogs) this.logs = [...seedLogs];
   }
 
+  onLog(cb: (entry: LogEntry) => void): () => void {
+    this.listeners.add(cb);
+    return () => this.listeners.delete(cb);
+  }
+
   append(entry: LogEntry): void {
     this.logs.push(entry);
+    for (const cb of this.listeners) cb(entry);
   }
 
   readLogs(filter?: LogFilter): LogEntry[] {
