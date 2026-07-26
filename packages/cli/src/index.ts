@@ -31,6 +31,7 @@ import { logsCommand } from './commands/logs.js';
 import { activationCommand } from './commands/activation.js';
 import { capabilityCommand } from './commands/capability.js';
 import { aliasCommand } from './commands/alias.js';
+import { searchCommand } from './commands/search.js';
 import { resolveAlias } from './services/alias.service.js';
 import { getProjectRoot } from './services/project.service.js';
 
@@ -90,6 +91,7 @@ const WELCOME = `
      akoris activation     Activation des agents
       akoris capability     Recherche de capacites
       akoris alias          Alias de commandes
+      akoris search         Recherche unifiée
       akoris --help         Aide complete
 
 \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
@@ -158,10 +160,11 @@ program.addCommand(activationCommand);
 program.addCommand(capabilityCommand);
 program.addCommand(logsCommand);
 program.addCommand(aliasCommand());
+program.addCommand(searchCommand());
 
 // Interception des alias avant le parsing Commander
 const firstArg = process.argv[2];
-if (firstArg && !['alias', 'help', '--help', '-h', '--version', '-V'].includes(firstArg)) {
+if (firstArg && !['alias', 'search', 'help', '--help', '-h', '--version', '-V'].includes(firstArg)) {
   try {
     const projectRoot = getProjectRoot();
     const resolved = resolveAlias(projectRoot, firstArg);
