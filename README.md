@@ -2,59 +2,61 @@
 
 **Standard de gouvernance pour le développement logiciel assisté par intelligence artificielle**
 
-Version 1.0.0 | [Documentation](docs/presentation) | [Constitution](constitution/CONSTITUTION.md) | [Registry](registry)
+Version 1.3.0 | [Documentation](docs/index.md) | [Constitution](constitution/CONSTITUTION.md) | [Registry](registry)
 
 ---
 
-## Vue d'ensemble
+## Qu'est-ce qu'AKORIS ?
 
-AKORIS est un standard de gouvernance conçu pour encadrer le développement logiciel assisté par IA. Il fournit un cadre modulaire, extensible et technologiquement neutre pour garantir la qualité, la traçabilité et la conformité des projets.
+AKORIS est un standard de gouvernance et une CLI qui encadrent le développement logiciel assisté par IA. Il fournit un cadre modulaire de 33 agents spécialisés, 12 règles de gouvernance, et 72 capacités — le tout orchestré par une machine à états qui garantit qualité, traçabilité et conformité.
 
-## Structure
-
-```
-AKORIS/
-├── constitution/     # Documents fondateurs (CONSTITUTION, PHILOSOPHY, VALUES, PRINCIPLES, GOVERNANCE, LICENSING, CODE_OF_ETHICS, TERMINOLOGY)
-├── docs/             # Documentation officielle (presentation, specifications, roadmap, decisions, releases)
-├── registry/         # Référentiel de gouvernance (agents, contracts, policies, workflows, quality-gates, templates, conventions, schemas)
-├── standards/        # Normes transverses (coding, documentation, architecture, security, quality)
-├── packages/         # Implémentations techniques
-│   ├── cli/          # CLI d'orchestration
-│   ├── sdk/          # API pour intégration tierce
-│   ├── adapters/     # Interfaces avec les moteurs IA
-│   └── connectors/   # Intégrations avec services externes
-├── playbooks/        # Configurations par stack technique
-└── examples/         # Exemples de projet
-```
+**Principe :** *Build software with method, not with chance.*
 
 ## Installation
 
 ```bash
-git clone <url-du-repo>
-cd AKORIS
-pnpm install
-pnpm build
+npm install -g @akoris/cli          # via npm
+npx @akoris/cli init mon-projet     # sans installation
 ```
 
-## Commandes CLI
+Depuis les sources :
 
 ```bash
-akoris init <name>         # Initialiser un projet AKORIS
-akoris install playbook    # Installer un playbook
-akoris doctor              # Diagnostiquer le projet
-akoris audit sprint        # Lancer un audit
-akoris quality check       # Vérifier les Quality Gates
-akoris status              # État global du projet
-akoris sync                # Synchroniser le Registry
-akoris metrics             # Afficher les métriques
+git clone https://github.com/sieni7/AKORIS.git
+cd AKORIS
+pnpm install && pnpm build
+akoris init mon-projet
 ```
+
+## Démarrage rapide
+
+```bash
+akoris init frontend --template fullstack   # Projet + 12 agents pré-activés
+akoris state show                            # Voir l'état du projet
+akoris search "performance"                  # Chercher dans tout le Registry
+akoris alias set review "state transition --from Draft --to Active"
+akoris review                                # Exécuter l'alias
+akoris logs --watch                          # Suivre les logs en temps réel
+```
+
+## Commandes
+
+| Catégorie | Commande | Rôle |
+|-----------|----------|------|
+| **Core** | `init` `doctor` `status` `info` `about` | Cycle de vie du projet |
+| **Registry** | `registry` `manifest` `validate` `sync` | Gouvernance centralisée |
+| **Qualité** | `audit` `quality` `install` `upgrade` | Contrôle et conformité |
+| **Artéfacts** | `adr` `sprint` `docs` `metrics` `knowledge` | Traçabilité |
+| **Productivité** | `search` `alias` `logs` `state` `activation` `capability` | Pilotage quotidien |
+
+23 commandes — voir la [référence complète](docs/user/cli.md).
 
 ## Garanties
 
-- **Zero Hallucination** : aucune decision sans element verifiable
-- **Zero Code Spaghetti** : architecture controlee en continu
-- **Zero Dette Technique** : toute dette est documentee et suivie
+- **Zero Hallucination** : toute décision s'appuie sur une source vérifiable
+- **Zero Code Spaghetti** : architecture contrôlée en continu
+- **Zero Dette Technique** : toute dette est documentée et suivie
 
 ## Licence
 
-MIT - Copyright (c) 2026 OULAI SIENI
+MIT — Copyright (c) 2026 OULAÏ SIÉNI ([sieni7@gmail.com](mailto:sieni7@gmail.com))
