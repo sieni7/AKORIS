@@ -1,50 +1,33 @@
-# ADR-004 : Moteur de recherche fédéré
-
-**Statut :** Approuvé  
-**Date :** 2026-07-26  
-**Décideur :** AKORIS Core Team  
+# ADR-004 : Pourquoi un moteur de recherche fédéré ?
 
 ## Contexte
 
-Les informations dans AKORIS sont réparties dans plusieurs sources (agents dans le Registry, règles dans `rules/`, ADRs dans `.akoris/decisions/`, logs dans `.akoris/logs/`). Pour trouver une information, l'utilisateur devait connaître la bonne commande (`capability find`, `agent list`, `logs`, etc.). Aucun point d'entrée unique.
-
-## Options envisagées
-
-| Option | Points forts | Points faibles |
-|--------|-------------|----------------|
-| **Moteur fédéré** | Point d'entrée unique, 7 sources, extensible | Complexité moyenne, pas de scoring |
-| **Index plein texte (Lunr.js)** | Recherche avancée, stemming | Dépendance lourde, index en mémoire, surdimensionné |
-| **Perpétuer la recherche par commande** | Simple | Mauvaise UX, courbe d'apprentissage |
+Le Registry est volumineux : 33 agents, 12 règles, 15 livrables, 18 événements, 69 capacités, etc. Pour trouver une information, l'utilisateur devait connaître la bonne commande (`capability find`, `agent list`, `logs`, etc.). Il n'existait aucun point d'entrée unique.
 
 ## Décision
 
-**Moteur fédéré interne** avec correspondance substring insensible à la casse. Chaque source est interrogée via son service dédié :
+Nous implémentons un moteur de recherche fédéré, accessible via la commande `akoris search`, qui interroge 7 sources en une seule requête.
 
-- Agents → `RegistryReaderV2.listAgentDirs() + readAgentJson()`
-- Règles → `RegistryReaderV2.getRules()`
-- Capacités → `RegistryReaderV2.getCapabilityRegistry()`
-- Livrables → `RegistryReaderV2.getDeliverables()`
-- Événements → `RegistryReaderV2.getEvents()`
-- ADRs → `readFileSync` sur `.akoris/decisions/*.md`
-- Logs → `readFileSync` sur `.akoris/logs/sessions/*.json`
+## Alternatives considérées
+
+- **Recherche par commande existante** (état antérieur) : l'utilisateur doit savoir où chercher.
+- **Index ElasticSearch** : très complet, mais nécessite un service externe, une installation, une maintenance.
+- **`grep` sur les fichiers** : peu structuré, ne permet pas de regrouper les résultats par type.
+
+## Justification
+
+- La recherche fédérée est légère : l'indexation est faite en mémoire au moment de l'exécution.
+- Elle est immédiate : pas de service externe à déployer.
+- Elle est extensible : on peut ajouter de nouvelles sources (ex: commentaires Git, issues GitHub) sans modifier l'API.
+- Elle est simple à utiliser : une seule commande pour tout trouver.
 
 ## Conséquences
 
-- 7 sources interrogées en une commande
-- Filtrage par type avec `--type`
-- Sortie texte (groupée par type) + JSON (`--json`) + verbose (`--verbose`)
-- Résultats triés par type (agents en premier, logs en dernier)
-- Résultats enrichis : champ matché, valeur matchée, chemin source
-- Pas de dépendance externe
-- Extensible par ajout d'une méthode privée dans `SearchEngine`
+- Le service `SearchEngine` est responsable de l'indexation et de la recherche.
+- Les résultats sont groupés par type pour une meilleure lisibilité.
+- La recherche est insensible à la casse et supporte la correspondance partielle.
+- Pour des volumes très importants (>500 agents), une évolution vers une indexation persistante sera nécessaire.
 
-## Limites
+## Statut
 
-- Pas de stemming ou de fuzzy matching
-- Pas de scoring ou de ranking par pertinence
-- Les ADRs nécessitent un parsing markdown simple
-
-## Références
-
-- Service : `src/services/search.service.ts`
-- Commande : `src/commands/search.ts`
+Accepté.

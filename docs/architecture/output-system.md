@@ -1,78 +1,60 @@
-# Système de formatage des sorties
+# Système de formatage
 
-Le module `format.ts` centralise toutes les sorties du CLI. Aucune commande n'utilise `console.log` directement.
+AKORIS CLI utilise un module centralisé `src/output/format.ts` pour produire des sorties cohérentes, lisibles par des humains et par des machines.
 
 ---
 
-## Principe
+## Helpers
 
-Toute sortie passe par un des helpers du module. Cela garantit :
-- une apparence cohérente (couleurs, symboles)
-- le support natif de `--json` (désactive la sortie texte)
-- le support de `--quiet` (réduit le bruit)
-- une seule cible à modifier pour changer le style global
+| Helper | Description | Exemple |
+|--------|-------------|---------|
+| `success(message)` | Vert, préfixé par `✓` | `success('Opération réussie.')` |
+| `error(message)` | Rouge, préfixé par `✗` | `error('Erreur : fichier introuvable.')` |
+| `warn(message)` | Jaune, préfixé par `⚠` | `warn('Dépendance optionnelle manquante.')` |
+| `info(message)` | Bleu, préfixé par `ℹ` | `info('Chargement du registry...')` |
+| `title(message)` | Vert, format titre | `title('📋 Logs AKORIS')` |
+| `header(message)` | Cyan, format sous-titre | `header('Filtres appliqués')` |
+| `printJSON(data)` | Sortie JSON formatée | `printJSON({ status: 'ok' })` |
+| `shouldOutputJSON(options)` | Détecte la présence de `--json` | `if (shouldOutputJSON(options)) { printJSON(...) }` |
 
-## Helpers de base
-
-```typescript
-success("Projet initialisé");      // ✅  Projet initialisé (vert)
-error("Échec de la transition");   // ❌  Échec de la transition (rouge)
-warn("Aucun alias défini");        // ⚠️  Aucun alias défini (jaune)
-info("Template appliqué");         // ℹ️  Template appliqué (bleu)
-title("Résultats");                // 📋 Résultats (gras, souligné)
-```
-
-## Sortie JSON
-
-```typescript
-shouldOutputJSON()  // → bool (lecture de l'état global)
-printJSON(data)     // → JSON.stringify(data, null, 2)
-```
-
-Quand `--json` est actif, `success()`, `error()`, `warn()`, `info()` et `title()` ne produisent aucune sortie texte.
+---
 
 ## Options globales
 
-Définies une seule fois sur le programme Commander, propagées via un hook `preAction` :
+Ces options sont disponibles sur toutes les commandes :
+
+| Option | Effet |
+|--------|-------|
+| `--json` | Sortie JSON structurée (désactive les couleurs, les messages textuels, les spinners) |
+| `--verbose` | Affiche des informations supplémentaires (logs internes, chemins, temps) |
+| `--quiet` | Supprime les messages informatifs (les erreurs et warnings restent visibles) |
+| `--no-color` | Désactive les couleurs ANSI (utile pour les logs, les CI) |
+| `--output <file>` | Redirige la sortie vers un fichier (le format est déduit de l'extension) |
+
+---
+
+## Intégration avec Commander
+
+Les options globales sont définies une fois dans `src/index.ts` via `program.option(...)`. Un hook `preAction` les injecte dans le contexte de chaque commande.
 
 ```typescript
-program
-  .option('--json', 'Sortie au format JSON')
-  .option('--verbose', 'Affiche les logs détaillés')
-  .option('--quiet', 'Réduit la sortie au minimum')
-  .option('--no-color', 'Désactive les couleurs')
-  .option('--output <file>', 'Exporte le résultat dans un fichier')
-  .hook('preAction', (thisCommand) => {
-    const opts = thisCommand.opts();
-    setGlobalOptions({
-      json: !!opts.json,
-      verbose: !!opts.verbose,
-      quiet: !!opts.quiet,
-      noColor: !!opts.noColor,
-      output: opts.output,
-    });
-    if (opts.noColor) chalk.level = 0;
-  });
+program.hook('preAction', (thisCommand, actionCommand) => {
+  const options = thisCommand.opts();
+  setGlobalOptions(options);
+});
 ```
 
-## Export fichier
+Aucune commande n'appelle directement `console.log`. Toutes les sorties transitent par `format.ts`.
 
-Quand `--output <file>` est utilisé, la sortie est dupliquée dans le fichier sans modification du comportement d'affichage.
+---
 
-## Implémentation
+## Règles de développement
 
-Source : `src/output/format.ts`
+- **Interdiction** d'utiliser `console.log`, `console.error`, `console.warn` ou `console.info` dans `src/commands/`.
+- Utiliser `shouldOutputJSON(options)` avant toute sortie texte.
+- Les erreurs critiques utilisent `error()` et `process.exit(1)`.
+- Les messages secondaires (chargement, progression) utilisent `info()` et sont désactivés en mode `--quiet`.
 
-```typescript
-export function setGlobalOptions(opts: GlobalOptions): void;
-export function shouldOutputJSON(): boolean;
-export function isVerbose(): boolean;
-export function printJSON(data: unknown): void;
-export function success(msg: string): void;
-export function error(msg: string): void;
-export function warn(msg: string): void;
-export function info(msg: string): void;
-export function title(msg: string): void;
-export function spinner(label: string): Ora;
-export function getOpts(): GlobalOptions;
-```
+---
+
+**Voir aussi** : [ADR-002](../adr/ADR-002-why-json-output.md)

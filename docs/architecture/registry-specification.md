@@ -1,126 +1,110 @@
-# Spécification du Registry AKORIS
+# Spécification du Registry AKORIS (v1.x)
 
-Le Registry est le référentiel central de gouvernance. Il contient la définition de tous les agents, règles, événements, capacités et livrables.
+Le Registry est le cœur d'AKORIS. Il contient l'ensemble des définitions de gouvernance : agents, règles, événements, workflows, Quality Gates, métriques, livrables et leurs relations.
 
 ---
 
-## Structure du dépôt
+## Structure du dossier `registry/`
 
 ```
 registry/
-├── registry.json              # Index général (version 2.0.0)
-├── dependency-graph.json      # Graphe de dépendances entre agents
-├── activation-matrix.json     # Matrice d'activation (18 événements)
-├── capabilities.json          # Catalogue de 72 capacités
-├── state-machine.json         # Machine à états (7 états, 8 transitions)
-├── ontology.json              # Ontologie du domaine
-├── agents/                    # 33 agents (un sous-dossier par agent)
-├── rules/                     # 12 règles (RULE-001 à RULE-012)
-├── deliverables/              # 15 livrables
-├── events/                    # Événements du cycle de vie
-├── policies/                  # Politiques de gouvernance
-├── quality-gates/             # Quality Gates
-├── templates/                 # Templates (ADR, playbooks)
-├── schemas/                   # Schémas JSON de validation
-├── contracts/                 # Contrats des agents
-├── workflows/                 # Workflows
-├── metrics/                   # Définitions de métriques
-├── conventions/               # Conventions de nommage
-├── checklists/                # Checklists par agent
-└── playbooks/                 # Playbooks par stack
+├── registry.json                # Index global (version, compteurs, chemin des composants)
+├── state-machine.json           # Machine à états (7 états, 8 transitions)
+├── activation-matrix.json       # Événements → agents activés
+├── capabilities.json            # Capacités → agents
+├── dependency-graph.json        # Dépendances entre agents
+├── ontology.json                # Définitions conceptuelles (domaines, types)
+│
+├── agents/                      # Dossiers individuels des 33 agents
+│   └── {DOMAINE}-{NN}-{Nom}/
+│       ├── agent.json           # Métadonnées (ID, version, criticité, tags)
+│       ├── contract.json        # Version machine-readable du contrat
+│       ├── capabilities.json    # can / cannot
+│       ├── mission.md           # Objectif, scope
+│       ├── activation.md        # Conditions d'activation
+│       ├── inputs.md / outputs.md
+│       ├── quality-gates.md
+│       ├── prompt.md
+│       ├── CHANGELOG.md
+│       └── tests/               # Scénarios de test
+│
+├── rules/                       # Règles formelles (if → then)
+├── deliverables/                # Livrables standardisés
+├── events/                      # Événements du cycle de vie
+├── workflows/                   # Séquences d'étapes exécutées par des agents
+├── policies/                    # Politiques de gouvernance organisationnelle
+├── quality-gates/               # Points de contrôle (QG-xxx)
+├── metrics/                     # Indicateurs quantifiables
+├── schemas/                     # Schémas JSON (validation)
+└── api/                         # Contrats OpenAPI pour l'API interne
 ```
 
-## Fichier d'index (`registry.json`)
+---
+
+## Format d'un agent
+
+Chaque agent est identifié par un ID unique au format `{DOMAINE}-{NN}-{Nom}` où :
+
+- `DOMAINE` : `CORE`, `DEV`, `QA`, `EXP`, `GOV` (ou domaine personnalisé)
+- `NN` : numéro séquentiel à deux chiffres (01 à 99)
+- `Nom` : nom en PascalCase décrivant le rôle
+
+Exemple : `CORE-02-Solution-Architect`
+
+### `agent.json` (exemple)
 
 ```json
 {
-  "name": "AKORIS Registry",
-  "version": "2.0.0",
-  "description": "Référentiel central de gouvernance AKORIS",
-  "components": {
-    "agents": { "count": 33, "path": "agents/" },
-    "rules": { "count": 12, "path": "rules/" },
-    "qualityGates": { "count": 15, "path": "quality-gates/" }
-  },
-  "domains": [
-    { "id": "CORE", "name": "Gouvernance", "agentCount": 8 },
-    { "id": "DEV", "name": "Architecture & Développement", "agentCount": 8 },
-    { "id": "QA", "name": "Qualité", "agentCount": 7 },
-    { "id": "EXP", "name": "Expertise", "agentCount": 7 },
-    { "id": "GOV", "name": "Gouvernance transverse", "agentCount": 3 }
-  ]
-}
-```
-
-## Agents
-
-Chaque agent est défini dans `registry/agents/<ID>-<Nom>/agent.json` :
-
-```json
-{
-  "id": "CORE-01",
-  "name": "Orchestrator",
+  "$schema": "../schemas/agent.schema.json",
+  "id": "CORE-01-Orchestrator",
+  "name": "Orchestrateur",
   "version": "1.0.0",
-  "domain": "Gouvernance",
+  "domain": "CORE",
   "criticity": "critique",
   "status": "active",
-  "tags": ["core", "orchestration", "governance"],
-  "dependencies": [],
-  "maintainer": "AKORIS Core Team",
-  "tokenEstimate": { "context": 8000, "prompt": 2000, "output": 1000 }
+  "description": "Agent coordinateur principal, responsable de l'activation et de la coordination des autres agents.",
+  "tags": ["core", "coordination", "orchestration"],
+  "dependencies": [
+    { "agentId": "CORE-02-Solution-Architect", "type": "mandatory" }
+  ],
+  "tokenEstimate": 4096,
+  "activatedBy": ["EVT-001", "EVT-005"],
+  "produces": ["DEL-001", "DEL-002"],
+  "validatedBy": ["QG-001", "QG-002"]
 }
 ```
 
-Les fichiers additionnels dans le dossier de l'agent :
-- `contract.json` — contrat formel (entrées, sorties, contraintes)
-- `capabilities.json` — capacités (can/cannot)
-- `README.md` — description longue
-- `prompt.md`, `mission.md`, `kpis.md`, `quality-gates.md`
+---
 
-## Règles
+## Relations clés
 
-Définies dans `registry/rules/RULE-NNN.json` :
+| Source | Relation | Cible |
+|--------|----------|-------|
+| Agent | `dependsOn` | Agent |
+| Agent | `produces` | Deliverable |
+| Agent | `consumes` | Deliverable |
+| Agent | `validatedBy` | QualityGate |
+| Agent | `activatedBy` | Event |
+| Event | `triggers` | Workflow |
+| Workflow | `executedBy` | Agent |
+| Rule | `enforces` | Agent |
+| Deliverable | `validatedBy` | QualityGate |
 
-```json
-{
-  "id": "RULE-001",
-  "name": "Release Requires Security Clearance",
-  "description": "SecurityAuditor (QA-03) must approve before any release proceeds",
-  "severity": "blocker",
-  "tags": ["security", "release", "governance"],
-  "if": "SecurityAuditor (QA-03) has not approved the release",
-  "then": "Release is forbidden",
-  "otherwise": "Release may proceed to Quality Gate validation"
-}
-```
+---
 
-Niveaux de sévérité : `blocker`, `critical`, `major`, `minor`, `info`.
+## Contraintes d'intégrité (validées par `akoris registry validate`)
 
-## Capacités
+- Toute référence à un ID doit pointer vers une ressource existante.
+- Le graphe des dépendances entre agents ne contient pas de cycle.
+- Tout agent est associé à au moins un Quality Gate.
+- Les identifiants sont uniques.
 
-Définies dans `capabilities.json` : 72 capacités associées à des agents.
+---
 
-```json
-{
-  "version": "1.0.0",
-  "capabilities": {
-    "define_security_policy": ["CORE-05"],
-    "design_api_contract": ["DEV-03"],
-    "write_unit_tests": ["QA-02"]
-  }
-}
-```
+## Évolution du Registry
 
-## Lecture par le CLI
+Le Registry est versionné globalement via `registry.json`. Les modifications qui n'affectent pas la compatibilité (ajout d'agent, nouvelle règle, nouveau livrable) sont considérées comme des évolutions mineures. Les changements incompatibles (suppression d'un champ obligatoire, modification de la sémantique d'un schéma) nécessitent une version majeure du Registry et ne sont pas introduits dans la v1.x.
 
-Le service `RegistryReaderV2` charge les données avec cache (TTL : 5 minutes) :
+---
 
-```typescript
-const reader = new RegistryReaderV2();
-reader.getRules();              // → Rule[]
-reader.listAgentDirs();         // → string[]
-reader.readAgentJson(dir);      // → agent object
-reader.getCapabilityRegistry(); // → CapabilityRegistry
-```
-
-Détection automatique du chemin : le reader remonte depuis le répertoire courant jusqu'à trouver `registry/registry.json`.
+**Voir aussi** : [ADR-003](../adr/ADR-003-why-state-machine.md), [ADR-004](../adr/ADR-004-why-search-engine.md)

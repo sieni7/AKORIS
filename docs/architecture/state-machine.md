@@ -1,71 +1,76 @@
-# Machine à états AKORIS
+# Machine à états du projet AKORIS
 
-La machine à états gouverne le cycle de vie du projet à travers 7 états et 8 transitions validées par des Quality Gates.
+La machine à états modélise le cycle de vie d'un projet AKORIS, de sa création à son archivage. Elle garantit que les transitions entre états sont soumises à des Quality Gates et à des autorisations.
 
 ---
 
-## États
+## États (7)
 
-| État | Description |
-|------|-------------|
-| **Draft** | Projet en définition. Aucune décision architecturale figée. |
-| **Planned** | Architecture et ADRs définis. Backlog priorisé. |
-| **Active** | Développement en cours. Agents activés selon les événements. |
-| **Audit** | Révision complète des livrables. Quality Gates obligatoires. |
-| **Released** | Livraison prête. Déploiement possible. |
-| **Archived** | Projet terminé. Accès en lecture seule. |
+| État | Phase | Description |
+|------|-------|-------------|
+| **DRAFT** | Initialisation | Projet en conception. Architecture, ADR et backlog non finalisés. |
+| **PLANNED** | Planification | Architecture validée, ADR approuvés, backlog priorisé. |
+| **ACTIVE** | Exécution | Développement en cours, sprints actifs, code produit. |
+| **AUDIT** | Validation | Revue qualité complète (sécurité, performances, documentation). |
+| **VALIDATED** | Validation | Audit passé, prêt pour la mise en production. |
+| **RELEASED** | Livraison | Version livrée en production. |
+| **ARCHIVED** | Archivage | Projet clôturé, connaissances capitalisées. |
 
-## Transitions
+---
 
-| From | To | Gates | Autorisation |
-|------|----|-------|-------------|
-| Draft | Planned | ADR validés, Architecture définie, Backlog priorisé | CORE-02 |
-| Planned | Active | Architecture approuvée, Contrats signés, Plan de test validé | CORE-03 |
-| Active | Audit | Tests passés, Documentation à jour, Métriques conformes | GOV-02 |
-| Active | Released | — | CORE-07 |
-| Audit | Released | Audit passé, Dettes documentées, Sécurité vérifiée | CORE-08 |
-| Audit | Active | Corrections demandées | CORE-01 |
-| Released | Archived | Projet livré, Documentation finalisée, Aucune dette critique | CORE-01 |
-| Released | Active | Réouverture des dev | CORE-01 |
+## Transitions (8)
 
-## Fichier d'état
+| De | Vers | Gates requis | Autorisation |
+|----|------|--------------|--------------|
+| DRAFT | PLANNED | ADR validés, Architecture définie, Backlog priorisé | GOV-01 (Project Manager) |
+| PLANNED | ACTIVE | Ressources allouées, Environnements prêts, CI/CD configuré | GOV-01, CORE-01 |
+| ACTIVE | AUDIT | Feature freeze, Tests rédigés, Documentation préliminaire | CORE-01 |
+| AUDIT | VALIDATED | Security OK, Performance OK, Accessibility OK, Documentation OK | GOV-04 (Auditor) |
+| VALIDATED | RELEASED | Release approuvée, CI/CD green, CHANGELOG mis à jour | GOV-01, GOV-03 (Compliance) |
+| RELEASED | ARCHIVED | Post-mortem réalisé, Connaissances capitalisées, Documentation finalisée | CORE-01 |
+| ACTIVE | PLANNED | Repriorisation nécessaire (retour en arrière) | CORE-01 |
+| AUDIT | ACTIVE | Correctifs appliqués, Nouvel audit planifié | CORE-01 |
 
-L'état courant est persistant dans `.akoris/state.json` :
+---
+
+## Fichier de persistance : `.akoris/state.json`
 
 ```json
 {
-  "current": "Planned",
+  "currentState": "ACTIVE",
   "history": [
-    { "state": "Draft", "enteredAt": "2026-07-26T03:45:00.000Z", "exitedAt": "2026-07-26T04:05:00.000Z" },
-    { "state": "Planned", "enteredAt": "2026-07-26T04:05:00.000Z", "exitedAt": null }
-  ]
+    {
+      "from": "DRAFT",
+      "to": "PLANNED",
+      "at": "2026-07-26T10:00:00Z",
+      "authorizedBy": "GOV-01"
+    },
+    {
+      "from": "PLANNED",
+      "to": "ACTIVE",
+      "at": "2026-07-27T14:30:00Z",
+      "authorizedBy": "GOV-01,CORE-01"
+    }
+  ],
+  "lastTransition": "2026-07-27T14:30:00Z"
 }
 ```
 
-## Commande CLI
+---
 
-```bash
-akoris state show                    # État courant + transitions possibles
-akoris state history                 # Historique complet
-akoris state transition --from Draft --to Planned
-akoris state export                  # Rapport texte
-akoris state export --format markdown --output rapport.md
-akoris state export --json           # JSON structuré
-```
+## Commandes associées
 
-## Service
+- `akoris state show` — affiche l'état courant et les transitions possibles.
+- `akoris state history` — liste l'historique.
+- `akoris state transition --from <état> --to <état>` — exécute une transition (vérifie les gates et les autorisations).
+- `akoris state export` — exporte l'état en Markdown/JSON/texte.
 
-```typescript
-const engine = new StateMachineEngine(reader);
-engine.getCurrentState();     // → "Planned"
-engine.canTransition(from, to); // → { allowed: boolean }
-engine.transition(from, to);    // → { success, message, gates }
-engine.exportReport('markdown'); // → string
-```
+---
 
-## Règle de gouvernance
+## Qualité Gates (non encore exécutés automatiquement en v1.3.0)
 
-Une transition n'est possible que si :
-1. Elle est définie dans la machine à états
-2. L'état courant correspond à `from`
-3. Les Quality Gates associés sont validés (vérifiés par `quality check`)
+Les Quality Gates sont définis dans `registry/quality-gates/`. Chaque gate est composé de critères évaluables. La transition n'est autorisée que si tous les gates requis sont `PASS`. Dans les versions futures, l'exécution sera automatisée.
+
+---
+
+**Voir aussi** : [Spécification du Registry](registry-specification.md), [ADR-003](../adr/ADR-003-why-state-machine.md)

@@ -1,37 +1,31 @@
-# ADR-003 : Machine à états pour le cycle de vie du projet
-
-**Statut :** Approuvé  
-**Date :** 2026-07-26  
-**Décideur :** AKORIS Core Team  
+# ADR-003 : Pourquoi une machine à états ?
 
 ## Contexte
 
-AKORIS gouverne le développement logiciel : il faut un mécanisme formel pour suivre et contraindre l'évolution du projet (draft → développement → audit → release). Sans machine à états, rien n'empêche de passer en production sans audit.
-
-## Options envisagées
-
-| Option | Points forts | Points faibles |
-|--------|-------------|----------------|
-| **Machine à états intégrée** | Contrôle total, transitions avec Quality Gates | Développement internal |
-| **Bibliothèque externe (XState)** | Riche, visuelle, testée | Surcharge pour 7 états, courbe d'apprentissage |
-| **Fichier JSON simple + logique** | Simple, lisible, versionnable | Validation manuelle des transitions |
+Un projet AKORIS passe par plusieurs phases : conception, développement, validation, livraison. Ces phases ont des règles (Quality Gates) et des autorisations (rôles RACI). Sans formalisation, le projet pourrait passer d'un état à un autre de manière arbitraire.
 
 ## Décision
 
-**Fichier `state.json` + logique dans `StateMachineEngine`.**
+Nous utilisons une machine à états formelle avec 7 états et 8 transitions, stockée dans `state-machine.json`.
 
-La machine est définie dans `registry/state-machine.json` (séparation données / logique). Le service `StateMachineEngine` charge la machine, valide les transitions et persiste l'état.
+## Alternatives considérées
+
+- **Pas de machine** : les phases sont simplement descriptives, sans contrôle. Le CLI n'impose aucune discipline.
+- **Machine en dur dans le code** : inflexible, nécessite une recompilation pour tout changement.
+- **Machine externe (service distant)** : lourd, nécessite un réseau et une infrastructure.
+
+## Justification
+
+- La machine est déclarative (JSON) : elle peut être modifiée sans recompiler le CLI, et même personnalisée par projet.
+- Elle impose une discipline : une transition ne peut être exécutée que si les Quality Gates requis sont PASS.
+- Elle est portable : le même fichier peut être interprété par d'autres outils (SDK, API).
+- Elle est alignée avec la philosophie "gouvernance first" d'AKORIS.
 
 ## Conséquences
 
-- 7 états, 8 transitions, toutes avec gates et autorisations
-- État persistant dans `.akoris/state.json`
-- 5 sous-commandes : `show`, `history`, `transition`, `info`, `export`
-- Export en 3 formats : markdown, json, text
-- Vérification systématique : `canTransition()` avant `transition()`
-- Quality Gates vérifiés par `quality check` avant chaque transition
+- Les commandes `state show`, `state transition`, `state export` dépendent de ce fichier.
+- Les projets peuvent ajouter des états personnalisés ou modifier les transitions (sans casser le CLI, car le CLI lit le fichier dynamiquement).
 
-## Références
+## Statut
 
-- Fichier machine : `registry/state-machine.json`
-- Service : `src/services/state-machine.service.ts`
+Accepté.
