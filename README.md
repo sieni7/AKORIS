@@ -171,6 +171,8 @@ akoris status
 | [03_TERMINOLOGY.md](constitution/03_TERMINOLOGY.md) | Glossaire normatif (60+ entrées) |
 | [04_LICENSING.md](constitution/04_LICENSING.md) | Licence MIT et conditions de contribution |
 | [00_GETTING_STARTED.md](docs/guides/00_GETTING_STARTED.md) | Guide de démarrage complet (12 étapes + exemple) |
+| [FAQ.md](docs/FAQ.md) | 20 questions fréquentes sourcées aux documents normatifs |
+| [architecture.mmd](docs/architecture.mmd) | Diagrammes officiels (hiérarchie, méthode, états, monorepo) |
 | [CHANGELOG.md](CHANGELOG.md) | Historique des versions et modifications |
 
 ---
