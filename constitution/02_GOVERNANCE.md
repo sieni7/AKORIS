@@ -1,6 +1,6 @@
 # Gouvernance d'AKORIS
 
-> **Version** : 1.0.0  
+> **Version** : 1.0.1  
 > **Statut** : Normatif  
 > **Date** : 2026-09-04  
 > **Approbation** : AKORIS Core Team
@@ -90,7 +90,7 @@ Conseil Constitutionnel
     ↓  (interprète et préserve la Constitution)
 Comité de Gouvernance
     ↓  (valide les politiques, ADR, dérogations)
-Registres Locaux / Agents
+Registry Locaux / Agents
     ↓  (exécutent les actions dans le cadre autorisé)
 ```
 
@@ -145,7 +145,7 @@ Recommandation IA : Une validation sans justification est invalide. Documente to
 **Mission** : Rôle indépendant chargé de vérifier la conformité globale.
 
 **Pouvoirs** :
-- Accès à tous les registres.
+- Accès à tous les Registry.
 - Reporte directement au Conseil Constitutionnel.
 - Peut déclencher des audits inopinés.
 
@@ -270,9 +270,20 @@ Recommandation IA : Un veto n'est pas une fin en soi. Il te signale qu'une actio
 
 ## 3. Cycle de vie
 
+### 3.0. Distinction `state-machine.json` et `state.json`
+
+Deux artefacts distincts régissent le cycle de vie dans une instance AKORIS :
+
+| Artefact | Rôle | Contenu | Mutabilité |
+|---|---|---|---|
+| `state-machine.json` | **Machine normative** : définit les états et transitions autorisés | États, transitions, exigences, autorités | Statique (référence de validation) |
+| `state.json` | **État courant** : position actuelle d'un artefact ou de l'instance | État courant horodaté | Dynamique (évolue à chaque transition) |
+
+**Règle** : `state-machine.json` est la norme de validation ; `state.json` est l'état factuel. Une transition de `state.json` n'est autorisée que si elle est définie dans `state-machine.json`.
+
 ### 3.1. PROPOSITION
 
-Un besoin est identifié. Une Proposition formelle est soumise via le Registre.
+Un besoin est identifié. Une Proposition formelle est soumise via le Registry.
 
 **Contenu requis** :
 - Contexte
@@ -395,7 +406,7 @@ Artefact clôturé. Connaissances capitalisées.
 
 **Action** : La décision de rejet est documentée avec les raisons. Un retour constructif est fourni. Une nouvelle proposition peut être créée si les circonstances ou les conditions ont changé.
 
-**Transition** : `REJECTED → ARCHIVED` (définitif)
+**Transition** : `REJECTED → ARCHIVED` est définitif pour l'artefact concerné. Une nouvelle proposition peut être créée (`PROPOSITION-002`) qui supersede ou reprend l'ancienne, mais l'ancien rejet reste historiquement intact.
 
 ---
 
@@ -424,6 +435,25 @@ Un Quality Gate est un point de contrôle formel permettant de déterminer si un
 Les Quality Gates sont obligatoires lorsqu'ils sont définis comme tels par la gouvernance applicable.
 
 Recommandation IA : Les Quality Gates sont un outil de rigueur, pas de rigidité. Ils sont proportionnés au risque.
+
+### 4.1.1. Quality Gate vs Decision Gate
+
+| Concept | Nature | Automatisable | Résultat |
+|---|---|---|---|
+| **Quality Gate** | Contrôle technique | Oui | PASS / FAIL |
+| **Decision Gate** | Décision humaine | Non | GO / NO-GO / CONDITIONAL GO |
+
+**Règle** : Un Quality Gate peut être automatisé. La décision de release est **toujours humaine**.
+
+**Règle normative** : L'IA produit. Les contrôles vérifient. L'humain décide. Un Quality Gate (PASS/FAIL) ne constitue jamais, à lui seul, une autorisation de mise en production. Toute transition vers un état de production (`VALIDATED → RELEASED`) requiert un Decision Gate humain (GO / NO-GO / CONDITIONAL GO).
+
+```
+Quality Gate (PASS/FAIL)
+    ↓
+Human Decision Gate (GO / NO-GO / CONDITIONAL GO)
+    ↓
+Transition autorisée
+```
 
 ---
 
@@ -679,6 +709,29 @@ Recommandation IA : Tes actions sont tracées. Agis comme si tout ce que tu fais
 - Une affirmation sans preuve est invalide.
 - La charge de la preuve incombe à celui qui émet l'affirmation.
 
+**Niveaux de preuve :**
+
+| Niveau | Description | Mécanisme |
+|---|---|---|
+| **E1 — Trace** | Fichier + auteur + timestamp + contexte | Métadonnées dans le Registry |
+| **E2 — Intégrité** | Preuve que le contenu n'a pas été altéré | SHA-256 du fichier |
+| **E3 — Preuve forte** | Engagement formel | Commit signé (GPG) ou signature cryptographique |
+
+**Objet `Evidence`** : Chaque preuve est un artefact structuré, enregistré dans le Registry, comportant :
+
+| Champ | Description | Exigence |
+|---|---|---|
+| `id` | Identifiant unique de la preuve | Obligatoire |
+| `level` | Niveau de preuve (`E1`, `E2`, `E3`) | Obligatoire |
+| `type` | Type de preuve (rapport, signature, hash, audit…) | Obligatoire |
+| `artifactRef` | Référence à l'artefact validé | Obligatoire |
+| `author` | Auteur de la preuve | Obligatoire |
+| `timestamp` | Date/heure de création | Obligatoire |
+| `source` | Origine de la preuve | Obligatoire |
+| `hash` | Empreinte (requis si niveau `E2` ou `E3`) | Selon niveau |
+
+Une preuve est **immuable** : elle ne peut être ni altérée ni supprimée. Une correction passe par une nouvelle preuve.
+
 Recommandation IA : Tu es responsable de la preuve de tes actions.
 
 ---
@@ -785,11 +838,21 @@ Un projet adopte AKORIS en initialisant une instance :
 akoris init [nom-du-projet]
 ```
 
-Cette commande crée la structure minimale :
-- `.akoris/` avec sous-dossiers.
-- `manifest.json` (identité du projet).
-- `state.json` (état initial : `PROPOSITION`).
-- `.gitignore` avec exclusion des secrets.
+Cette commande crée la structure **canonique** de l'instance (voir `00_AKORIS.md` §6.1) :
+
+```
+.akoris/
+├── manifest.json            (identité, version, profil de l'instance)
+├── state.json               (état courant, dynamique)
+├── state-machine.json       (machine normative, statique)
+├── registry/
+│   ├── contracts/           (contrats des agents)
+│   ├── policies/            (politiques POL-XXX)
+│   ├── decisions/           (ADR)
+│   ├── profiles/            (configurations Lite/Standard/Critical)
+│   └── schemas/             (schémas de validation)
+└── .gitignore               (exclusion des secrets)
+```
 
 Recommandation IA : L'initialisation est la première décision de gouvernance. Prends-la au sérieux.
 
@@ -849,4 +912,88 @@ Recommandation IA : L'évolution est documentée et versionnée. Chaque modifica
 
 ---
 
-> **Fin du document — Gouvernance d'AKORIS v1.0.0**
+## 11. Évolution de l'écosystème
+
+### 11.1. Métriques (KPIs)
+
+AKORIS définit un cadre de métriques pour évaluer la santé des instances :
+
+| Métrique | Description | Unité |
+|---|---|---|
+| **Taux de QG réussis** | Pourcentage de Quality Gates PASS sur une période donnée | % |
+| **Dette résolue** | Nombre de dettes techniques traitées vs détectées | Ratio |
+| **Couverture documentaire** | % de documents à jour vs total requis | % |
+| **Temps de cycle** | Temps moyen entre PROPOSITION et VALIDATED | Jours |
+| **Conformité des agents** | % d'agents dont les contrats sont à jour | % |
+
+Ces métriques sont collectées automatiquement par le Core Engine et exposées via le Dashboard.
+
+---
+
+### 11.2. Cycle de vie des agents (Sunset)
+
+Les agents AKORIS suivent un cycle de vie standardisé :
+
+| Statut | Description | Transitions possibles |
+|---|---|---|
+| **active** | Agent opérationnel | → deprecated |
+| **deprecated** | Agent obsolète, à remplacer, encore utilisable | → sunset, active |
+| **sunset** | Agent en fin de vie, plus de support, déconseillé | → archived |
+| **archived** | Agent retiré, conservé pour référence | (terminal) |
+
+Un agent ne peut passer de `active` à `archived` qu'après une période de `deprecated` et `sunset` documentée.
+
+---
+
+### 11.3. Audit automatisé
+
+**Principe** : L'audit automatisé assiste l'Auditeur humain. Il vérifie, signale et recommande, mais ne modifie pas les livrables.
+
+**Flux** :
+
+```
+Agents producteurs
+       ↓
+Livrables
+       ↓
+Agent QA / Audit automatisé
+       ↓
+Evidence
+       ↓
+Quality Gate
+       ↓
+Rapport d'audit
+       ↓
+Auditeur humain (validation finale)
+```
+
+**Règle** : L'auditeur (humain ou automatisé) ne doit pas modifier le livrable qu'il est chargé d'auditer.
+
+---
+
+### 11.4. Métriques et Sunset dans le Registry
+
+Les métriques et les statuts de sunset sont stockés dans le Registry pour assurer la traçabilité.
+
+- `registry/metrics/` : métriques collectées
+- `registry/sunset/` : statuts de sunset des agents
+
+---
+
+### 11.5. Commandes CLI planifiées
+
+| Commande | Fonction |
+|---|---|
+| `akoris doctor` | Vérifier l'intégrité de l'instance (frontière `.akoris/`/`docs/`) |
+| `akoris registry validate` | Valider la cohérence du Registry (références, schémas, intégrité) |
+| `akoris state transition` | Exécuter une transition d'état selon `state-machine.json` |
+
+### 11.6. Documentation planifiée
+
+- `docs/guides/` : guides utilisateur
+- `docs/api/` : documentation API
+- `docs/architecture/` : documentation technique
+
+---
+
+> **Fin du document — Gouvernance d'AKORIS v1.0.1**

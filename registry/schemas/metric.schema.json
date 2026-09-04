@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AKORIS Metric Schema",
+  "type": "object",
+  "required": ["id", "name", "unit", "source"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^MET-[0-9]{3}$" },
+    "name": { "type": "string" },
+    "description": { "type": "string" },
+    "unit": { "type": "string" },
+    "source": { "type": "string", "enum": ["core", "registry", "agent", "gate"] },
+    "target": { "type": "number" },
+    "warning": { "type": "number" },
+    "critical": { "type": "number" },
+    "metadata": { "type": "object" }
+  }
+}

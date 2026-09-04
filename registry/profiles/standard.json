@@ -1,0 +1,11 @@
+{
+  "version": "1.0.0",
+  "profile": "standard",
+  "description": "Profil standard pour projets professionnels",
+  "evidence": { "levels": ["E1", "E2"] },
+  "qualityGates": { "mode": "complete", "count": 8 },
+  "audit": { "mode": "planned" },
+  "agents": { "default": ["CORE-*", "DEV-* (6)", "QA-* (4)"] },
+  "adr": { "required": true },
+  "decisionGate": { "required": true }
+}

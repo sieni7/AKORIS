@@ -1,6 +1,6 @@
-# Licence et Contribution — AKORIS v1.0.0
+# Licence et Contribution — AKORIS v1.0.1
 
-> **Version** : 1.0.0  
+> **Version** : 1.0.1  
 > **Statut** : Normatif  
 > **Date** : 2026-09-04  
 > **Approbation** : AKORIS Core Team
@@ -10,6 +10,8 @@
 ## Préambule
 
 AKORIS est une méthode de gouvernance pour le développement logiciel assisté par IA. Ce document définit les conditions d'utilisation, de modification, de distribution et de contribution à AKORIS.
+
+> **Clarification :** La méthode AKORIS, sa documentation et ses artefacts sont distribués sous licence **MIT exclusivement**. Aucune autre licence (notamment Creative Commons) ne s'applique aux contenus de ce dépôt.
 
 Il complète la Constitution (`01_CONSTITUTION.md`) et la Gouvernance (`02_GOVERNANCE.md`) en encadrant les aspects juridiques et pratiques de l'adoption et de la contribution.
 
@@ -246,9 +248,9 @@ Recommandation IA : Avant de mettre à jour une instance, consulte le CHANGELOG 
 
 Pour toute question relative à cette licence, aux marques, ou aux autorisations spéciales :
 
-- **Email** : core@akoris.io *(à définir)*
-- **Dépôt officiel** : *(à définir)*
-- **Documentation** : *(à définir)*
+- **Dépôt officiel** : https://github.com/sieni7/AKORIS
+- **Email** : non publié à ce jour
+- **Documentation** : voir le dépôt officiel, répertoire `constitution/`
 
 ### 9.2. Signalement de violations
 
@@ -262,8 +264,9 @@ Recommandation IA : Si tu détectes une violation de cette licence, signale-la. 
 
 | Version | Date | Modifications |
 |---|---|---|
+| 1.0.1 | 2026-09-04 | Clause "MIT exclusif" ajoutée, placeholders §9 renseignés |
 | 1.0.0 | 2026-09-04 | Création initiale |
 
 ---
 
-> **Fin du document — Licence et Contribution AKORIS v1.0.0**
+> **Fin du document — Licence et Contribution AKORIS v1.0.1**

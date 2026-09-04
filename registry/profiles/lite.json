@@ -1,0 +1,11 @@
+{
+  "version": "1.0.0",
+  "profile": "lite",
+  "description": "Profil allégé pour prototypes et projets solo",
+  "evidence": { "levels": ["E1"] },
+  "qualityGates": { "mode": "essential", "gates": ["QG-001", "QG-002"] },
+  "audit": { "mode": "deferred" },
+  "agents": { "default": ["CORE-01", "CORE-03", "DEV-01"] },
+  "adr": { "required": false },
+  "decisionGate": { "required": false }
+}

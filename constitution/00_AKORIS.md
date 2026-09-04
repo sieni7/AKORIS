@@ -8,7 +8,7 @@
 
 **AKORIS** (Adaptive Knowledge & Orchestrated Review for Intelligent Software) est un standard de gouvernance pour le développement logiciel assisté par IA.
 
-C'est un référentiel et un CLI qui transforment des prompts en processus contrôlés : contrats, règles, machine à états.
+C'est une **méthode de gouvernance** qui transforme des prompts en processus contrôlés : contrats, règles, machine à états.
 
 > **Définition :** *Standard de gouvernance pour le développement logiciel assisté par IA.*
 
@@ -95,11 +95,31 @@ Recommandation IA :
 
 | Interface | Usage |
 |---|---|
-| **CLI** | Commandes `akoris init`, `state show`, `search`, `alias` pour les développeurs. |
+| **CLI (prévu)** | Commandes `akoris init`, `state show`, `search`, `alias` pour les développeurs. *Statut : prévu dans l'écosystème.* |
 | **Control Center (Dashboard)** | Interface web pour la supervision, l'historique et les transitions d'état. |
 | **API & SDK** | Intégration programmatique et automatisation. |
 
 Recommandation IA : Lorsque tu interagis avec le CLI, privilégie les sorties `--json` pour un traitement structuré. Si tu développes un outil d'intégration, utilise le SDK pour te conformer aux contrats de l'API plutôt que d'appeler directement les commandes shell.
+
+### 6.1. Structure canonique `.akoris/`
+
+Une instance AKORIS matérialise sa gouvernance dans le répertoire `.akoris/` selon la structure canonique unique suivante :
+
+```
+.akoris/
+├── manifest.json            (identité, version, profil de l'instance)
+├── state.json               (état courant, dynamique)
+├── state-machine.json       (machine normative, statique)
+├── registry/
+│   ├── contracts/           (contrats des agents)
+│   ├── policies/            (politiques POL-XXX)
+│   ├── decisions/           (ADR)
+│   ├── profiles/            (configurations Lite/Standard/Critical)
+│   └── schemas/             (schémas de validation)
+└── .gitignore               (exclusion des secrets)
+```
+
+Cette structure est la **référence unique**. Toute instance est conforme si elle la respecte. Elle est détaillée dans `02_GOVERNANCE.md` (§10).
 
 ---
 
@@ -118,6 +138,8 @@ AKORIS définit 40 agents répartis en 5 domaines :
 
 Chaque agent a un contrat formel : mission, responsabilités, limites, interdépendances.
 
+> **Note** : Le nombre d'agents (40) et leur répartition par domaine sont **calculés depuis `registry/agents/`**, le catalogue de référence. Le présent tableau est une représentation ; la source de vérité est le Registry.
+
 Recommandation IA : Pour toute action, identifie à quel agent elle se rattache. Si aucune mission ne correspond, c'est que le périmètre n'est pas couvert. Dans ce cas, propose un nouveau contrat ou un ajustement du Registry.
 
 ---
@@ -134,10 +156,21 @@ Recommandation IA : Avant d'utiliser ou de créer une règle, vérifie qu'elle n
 
 ---
 
+### 8.1. Frontière `.akoris/` vs `docs/`
+
+| Répertoire | Contenu | Règle |
+|---|---|---|
+| `.akoris/` | Gouvernance du projet (Registry, contrats, politiques, ADR, preuves) | Source de vérité |
+| `docs/` | Documentation du logiciel (README, guides, API docs) | Complémentaire |
+
+**Règle** : Une information de gouvernance n'appartient pas à `docs/`.
+
+---
+
 **AKORIS est un standard de gouvernance pour le développement logiciel assisté par IA.**
 
 **Build software with method, not with chance.**
 
 ---
 
-*AKORIS v1.0.0 — Constitution*
+*AKORIS v1.0.1 — Constitution*

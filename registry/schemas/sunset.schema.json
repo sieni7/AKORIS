@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AKORIS Sunset Schema",
+  "type": "object",
+  "required": ["agentId", "status", "effectiveDate"],
+  "properties": {
+    "agentId": { "type": "string" },
+    "status": { "type": "string", "enum": ["active", "deprecated", "sunset", "archived"] },
+    "effectiveDate": { "type": "string", "format": "date" },
+    "reason": { "type": "string" },
+    "replacement": { "type": "string" },
+    "deprecatedDate": { "type": "string", "format": "date" },
+    "sunsetDate": { "type": "string", "format": "date" },
+    "archivedDate": { "type": "string", "format": "date" },
+    "metadata": { "type": "object" }
+  }
+}

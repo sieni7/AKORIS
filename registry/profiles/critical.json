@@ -1,0 +1,11 @@
+{
+  "version": "1.0.0",
+  "profile": "critical",
+  "description": "Profil renforcé pour projets sensibles",
+  "evidence": { "levels": ["E1", "E2", "E3"] },
+  "qualityGates": { "mode": "complete+reinforced", "count": 8, "externalReview": true },
+  "audit": { "mode": "mandatory+external" },
+  "agents": { "default": ["all-critical"] },
+  "adr": { "required": true, "externalReview": true },
+  "decisionGate": { "required": true, "multiple": true }
+}

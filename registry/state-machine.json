@@ -1,0 +1,30 @@
+{
+  "version": "1.0.1",
+  "schema": "state-machine.schema.json",
+  "initialState": "PROPOSITION",
+  "terminalStates": ["ARCHIVED"],
+  "states": [
+    { "id": "PROPOSITION", "label": "Proposition", "phase": "initiation" },
+    { "id": "DRAFT", "label": "Ébauche", "phase": "spécification" },
+    { "id": "PLANNED", "label": "Planifié", "phase": "planification" },
+    { "id": "ACTIVE", "label": "Actif", "phase": "exécution" },
+    { "id": "AUDIT", "label": "Audit", "phase": "contrôle" },
+    { "id": "VALIDATED", "label": "Validé", "phase": "approbation" },
+    { "id": "RELEASED", "label": "Livré", "phase": "production" },
+    { "id": "ARCHIVED", "label": "Archivé", "phase": "clôture" }
+  ],
+  "transitions": [
+    { "from": "PROPOSITION", "to": "DRAFT", "requires": ["QG-PROPOSITION"], "required": true, "authorizedBy": ["VALIDATOR"] },
+    { "from": "DRAFT", "to": "PLANNED", "requires": ["QG-DRAFT"], "required": true, "authorizedBy": ["VALIDATOR"] },
+    { "from": "PLANNED", "to": "ACTIVE", "requires": ["QG-PLANNED"], "required": true, "authorizedBy": ["VALIDATOR"] },
+    { "from": "ACTIVE", "to": "AUDIT", "requires": ["QG-ACTIVE"], "required": true, "authorizedBy": ["VALIDATOR"] },
+    { "from": "AUDIT", "to": "VALIDATED", "requires": ["QG-AUDIT"], "required": true, "authorizedBy": ["VALIDATOR"] },
+    { "from": "VALIDATED", "to": "RELEASED", "requires": ["QG-VALIDATED"], "required": true, "authorizedBy": ["HUMAN_DECISION"] },
+    { "from": "RELEASED", "to": "ARCHIVED", "requires": [], "required": false, "authorizedBy": ["MAINTAINER"] }
+  ],
+  "exceptionStates": {
+    "BLOCKED": { "from": ["DRAFT", "PLANNED", "ACTIVE", "AUDIT"], "to": ["ACTIVE", "REJECTED"] },
+    "REJECTED": { "from": ["DRAFT", "PLANNED", "ACTIVE", "AUDIT", "VALIDATED"], "to": ["ARCHIVED"] },
+    "SUPERSEDED": { "from": ["ACTIVE", "VALIDATED", "RELEASED"], "to": ["ARCHIVED"] }
+  }
+}

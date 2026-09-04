@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AKORIS State Machine Schema",
+  "type": "object",
+  "required": ["version", "initialState", "terminalStates", "states", "transitions"],
+  "properties": {
+    "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "schema": { "type": "string" },
+    "initialState": { "type": "string" },
+    "terminalStates": { "type": "array", "items": { "type": "string" } },
+    "states": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "phase"],
+        "properties": {
+          "id": { "type": "string" },
+          "label": { "type": "string" },
+          "phase": { "type": "string" }
+        }
+      }
+    },
+    "transitions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["from", "to", "requires", "authorizedBy"],
+        "properties": {
+          "from": { "type": "string" },
+          "to": { "type": "string" },
+          "requires": { "type": "array", "items": { "type": "string" } },
+          "required": { "type": "boolean" },
+          "authorizedBy": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "exceptionStates": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "from": { "type": "array", "items": { "type": "string" } },
+          "to": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    }
+  }
+}

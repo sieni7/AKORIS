@@ -1,6 +1,6 @@
 # Terminologie AKORIS
 
-> **Version** : 1.0.0  
+> **Version** : 1.0.1  
 > **Statut** : Normatif  
 > **Date** : 2026-09-04  
 > **Approbation** : AKORIS Core Team
@@ -32,7 +32,7 @@ Recommandation IA : Ce glossaire est ton dictionnaire de référence. Avant d'ut
 
 **Portée** : Globale.
 
-**Usage** : Désigne la méthode, ses principes, ses règles, ses processus et ses artefacts fondamentaux.
+**Usage** : Désigne la méthode, ses principes, ses règles, ses processus et ses artefacts fondamentaux. **Le terme "référentiel" est réservé au Registry ; il ne désigne pas AKORIS lui-même.** AKORIS est une méthode, le Registry est un référentiel de gouvernance.
 
 **Relation** : La méthode est appliquée via une **Instance AKORIS**.
 
@@ -295,6 +295,34 @@ Recommandation IA : Si un Superviseur humain exerce son droit de veto ou d'inter
 **Usage** : Garantit l'intégrité des décisions.
 
 **Relation** : S'applique aux **Porteurs**, **Validateurs** et **Auditeurs**.
+
+---
+
+### Adapter
+
+**Définition** : Composant technique permettant à un agent AKORIS d'interagir avec un moteur d'exécution externe. L'adaptateur traduit les contrats AKORIS en instructions compatibles avec le moteur cible (OpenCode, Cursor, Codex, etc.).
+
+**Portée** : Écosystème AKORIS.
+
+**Usage** : L'adaptateur est l'interface technique entre la gouvernance (contrats, politiques) et l'exécution (moteur IA). Il peut être développé par la communauté ou par l'équipe AKORIS.
+
+**Relation** : Relie un **Agent AKORIS** à un **Execution Engine**.
+
+📌 **Recommandation IA** : Un adaptateur n'est pas un agent. Il est un outil technique qui permet à un agent de s'exécuter. Si tu conçois un nouvel adaptateur, assure-toi qu'il respecte les contrats AKORIS.
+
+---
+
+### Execution Engine
+
+**Définition** : Moteur d'exécution externe (OpenCode, Cursor, GitHub Copilot, Claude Code, etc.) qui exécute les instructions produites par les agents.
+
+**Portée** : Écosystème AKORIS.
+
+**Usage** : L'execution engine est un exécutant. Il ne définit pas les règles, il les applique. Il est remplaçable : un projet AKORIS peut utiliser OpenCode aujourd'hui et Cursor demain.
+
+**Relation** : Consommé via un **Adapter** par un **Agent AKORIS**.
+
+📌 **Recommandation IA** : L'execution engine ne doit pas être confondu avec l'agent. L'agent définit ce qui doit être fait ; l'execution engine le fait. AKORIS est indépendant de tout moteur d'exécution spécifique.
 
 ---
 
@@ -576,7 +604,7 @@ Recommandation IA : Un ADR n'est pas une simple note. C'est un artefact de gouve
 
 **Portée** : Instance.
 
-**Usage** : La machine à états est le moteur du cycle de vie des artefacts.
+**Usage** : La machine à états est le moteur du cycle de vie des artefacts. Elle se matérialise par deux artefacts distincts : `state-machine.json` (la norme de validation, statique) et `state.json` (l'état courant factuel, dynamique). Une transition de l'état courant n'est autorisée que si elle est définie dans la machine normative.
 
 **Relation** : Gère les **États** et les **Transitions**.
 
@@ -585,15 +613,13 @@ Recommandation IA : Un ADR n'est pas une simple note. C'est un artefact de gouve
 ## 7. Commandes et interfaces
 
 ### CLI
-**Définition** : Interface en ligne de commande permettant d'interagir avec une instance AKORIS pour consulter, modifier et exécuter des actions de gouvernance.
+**Définition** : Interface en ligne de commande **prévue** dans l'écosystème AKORIS permettant d'interagir avec une instance pour consulter, modifier et exécuter des actions de gouvernance.
 
 **Portée** : Utilisateur (développeur, administrateur).
 
-**Usage** : Le CLI est l'interface terminal d'AKORIS. Il expose des commandes qui permettent d'initialiser une instance, de consulter l'état, de naviguer dans le Registry, de valider des transitions et d'exécuter des prompts gouvernés.
+**Usage** : Le CLI est l'interface terminal d'AKORIS. Il expose des commandes qui permettent d'initialiser une instance, de consulter l'état, de naviguer dans le Registry, de valider des transitions et d'exécuter des prompts gouvernés. **Statut : prévu dans l'écosystème, aucune implémentation dans le présent dépôt de spécification.**
 
-**Relation** : Interface de l'**Écosystème AKORIS**. Complémentaire au **Dashboard** et à l'**API**.
-
-Recommandation IA : Le CLI est un outil d'exécution, pas un outil de définition. Il ne crée pas de règles, il les applique.
+**Relation** : Interface de l'**Écosystème AKORIS**. Complémentaire au **Dashboard** et à l'**API**. Le CLI est un outil d'exécution, pas un outil de définition. Il ne crée pas de règles, il les applique.
 
 ---
 
@@ -741,4 +767,4 @@ Recommandation IA : Un livrable AKORIS n'est jamais isolé. Il est toujours ratt
 
 ---
 
-> **Fin du document — Terminologie AKORIS v1.0.0**
+> **Fin du document — Terminologie AKORIS v1.0.1**
