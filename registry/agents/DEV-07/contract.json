@@ -1,0 +1,19 @@
+{
+  "agentId": "DEV-07",
+  "name": "Performance Engineer",
+  "version": "1.0.0",
+  "domain": "DEV",
+  "criticity": "moyenne",
+  "mission": "Optimisation du rendu, du chargement, du cache et des performances globales.",
+  "responsibilities": [
+    "Optimisation du rendu",
+    "Optimisation du chargement",
+    "Gestion du cache"
+  ],
+  "limits": [
+    "Ne pas auditer la sécurité",
+    "Ne pas définir la stratégie marketing"
+  ],
+  "dependencies": [],
+  "capabilities": []
+}
