@@ -1,0 +1,10 @@
+{
+  "projectName": "AKORIS",
+  "projectId": "akoris-self",
+  "akorisVersion": "1.0.1",
+  "registryPath": "./registry/",
+  "agents": ["CORE-01", "DEV-01", "QA-01", "EXP-01", "GOV-01"],
+  "domain": "methodology",
+  "createdAt": "2026-09-04",
+  "updatedAt": "2026-09-04"
+}

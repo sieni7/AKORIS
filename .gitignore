@@ -17,3 +17,7 @@ Thumbs.db
 node_modules/
 dist/
 build/
+
+# Turborepo
+.turbo/
+*.tsbuildinfo

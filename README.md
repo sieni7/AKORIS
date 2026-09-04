@@ -2,6 +2,11 @@
 
 > **Build software with method, not with chance.**
 
+> **⚠️ Branche `impl` — développement de l'écosystème AKORIS**
+>
+> La méthode AKORIS est gelée en `v1.0.1` sur la branche `main`.
+> Cette branche contient l'implémentation de référence (Core, CLI, Dashboard).
+
 ---
 
 ## 1. Qu'est-ce qu'AKORIS ?
@@ -226,4 +231,4 @@ SOFTWARE.
 
 ---
 
-*AKORIS v1.0.1 — 2026-09-04*
+*AKORIS v1.0.1 (méthode) — v0.1.0-dev (code) — 2026-09-04*

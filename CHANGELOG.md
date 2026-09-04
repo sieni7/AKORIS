@@ -6,6 +6,27 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/) et ce pr
 
 ---
 
+## [0.1.0-dev] — 2026-09-04
+
+### Statut
+🚧 **v0.1.0-dev — Branche `impl` initialisée**
+
+Ouverture de la branche de développement pour l'écosystème AKORIS (Core, CLI, Dashboard).
+
+### Ajouté
+- Branche `impl` pour le développement de l'écosystème AKORIS.
+- Monorepo pnpm : `packages/core/`, `packages/cli/`, `apps/dashboard/`.
+- Self-hosting `.akoris/` appliqué au dépôt (`manifest.json`, `state.json`).
+- `tsconfig.base.json` partagé, `package.json` racine avec scripts build/test/dev.
+- Placeholder `scripts/validate-registry.js`.
+
+### Note
+- La méthode AKORIS reste en `v1.0.1` (gelée sur `main`).
+- Le code suit son propre versionnement (`v0.1.0-dev`).
+- Versionning séparé : `@akoris/core@0.1.0`, `@akoris/cli@0.1.0`.
+
+---
+
 ## [1.0.1] — 2026-09-04
 
 ### Statut
