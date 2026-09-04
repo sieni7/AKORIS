@@ -15,5 +15,21 @@
     "Ne pas approuver seul la release"
   ],
   "dependencies": [],
-  "capabilities": []
+  "capabilities": [],
+  "raci": {
+    "R": [
+      "CORE-08"
+    ],
+    "A": [
+      "CORE-01"
+    ],
+    "C": [
+      "QA-01",
+      "QA-07"
+    ],
+    "I": [
+      "GOV-01",
+      "GOV-02"
+    ]
+  }
 }

@@ -15,5 +15,32 @@
   "limits": [
     "Ne pas valider les spécifications fonctionnelles",
     "Ne pas administrer les pipelines"
+  ],
+  "dependencies": [
+    {
+      "agentId": "CORE-01",
+      "type": "mandatory",
+      "description": "Nécessite l'Orchestrator pour la coordination"
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "write_docs",
+      "name": "Rédiger la documentation",
+      "description": "Rédiger la documentation technique",
+      "type": "can"
+    },
+    {
+      "id": "maintain_adr",
+      "name": "Maintenir les ADR",
+      "description": "Maintenir les décisions architecturales",
+      "type": "can"
+    },
+    {
+      "id": "capitalize_knowledge",
+      "name": "Capitaliser les connaissances",
+      "description": "Capitaliser les connaissances du projet",
+      "type": "can"
+    }
   ]
 }

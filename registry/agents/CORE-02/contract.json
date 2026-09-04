@@ -15,5 +15,20 @@
     "Ne pas planifier le backlog"
   ],
   "dependencies": [],
-  "capabilities": []
+  "capabilities": [],
+  "raci": {
+    "R": [
+      "CORE-02"
+    ],
+    "A": [
+      "CORE-01"
+    ],
+    "C": [
+      "DEV-01",
+      "DEV-02"
+    ],
+    "I": [
+      "GOV-01"
+    ]
+  }
 }

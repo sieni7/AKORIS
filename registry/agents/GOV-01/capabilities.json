@@ -1,4 +1,23 @@
 {
   "agentId": "GOV-01",
-  "capabilities": []
+  "capabilities": [
+    {
+      "id": "guard_methodology",
+      "name": "Garder la méthodologie",
+      "description": "Garantir l'application de la méthode AKORIS",
+      "type": "can"
+    },
+    {
+      "id": "audit_compliance",
+      "name": "Auditer la conformité",
+      "description": "Auditer la conformité méthodologique",
+      "type": "can"
+    },
+    {
+      "id": "evolve_standard",
+      "name": "Faire évoluer le standard",
+      "description": "Faire évoluer le standard méthodologique",
+      "type": "can"
+    }
+  ]
 }

@@ -15,5 +15,37 @@
   "limits": [
     "Ne pas définir l'architecture applicative",
     "Ne pas réaliser les audits de sécurité"
+  ],
+  "dependencies": [
+    {
+      "agentId": "CORE-01",
+      "type": "mandatory",
+      "description": "Nécessite l'Orchestrator pour la coordination"
+    },
+    {
+      "agentId": "CORE-02",
+      "type": "mandatory",
+      "description": "Nécessite l'architecture technique"
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "developer_experience",
+      "name": "Expérience développeur",
+      "description": "Optimiser l'expérience développeur",
+      "type": "can"
+    },
+    {
+      "id": "dev_environment",
+      "name": "Environnement de développement",
+      "description": "Configurer les environnements de développement",
+      "type": "can"
+    },
+    {
+      "id": "onboarding",
+      "name": "Onboarding",
+      "description": "Faciliter l'onboarding des développeurs",
+      "type": "can"
+    }
   ]
 }

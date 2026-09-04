@@ -15,5 +15,37 @@
   "limits": [
     "Ne pas trancher les choix UI",
     "Ne pas définir la stratégie de test"
+  ],
+  "dependencies": [
+    {
+      "agentId": "CORE-01",
+      "type": "mandatory",
+      "description": "Nécessite l'Orchestrator pour la coordination"
+    },
+    {
+      "agentId": "CORE-02",
+      "type": "mandatory",
+      "description": "Nécessite l'architecture technique"
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "design_backend",
+      "name": "Concevoir le backend",
+      "description": "Concevoir l'architecture backend",
+      "type": "can"
+    },
+    {
+      "id": "design_services",
+      "name": "Concevoir les services",
+      "description": "Concevoir les services métier",
+      "type": "can"
+    },
+    {
+      "id": "integrate_systems",
+      "name": "Intégrer les systèmes",
+      "description": "Intégrer les systèmes",
+      "type": "can"
+    }
   ]
 }

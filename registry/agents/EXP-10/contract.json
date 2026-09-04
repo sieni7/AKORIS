@@ -15,5 +15,20 @@
     "Ne pas définir la stratégie de sécurité"
   ],
   "dependencies": [],
-  "capabilities": []
+  "capabilities": [],
+  "raci": {
+    "R": [
+      "EXP-10"
+    ],
+    "A": [
+      "CORE-01"
+    ],
+    "C": [
+      "CORE-07",
+      "DEV-08"
+    ],
+    "I": [
+      "GOV-01"
+    ]
+  }
 }

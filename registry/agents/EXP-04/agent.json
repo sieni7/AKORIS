@@ -15,5 +15,32 @@
   "limits": [
     "Ne pas définir le modèle applicatif",
     "Ne pas gérer les données personnelles"
+  ],
+  "dependencies": [
+    {
+      "agentId": "CORE-01",
+      "type": "mandatory",
+      "description": "Nécessite l'Orchestrator pour la coordination"
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "etl",
+      "name": "ETL",
+      "description": "Concevoir des pipelines ETL",
+      "type": "can"
+    },
+    {
+      "id": "data_pipelines",
+      "name": "Pipelines de données",
+      "description": "Concevoir des pipelines de données",
+      "type": "can"
+    },
+    {
+      "id": "analytics",
+      "name": "Analytique",
+      "description": "Concevoir des traitements analytiques",
+      "type": "can"
+    }
   ]
 }

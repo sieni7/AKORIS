@@ -1,4 +1,23 @@
 {
   "agentId": "QA-03",
-  "capabilities": []
+  "capabilities": [
+    {
+      "id": "audit_security",
+      "name": "Auditer la sécurité",
+      "description": "Auditer la sécurité du système",
+      "type": "can"
+    },
+    {
+      "id": "vulnerability_scan",
+      "name": "Scanner les vulnérabilités",
+      "description": "Scanner les vulnérabilités",
+      "type": "can"
+    },
+    {
+      "id": "security_recommendations",
+      "name": "Recommandations de sécurité",
+      "description": "Formuler des recommandations de sécurité",
+      "type": "can"
+    }
+  ]
 }

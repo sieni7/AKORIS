@@ -3,13 +3,16 @@
  * generate-agent-files.js — Génère les fichiers complémentaires des agents.
  *
  * Principes :
- *   - ne crée que les fichiers MANQUANTS (writeIfMissing)
+ *   - par défaut ne crée que les fichiers MANQUANTS (writeIfMissing)
+ *   - avec --overwrite, régénère tous les fichiers dérivés
  *   - ne touche JAMAIS à agent.json (source de vérité du Registry)
+ *   - ne gère NI prompt.md (propriétaire: enrich-prompts.js)
+ *             NI contract.json (propriétaire: enrich-agents.js, deps/caps/raci)
  *   - extrait le contenu réel de agent.json (pas de contenu générique)
- *   - idempotent : une seconde exécution ne crée rien
+ *   - idempotent : une seconde exécution sans --overwrite ne crée rien
  *
  * Fichiers générés par agent :
- *   mission.md, contract.md, prompt.md, contract.json, capabilities.json
+ *   mission.md, contract.md, capabilities.json
  *   + dossiers tests/, examples/, assets/
  */
 
@@ -21,8 +24,10 @@ const path = require('path');
 const ROOT = path.resolve(__dirname, '..');
 const AGENTS_DIR = path.join(ROOT, 'registry', 'agents');
 
-function writeIfMissing(filepath, content) {
-  if (!fs.existsSync(filepath)) {
+const overwrite = process.argv.includes('--overwrite');
+
+function writeFile(filepath, content) {
+  if (overwrite || !fs.existsSync(filepath)) {
     fs.writeFileSync(filepath, content);
     return true;
   }
@@ -52,7 +57,7 @@ ${(agent.responsibilities || []).map((r) => `- ${r}`).join('\n')}
 ## Limites
 ${(agent.limits || []).map((l) => `- ${l}`).join('\n')}
 `;
-  if (writeIfMissing(path.join(agentDir, 'mission.md'), missionContent)) created.push('mission.md');
+  if (writeFile(path.join(agentDir, 'mission.md'), missionContent)) created.push('mission.md');
 
   // contract.md
   const contractContent = `# Contrat — ${name} (${id})
@@ -73,48 +78,17 @@ ${(agent.responsibilities || []).map((r) => `- ${r}`).join('\n')}
 ## Limites
 ${(agent.limits || []).map((l) => `- ${l}`).join('\n')}
 `;
-  if (writeIfMissing(path.join(agentDir, 'contract.md'), contractContent)) created.push('contract.md');
+  if (writeFile(path.join(agentDir, 'contract.md'), contractContent)) created.push('contract.md');
 
-  // prompt.md
-  const promptContent = `# Prompt de référence — ${name} (${id})
-
-Tu es ${name} (${id}) — ${agent.domain} ${agent.criticity === 'critique' ? '⚠️ critique' : ''}.
-
-## Mission
-${agent.mission || 'Mission non définie'}
-
-## Consignes
-${(agent.responsibilities || []).map((r) => `- ${r}`).join('\n')}
-
-## Limites
-${(agent.limits || []).map((l) => `- ${l}`).join('\n')}
-
-## Format de sortie
-Markdown ou JSON selon le contexte.
-`;
-  if (writeIfMissing(path.join(agentDir, 'prompt.md'), promptContent)) created.push('prompt.md');
-
-  // contract.json
-  const contractJson = JSON.stringify({
-    agentId: id,
-    name: name,
-    version: agent.version || '1.0.0',
-    domain: agent.domain,
-    criticity: agent.criticity,
-    mission: agent.mission || '',
-    responsibilities: agent.responsibilities || [],
-    limits: agent.limits || [],
-    dependencies: agent.dependencies || [],
-    capabilities: agent.capabilities || []
-  }, null, 2);
-  if (writeIfMissing(path.join(agentDir, 'contract.json'), contractJson)) created.push('contract.json');
+  // NOTE : prompt.md est géré par scripts/enrich-prompts.js (seul écrivain).
+  // NOTE : contract.json est géré par scripts/enrich-agents.js (deps/caps/raci).
 
   // capabilities.json
   const capabilitiesJson = JSON.stringify({
     agentId: id,
     capabilities: agent.capabilities || []
   }, null, 2);
-  if (writeIfMissing(path.join(agentDir, 'capabilities.json'), capabilitiesJson)) created.push('capabilities.json');
+  if (writeFile(path.join(agentDir, 'capabilities.json'), capabilitiesJson)) created.push('capabilities.json');
 
   // Dossiers
   ['tests', 'examples', 'assets'].forEach((dir) => {
@@ -145,7 +119,7 @@ function main() {
   console.log(`\n✅ ${dirs.length} agents traités`);
 }
 
-module.exports = { generateFilesForAgent, writeIfMissing };
+module.exports = { generateFilesForAgent, writeFile };
 
 if (require.main === module) {
   main();

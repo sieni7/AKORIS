@@ -15,5 +15,19 @@
     "Ne pas définir l'architecture serveur"
   ],
   "dependencies": [],
-  "capabilities": []
+  "capabilities": [],
+  "raci": {
+    "R": [
+      "DEV-06"
+    ],
+    "A": [
+      "CORE-01"
+    ],
+    "C": [
+      "DEV-01"
+    ],
+    "I": [
+      "GOV-01"
+    ]
+  }
 }

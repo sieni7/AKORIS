@@ -1,4 +1,23 @@
 {
   "agentId": "DEV-02",
-  "capabilities": []
+  "capabilities": [
+    {
+      "id": "design_backend",
+      "name": "Concevoir le backend",
+      "description": "Concevoir l'architecture backend",
+      "type": "can"
+    },
+    {
+      "id": "design_services",
+      "name": "Concevoir les services",
+      "description": "Concevoir les services métier",
+      "type": "can"
+    },
+    {
+      "id": "integrate_systems",
+      "name": "Intégrer les systèmes",
+      "description": "Intégrer les systèmes",
+      "type": "can"
+    }
+  ]
 }

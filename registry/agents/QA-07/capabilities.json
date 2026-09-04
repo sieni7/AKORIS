@@ -1,4 +1,23 @@
 {
   "agentId": "QA-07",
-  "capabilities": []
+  "capabilities": [
+    {
+      "id": "analyze_technical_debt",
+      "name": "Analyser la dette technique",
+      "description": "Analyser la dette technique",
+      "type": "can"
+    },
+    {
+      "id": "prioritize_debt",
+      "name": "Prioriser la dette",
+      "description": "Prioriser les éléments de dette",
+      "type": "can"
+    },
+    {
+      "id": "debt_report",
+      "name": "Rapport de dette",
+      "description": "Produire un rapport de dette technique",
+      "type": "can"
+    }
+  ]
 }

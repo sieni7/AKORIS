@@ -15,5 +15,26 @@
   "limits": [
     "Ne pas écrire de code applicatif",
     "Ne pas décider seul des choix métier"
+  ],
+  "dependencies": [],
+  "capabilities": [
+    {
+      "id": "orchestrate",
+      "name": "Orchestrer",
+      "description": "Coordonner tous les agents",
+      "type": "can"
+    },
+    {
+      "id": "arbitrate",
+      "name": "Arbitrer",
+      "description": "Résoudre les conflits",
+      "type": "can"
+    },
+    {
+      "id": "validate_transition",
+      "name": "Valider les transitions",
+      "description": "Valider les transitions d'état",
+      "type": "can"
+    }
   ]
 }

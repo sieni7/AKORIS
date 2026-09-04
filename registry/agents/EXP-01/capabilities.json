@@ -1,4 +1,23 @@
 {
   "agentId": "EXP-01",
-  "capabilities": []
+  "capabilities": [
+    {
+      "id": "optimize_prompts",
+      "name": "Optimiser les prompts",
+      "description": "Optimiser les prompts IA",
+      "type": "can"
+    },
+    {
+      "id": "multi_agent_orchestration",
+      "name": "Orchestration multi-agents",
+      "description": "Orchestrer les agents IA",
+      "type": "can"
+    },
+    {
+      "id": "cost_optimization",
+      "name": "Optimiser les coûts",
+      "description": "Optimiser les coûts d'IA",
+      "type": "can"
+    }
+  ]
 }

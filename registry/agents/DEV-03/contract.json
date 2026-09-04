@@ -15,5 +15,20 @@
     "Ne pas définir le schéma de base de données"
   ],
   "dependencies": [],
-  "capabilities": []
+  "capabilities": [],
+  "raci": {
+    "R": [
+      "DEV-03"
+    ],
+    "A": [
+      "CORE-01"
+    ],
+    "C": [
+      "DEV-02",
+      "DEV-08"
+    ],
+    "I": [
+      "GOV-01"
+    ]
+  }
 }

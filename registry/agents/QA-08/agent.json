@@ -15,5 +15,37 @@
   "limits": [
     "Ne pas designer les interfaces",
     "Ne pas auditer la sécurité"
+  ],
+  "dependencies": [
+    {
+      "agentId": "CORE-01",
+      "type": "mandatory",
+      "description": "Nécessite l'Orchestrator pour la coordination"
+    },
+    {
+      "agentId": "CORE-08",
+      "type": "mandatory",
+      "description": "Nécessite la gouvernance QA"
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "usability_test",
+      "name": "Tester l'utilisabilité",
+      "description": "Tester l'utilisabilité des interfaces",
+      "type": "can"
+    },
+    {
+      "id": "ux_audit",
+      "name": "Audit UX",
+      "description": "Auditer l'expérience utilisateur",
+      "type": "can"
+    },
+    {
+      "id": "ux_recommendations",
+      "name": "Recommandations UX",
+      "description": "Formuler des recommandations UX",
+      "type": "can"
+    }
   ]
 }

@@ -15,5 +15,32 @@
   "limits": [
     "Ne pas décider de la méthode",
     "Ne pas écrire le code applicatif"
+  ],
+  "dependencies": [
+    {
+      "agentId": "CORE-01",
+      "type": "mandatory",
+      "description": "Nécessite l'Orchestrator pour la coordination"
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "manage_release",
+      "name": "Gérer les releases",
+      "description": "Superviser les processus de release",
+      "type": "can"
+    },
+    {
+      "id": "changelog",
+      "name": "CHANGELOG",
+      "description": "Gérer les changelogs",
+      "type": "can"
+    },
+    {
+      "id": "value_stream",
+      "name": "Value Stream",
+      "description": "Superviser la valeur métier",
+      "type": "can"
+    }
   ]
 }

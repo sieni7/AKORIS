@@ -20,6 +20,13 @@ Ouverture de la branche de développement pour l'écosystème AKORIS (Core, CLI,
 - `tsconfig.base.json` partagé, `package.json` racine avec scripts build/test/dev.
 - Placeholder `scripts/validate-registry.js`.
 
+### Enrichissement des agents (N2.3.1)
+- `enrich-agents.js` : ajoute `dependencies`, `capabilities` (achevé, réels par agent) et `raci` — écrit dans `agent.json` et `contract.json`, sans écraser les champs existants ni toucher à `capabilities.json`/`prompt.md`.
+- `enrich-prompts.js` : seul écrivain de `prompt.md`, template enrichi (variables `{{agent}}`/`{{domain}}`/`{{criticity}}`, consignes par domaine).
+- `generate-agent-files.js` : ajout du mode `--overwrite` ; retrait de `prompt.md` et `contract.json` de son périmètre (propriétés respectives enrich-agents/enrich-prompts).
+- `agent.schema.json` : ajout du champ `description` dans `capabilities`.
+- Vidage exploitable : 40 agents enrichis, 120 capacités, RACI sur 40 `contract.json`, validation verte (exit 0).
+
 ### Note
 - La méthode AKORIS reste en `v1.0.1` (gelée sur `main`).
 - Le code suit son propre versionnement (`v0.1.0-dev`).

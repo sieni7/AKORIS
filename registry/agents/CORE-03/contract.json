@@ -15,5 +15,21 @@
     "Ne pas réaliser les audits qualité"
   ],
   "dependencies": [],
-  "capabilities": []
+  "capabilities": [],
+  "raci": {
+    "R": [
+      "CORE-03"
+    ],
+    "A": [
+      "CORE-01"
+    ],
+    "C": [
+      "DEV-01",
+      "DEV-02",
+      "QA-01"
+    ],
+    "I": [
+      "GOV-01"
+    ]
+  }
 }

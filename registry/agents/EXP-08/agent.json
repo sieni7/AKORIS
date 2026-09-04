@@ -15,5 +15,32 @@
   "limits": [
     "Ne pas développer les fonctionnalités",
     "Ne pas définir la conformité réglementaire"
+  ],
+  "dependencies": [
+    {
+      "agentId": "CORE-01",
+      "type": "mandatory",
+      "description": "Nécessite l'Orchestrator pour la coordination"
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "evaluate_models",
+      "name": "Évaluer les modèles",
+      "description": "Évaluer les modèles LLM",
+      "type": "can"
+    },
+    {
+      "id": "bias_detection",
+      "name": "Détection des biais",
+      "description": "Détecter les biais",
+      "type": "can"
+    },
+    {
+      "id": "ethical_audit",
+      "name": "Audit éthique",
+      "description": "Auditer l'éthique des prompts",
+      "type": "can"
+    }
   ]
 }

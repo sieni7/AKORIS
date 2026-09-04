@@ -15,5 +15,37 @@
   "limits": [
     "Ne pas définir le modèle de données",
     "Ne pas concevoir l'API"
+  ],
+  "dependencies": [
+    {
+      "agentId": "CORE-01",
+      "type": "mandatory",
+      "description": "Nécessite l'Orchestrator pour la coordination"
+    },
+    {
+      "agentId": "CORE-02",
+      "type": "mandatory",
+      "description": "Nécessite l'architecture technique"
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "design_frontend",
+      "name": "Concevoir le frontend",
+      "description": "Concevoir l'architecture frontend",
+      "type": "can"
+    },
+    {
+      "id": "design_system",
+      "name": "Design system",
+      "description": "Définir le design system",
+      "type": "can"
+    },
+    {
+      "id": "optimize_ui",
+      "name": "Optimiser l'UI",
+      "description": "Optimiser les performances UI",
+      "type": "can"
+    }
   ]
 }

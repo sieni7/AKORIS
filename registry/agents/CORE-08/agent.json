@@ -15,5 +15,32 @@
   "limits": [
     "Ne pas corriger directement le code",
     "Ne pas approuver seul la release"
+  ],
+  "dependencies": [
+    {
+      "agentId": "CORE-01",
+      "type": "mandatory",
+      "description": "Nécessite l'Orchestrator pour la coordination"
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "define_quality_gates",
+      "name": "Définir les Quality Gates",
+      "description": "Définir les points de contrôle qualité",
+      "type": "can"
+    },
+    {
+      "id": "supervise_audit",
+      "name": "Superviser les audits",
+      "description": "Superviser les audits qualité",
+      "type": "can"
+    },
+    {
+      "id": "enforce_compliance",
+      "name": "Imposer la conformité",
+      "description": "Imposer la conformité globale",
+      "type": "can"
+    }
   ]
 }

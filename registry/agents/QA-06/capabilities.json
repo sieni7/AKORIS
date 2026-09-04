@@ -1,4 +1,23 @@
 {
   "agentId": "QA-06",
-  "capabilities": []
+  "capabilities": [
+    {
+      "id": "audit_documentation",
+      "name": "Auditer la documentation",
+      "description": "Auditer la documentation",
+      "type": "can"
+    },
+    {
+      "id": "doc_coherence",
+      "name": "Cohérence documentaire",
+      "description": "Vérifier la cohérence de la documentation",
+      "type": "can"
+    },
+    {
+      "id": "doc_completeness",
+      "name": "Exhaustivité documentaire",
+      "description": "Vérifier l'exhaustivité de la documentation",
+      "type": "can"
+    }
+  ]
 }

@@ -1,4 +1,23 @@
 {
   "agentId": "EXP-05",
-  "capabilities": []
+  "capabilities": [
+    {
+      "id": "rgpd_compliance",
+      "name": "Conformité RGPD",
+      "description": "Assurer la conformité RGPD",
+      "type": "can"
+    },
+    {
+      "id": "iso_compliance",
+      "name": "Conformité ISO",
+      "description": "Assurer la conformité ISO",
+      "type": "can"
+    },
+    {
+      "id": "audit_compliance",
+      "name": "Audit de conformité",
+      "description": "Auditer la conformité",
+      "type": "can"
+    }
+  ]
 }

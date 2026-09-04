@@ -15,5 +15,19 @@
     "Ne pas auditer la sécurité"
   ],
   "dependencies": [],
-  "capabilities": []
+  "capabilities": [],
+  "raci": {
+    "R": [
+      "EXP-03"
+    ],
+    "A": [
+      "CORE-01"
+    ],
+    "C": [
+      "DEV-01"
+    ],
+    "I": [
+      "GOV-01"
+    ]
+  }
 }

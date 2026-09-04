@@ -15,5 +15,20 @@
     "Ne pas valider la documentation"
   ],
   "dependencies": [],
-  "capabilities": []
+  "capabilities": [],
+  "raci": {
+    "R": [
+      "QA-01"
+    ],
+    "A": [
+      "CORE-08"
+    ],
+    "C": [
+      "DEV-01",
+      "DEV-02"
+    ],
+    "I": [
+      "GOV-01"
+    ]
+  }
 }

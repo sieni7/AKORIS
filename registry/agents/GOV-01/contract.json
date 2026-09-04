@@ -15,5 +15,20 @@
     "Ne pas prioriser le backlog"
   ],
   "dependencies": [],
-  "capabilities": []
+  "capabilities": [],
+  "raci": {
+    "R": [
+      "GOV-01"
+    ],
+    "A": [
+      "CORE-01"
+    ],
+    "C": [
+      "GOV-02",
+      "GOV-03"
+    ],
+    "I": [
+      "CORE-01"
+    ]
+  }
 }

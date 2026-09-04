@@ -1,4 +1,23 @@
 {
   "agentId": "CORE-07",
-  "capabilities": []
+  "capabilities": [
+    {
+      "id": "setup_ci_cd",
+      "name": "Configurer CI/CD",
+      "description": "Configurer les pipelines CI/CD",
+      "type": "can"
+    },
+    {
+      "id": "deploy",
+      "name": "Déployer",
+      "description": "Déployer les applications",
+      "type": "can"
+    },
+    {
+      "id": "observability",
+      "name": "Observabilité",
+      "description": "Configurer l'observabilité",
+      "type": "can"
+    }
+  ]
 }

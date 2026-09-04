@@ -15,5 +15,37 @@
   "limits": [
     "Ne pas rédiger la documentation",
     "Ne pas auditer le code"
+  ],
+  "dependencies": [
+    {
+      "agentId": "CORE-01",
+      "type": "mandatory",
+      "description": "Nécessite l'Orchestrator pour la coordination"
+    },
+    {
+      "agentId": "CORE-08",
+      "type": "mandatory",
+      "description": "Nécessite la gouvernance QA"
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "audit_documentation",
+      "name": "Auditer la documentation",
+      "description": "Auditer la documentation",
+      "type": "can"
+    },
+    {
+      "id": "doc_coherence",
+      "name": "Cohérence documentaire",
+      "description": "Vérifier la cohérence de la documentation",
+      "type": "can"
+    },
+    {
+      "id": "doc_completeness",
+      "name": "Exhaustivité documentaire",
+      "description": "Vérifier l'exhaustivité de la documentation",
+      "type": "can"
+    }
   ]
 }

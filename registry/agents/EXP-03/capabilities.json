@@ -1,4 +1,23 @@
 {
   "agentId": "EXP-03",
-  "capabilities": []
+  "capabilities": [
+    {
+      "id": "mobile_development",
+      "name": "Développement mobile",
+      "description": "Développer des applications mobiles",
+      "type": "can"
+    },
+    {
+      "id": "sync",
+      "name": "Synchronisation",
+      "description": "Gérer la synchronisation des données",
+      "type": "can"
+    },
+    {
+      "id": "ios_android",
+      "name": "iOS/Android",
+      "description": "Connaître les contraintes iOS/Android",
+      "type": "can"
+    }
+  ]
 }

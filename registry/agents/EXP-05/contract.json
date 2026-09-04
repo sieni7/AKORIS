@@ -15,5 +15,20 @@
     "Ne pas réaliser l'audit de code"
   ],
   "dependencies": [],
-  "capabilities": []
+  "capabilities": [],
+  "raci": {
+    "R": [
+      "EXP-05"
+    ],
+    "A": [
+      "CORE-01"
+    ],
+    "C": [
+      "CORE-05"
+    ],
+    "I": [
+      "GOV-01",
+      "GOV-02"
+    ]
+  }
 }

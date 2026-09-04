@@ -1,4 +1,23 @@
 {
   "agentId": "CORE-03",
-  "capabilities": []
+  "capabilities": [
+    {
+      "id": "prioritize_backlog",
+      "name": "Prioriser le backlog",
+      "description": "Prioriser les fonctionnalités",
+      "type": "can"
+    },
+    {
+      "id": "validate_functional",
+      "name": "Valider fonctionnel",
+      "description": "Valider les livrables fonctionnels",
+      "type": "can"
+    },
+    {
+      "id": "define_requirements",
+      "name": "Définir les exigences",
+      "description": "Définir les exigences métier",
+      "type": "can"
+    }
+  ]
 }

@@ -1,4 +1,23 @@
 {
   "agentId": "DEV-09",
-  "capabilities": []
+  "capabilities": [
+    {
+      "id": "test_strategy",
+      "name": "Stratégie de test",
+      "description": "Définir la stratégie de test",
+      "type": "can"
+    },
+    {
+      "id": "reliability",
+      "name": "Fiabilité",
+      "description": "Assurer la fiabilité",
+      "type": "can"
+    },
+    {
+      "id": "chaos_engineering",
+      "name": "Chaos Engineering",
+      "description": "Mettre en place le Chaos Engineering",
+      "type": "can"
+    }
+  ]
 }

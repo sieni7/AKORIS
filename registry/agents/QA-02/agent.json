@@ -15,5 +15,37 @@
   "limits": [
     "Ne pas développer les fonctionnalités",
     "Ne pas définir les critères de sécurité"
+  ],
+  "dependencies": [
+    {
+      "agentId": "CORE-01",
+      "type": "mandatory",
+      "description": "Nécessite l'Orchestrator pour la coordination"
+    },
+    {
+      "agentId": "CORE-08",
+      "type": "mandatory",
+      "description": "Nécessite la gouvernance QA"
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "test_automation",
+      "name": "Automatiser les tests",
+      "description": "Automatiser les tests",
+      "type": "can"
+    },
+    {
+      "id": "unit_tests",
+      "name": "Tests unitaires",
+      "description": "Écrire des tests unitaires",
+      "type": "can"
+    },
+    {
+      "id": "e2e_tests",
+      "name": "Tests E2E",
+      "description": "Écrire des tests end-to-end",
+      "type": "can"
+    }
   ]
 }

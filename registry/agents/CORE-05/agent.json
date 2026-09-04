@@ -15,5 +15,32 @@
   "limits": [
     "Ne pas développer les fonctionnalités",
     "Ne pas réaliser l'audit de code"
+  ],
+  "dependencies": [
+    {
+      "agentId": "CORE-01",
+      "type": "mandatory",
+      "description": "Nécessite l'Orchestrator pour la coordination"
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "define_security",
+      "name": "Définir la sécurité",
+      "description": "Définir les exigences de sécurité",
+      "type": "can"
+    },
+    {
+      "id": "audit_security",
+      "name": "Auditer la sécurité",
+      "description": "Auditer la sécurité du système",
+      "type": "can"
+    },
+    {
+      "id": "comply",
+      "name": "Assurer la conformité",
+      "description": "Assurer la conformité aux normes",
+      "type": "can"
+    }
   ]
 }

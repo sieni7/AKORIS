@@ -15,5 +15,32 @@
   "limits": [
     "Ne pas développer le produit final",
     "Ne pas définir la stratégie de sécurité"
+  ],
+  "dependencies": [
+    {
+      "agentId": "CORE-01",
+      "type": "mandatory",
+      "description": "Nécessite l'Orchestrator pour la coordination"
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "platform_design",
+      "name": "Concevoir la plateforme",
+      "description": "Concevoir la plateforme interne",
+      "type": "can"
+    },
+    {
+      "id": "self_service",
+      "name": "Self-service",
+      "description": "Mettre en place le self-service",
+      "type": "can"
+    },
+    {
+      "id": "abstraction",
+      "name": "Abstraction",
+      "description": "Abstraire les environnements",
+      "type": "can"
+    }
   ]
 }

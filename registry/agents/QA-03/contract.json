@@ -15,5 +15,20 @@
     "Ne pas définir les exigences métier"
   ],
   "dependencies": [],
-  "capabilities": []
+  "capabilities": [],
+  "raci": {
+    "R": [
+      "QA-03"
+    ],
+    "A": [
+      "CORE-08"
+    ],
+    "C": [
+      "CORE-05"
+    ],
+    "I": [
+      "GOV-01",
+      "GOV-02"
+    ]
+  }
 }

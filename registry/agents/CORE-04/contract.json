@@ -15,5 +15,20 @@
     "Ne pas rédiger la documentation métier"
   ],
   "dependencies": [],
-  "capabilities": []
+  "capabilities": [],
+  "raci": {
+    "R": [
+      "CORE-04"
+    ],
+    "A": [
+      "CORE-01"
+    ],
+    "C": [
+      "DEV-02",
+      "DEV-07"
+    ],
+    "I": [
+      "GOV-01"
+    ]
+  }
 }

@@ -1,4 +1,23 @@
 {
   "agentId": "DEV-03",
-  "capabilities": []
+  "capabilities": [
+    {
+      "id": "design_api",
+      "name": "Concevoir l'API",
+      "description": "Concevoir les contrats API",
+      "type": "can"
+    },
+    {
+      "id": "write_openapi",
+      "name": "Rédiger OpenAPI",
+      "description": "Rédiger les spécifications OpenAPI",
+      "type": "can"
+    },
+    {
+      "id": "version_api",
+      "name": "Versionner l'API",
+      "description": "Versionner les API",
+      "type": "can"
+    }
+  ]
 }

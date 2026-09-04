@@ -15,5 +15,19 @@
     "Ne pas concevoir l'API"
   ],
   "dependencies": [],
-  "capabilities": []
+  "capabilities": [],
+  "raci": {
+    "R": [
+      "DEV-01"
+    ],
+    "A": [
+      "CORE-01"
+    ],
+    "C": [
+      "DEV-05"
+    ],
+    "I": [
+      "GOV-01"
+    ]
+  }
 }

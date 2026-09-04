@@ -15,5 +15,20 @@
     "Ne pas définir les critères de sécurité"
   ],
   "dependencies": [],
-  "capabilities": []
+  "capabilities": [],
+  "raci": {
+    "R": [
+      "QA-02"
+    ],
+    "A": [
+      "CORE-08"
+    ],
+    "C": [
+      "DEV-01",
+      "DEV-02"
+    ],
+    "I": [
+      "GOV-01"
+    ]
+  }
 }

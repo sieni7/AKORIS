@@ -15,5 +15,37 @@
   "limits": [
     "Ne pas auditer la sécurité",
     "Ne pas définir la stratégie marketing"
+  ],
+  "dependencies": [
+    {
+      "agentId": "CORE-01",
+      "type": "mandatory",
+      "description": "Nécessite l'Orchestrator pour la coordination"
+    },
+    {
+      "agentId": "CORE-02",
+      "type": "mandatory",
+      "description": "Nécessite l'architecture technique"
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "optimize_performance",
+      "name": "Optimiser les performances",
+      "description": "Optimiser les performances globales",
+      "type": "can"
+    },
+    {
+      "id": "caching",
+      "name": "Cache",
+      "description": "Gérer le cache",
+      "type": "can"
+    },
+    {
+      "id": "load_testing",
+      "name": "Tests de charge",
+      "description": "Effectuer des tests de charge",
+      "type": "can"
+    }
   ]
 }

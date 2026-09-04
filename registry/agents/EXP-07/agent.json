@@ -15,5 +15,32 @@
   "limits": [
     "Ne pas définir la stratégie produit",
     "Ne pas auditer la sécurité"
+  ],
+  "dependencies": [
+    {
+      "agentId": "CORE-01",
+      "type": "mandatory",
+      "description": "Nécessite l'Orchestrator pour la coordination"
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "standardize",
+      "name": "Standardiser",
+      "description": "Standardiser les processus",
+      "type": "can"
+    },
+    {
+      "id": "templates",
+      "name": "Templates",
+      "description": "Créer des templates réutilisables",
+      "type": "can"
+    },
+    {
+      "id": "reproducibility",
+      "name": "Reproductibilité",
+      "description": "Assurer la reproductibilité",
+      "type": "can"
+    }
   ]
 }

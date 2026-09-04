@@ -15,5 +15,19 @@
     "Ne pas écrire le code applicatif"
   ],
   "dependencies": [],
-  "capabilities": []
+  "capabilities": [],
+  "raci": {
+    "R": [
+      "GOV-04"
+    ],
+    "A": [
+      "CORE-01"
+    ],
+    "C": [
+      "GOV-01"
+    ],
+    "I": [
+      "GOV-02"
+    ]
+  }
 }

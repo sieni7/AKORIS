@@ -1,4 +1,23 @@
 {
   "agentId": "EXP-04",
-  "capabilities": []
+  "capabilities": [
+    {
+      "id": "etl",
+      "name": "ETL",
+      "description": "Concevoir des pipelines ETL",
+      "type": "can"
+    },
+    {
+      "id": "data_pipelines",
+      "name": "Pipelines de données",
+      "description": "Concevoir des pipelines de données",
+      "type": "can"
+    },
+    {
+      "id": "analytics",
+      "name": "Analytique",
+      "description": "Concevoir des traitements analytiques",
+      "type": "can"
+    }
+  ]
 }

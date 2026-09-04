@@ -15,5 +15,32 @@
   "limits": [
     "Ne pas développer les fonctionnalités",
     "Ne pas réaliser l'audit de code"
+  ],
+  "dependencies": [
+    {
+      "agentId": "CORE-01",
+      "type": "mandatory",
+      "description": "Nécessite l'Orchestrator pour la coordination"
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "rgpd_compliance",
+      "name": "Conformité RGPD",
+      "description": "Assurer la conformité RGPD",
+      "type": "can"
+    },
+    {
+      "id": "iso_compliance",
+      "name": "Conformité ISO",
+      "description": "Assurer la conformité ISO",
+      "type": "can"
+    },
+    {
+      "id": "audit_compliance",
+      "name": "Audit de conformité",
+      "description": "Auditer la conformité",
+      "type": "can"
+    }
   ]
 }

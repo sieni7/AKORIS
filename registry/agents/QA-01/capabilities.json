@@ -1,4 +1,23 @@
 {
   "agentId": "QA-01",
-  "capabilities": []
+  "capabilities": [
+    {
+      "id": "review_code",
+      "name": "Reviewer le code",
+      "description": "Reviewer le code",
+      "type": "can"
+    },
+    {
+      "id": "ensure_quality",
+      "name": "Assurer la qualité",
+      "description": "Assurer la qualité du code",
+      "type": "can"
+    },
+    {
+      "id": "best_practices",
+      "name": "Bonnes pratiques",
+      "description": "Appliquer les bonnes pratiques",
+      "type": "can"
+    }
+  ]
 }

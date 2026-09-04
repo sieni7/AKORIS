@@ -1,4 +1,23 @@
 {
   "agentId": "QA-04",
-  "capabilities": []
+  "capabilities": [
+    {
+      "id": "audit_performance",
+      "name": "Auditer les performances",
+      "description": "Auditer les performances",
+      "type": "can"
+    },
+    {
+      "id": "bottleneck_analysis",
+      "name": "Analyse des goulots",
+      "description": "Identifier les goulots d'étranglement",
+      "type": "can"
+    },
+    {
+      "id": "performance_report",
+      "name": "Rapport de performance",
+      "description": "Produire un rapport de performance",
+      "type": "can"
+    }
+  ]
 }

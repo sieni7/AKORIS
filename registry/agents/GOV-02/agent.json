@@ -15,5 +15,32 @@
   "limits": [
     "Ne pas corriger le contenu",
     "Ne pas définir seul les critères"
+  ],
+  "dependencies": [
+    {
+      "agentId": "CORE-01",
+      "type": "mandatory",
+      "description": "Nécessite l'Orchestrator pour la coordination"
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "authorize_gates",
+      "name": "Autoriser les gates",
+      "description": "Autoriser ou refuser les Quality Gates",
+      "type": "can"
+    },
+    {
+      "id": "validate_criteria",
+      "name": "Valider les critères",
+      "description": "Valider les critères des gates",
+      "type": "can"
+    },
+    {
+      "id": "enforce_quality",
+      "name": "Imposer la qualité",
+      "description": "Imposer les règles de qualité",
+      "type": "can"
+    }
   ]
 }

@@ -1,4 +1,23 @@
 {
   "agentId": "QA-05",
-  "capabilities": []
+  "capabilities": [
+    {
+      "id": "audit_accessibility",
+      "name": "Auditer l'accessibilité",
+      "description": "Auditer l'accessibilité WCAG",
+      "type": "can"
+    },
+    {
+      "id": "accessibility_report",
+      "name": "Rapport d'accessibilité",
+      "description": "Produire un rapport d'accessibilité",
+      "type": "can"
+    },
+    {
+      "id": "accessibility_recommendations",
+      "name": "Recommandations WCAG",
+      "description": "Formuler des recommandations WCAG",
+      "type": "can"
+    }
+  ]
 }

@@ -15,5 +15,20 @@
     "Ne pas produire les documents de release"
   ],
   "dependencies": [],
-  "capabilities": []
+  "capabilities": [],
+  "raci": {
+    "R": [
+      "DEV-09"
+    ],
+    "A": [
+      "CORE-01"
+    ],
+    "C": [
+      "QA-01",
+      "QA-02"
+    ],
+    "I": [
+      "GOV-01"
+    ]
+  }
 }

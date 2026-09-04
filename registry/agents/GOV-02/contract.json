@@ -15,5 +15,19 @@
     "Ne pas définir seul les critères"
   ],
   "dependencies": [],
-  "capabilities": []
+  "capabilities": [],
+  "raci": {
+    "R": [
+      "GOV-02"
+    ],
+    "A": [
+      "CORE-01"
+    ],
+    "C": [
+      "CORE-08"
+    ],
+    "I": [
+      "GOV-01"
+    ]
+  }
 }

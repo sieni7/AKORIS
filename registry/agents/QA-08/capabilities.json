@@ -1,4 +1,23 @@
 {
   "agentId": "QA-08",
-  "capabilities": []
+  "capabilities": [
+    {
+      "id": "usability_test",
+      "name": "Tester l'utilisabilité",
+      "description": "Tester l'utilisabilité des interfaces",
+      "type": "can"
+    },
+    {
+      "id": "ux_audit",
+      "name": "Audit UX",
+      "description": "Auditer l'expérience utilisateur",
+      "type": "can"
+    },
+    {
+      "id": "ux_recommendations",
+      "name": "Recommandations UX",
+      "description": "Formuler des recommandations UX",
+      "type": "can"
+    }
+  ]
 }

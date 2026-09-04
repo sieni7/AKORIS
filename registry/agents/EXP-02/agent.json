@@ -15,5 +15,32 @@
   "limits": [
     "Ne pas définir l'architecture de sécurité",
     "Ne pas développer le produit"
+  ],
+  "dependencies": [
+    {
+      "agentId": "CORE-01",
+      "type": "mandatory",
+      "description": "Nécessite l'Orchestrator pour la coordination"
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "multi_tenant",
+      "name": "Multi-tenant",
+      "description": "Concevoir des architectures multi-tenant",
+      "type": "can"
+    },
+    {
+      "id": "saas_billing",
+      "name": "Facturation SaaS",
+      "description": "Concevoir des systèmes de facturation SaaS",
+      "type": "can"
+    },
+    {
+      "id": "saas_metrics",
+      "name": "Indicateurs SaaS",
+      "description": "Définir les indicateurs SaaS",
+      "type": "can"
+    }
   ]
 }

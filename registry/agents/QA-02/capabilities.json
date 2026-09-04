@@ -1,4 +1,23 @@
 {
   "agentId": "QA-02",
-  "capabilities": []
+  "capabilities": [
+    {
+      "id": "test_automation",
+      "name": "Automatiser les tests",
+      "description": "Automatiser les tests",
+      "type": "can"
+    },
+    {
+      "id": "unit_tests",
+      "name": "Tests unitaires",
+      "description": "Écrire des tests unitaires",
+      "type": "can"
+    },
+    {
+      "id": "e2e_tests",
+      "name": "Tests E2E",
+      "description": "Écrire des tests end-to-end",
+      "type": "can"
+    }
+  ]
 }

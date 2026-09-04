@@ -15,5 +15,37 @@
   "limits": [
     "Ne pas écrire directement le code",
     "Ne pas valider la documentation"
+  ],
+  "dependencies": [
+    {
+      "agentId": "CORE-01",
+      "type": "mandatory",
+      "description": "Nécessite l'Orchestrator pour la coordination"
+    },
+    {
+      "agentId": "CORE-08",
+      "type": "mandatory",
+      "description": "Nécessite la gouvernance QA"
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "review_code",
+      "name": "Reviewer le code",
+      "description": "Reviewer le code",
+      "type": "can"
+    },
+    {
+      "id": "ensure_quality",
+      "name": "Assurer la qualité",
+      "description": "Assurer la qualité du code",
+      "type": "can"
+    },
+    {
+      "id": "best_practices",
+      "name": "Bonnes pratiques",
+      "description": "Appliquer les bonnes pratiques",
+      "type": "can"
+    }
   ]
 }

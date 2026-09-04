@@ -1,4 +1,23 @@
 {
   "agentId": "CORE-02",
-  "capabilities": []
+  "capabilities": [
+    {
+      "id": "design_architecture",
+      "name": "Concevoir l'architecture",
+      "description": "Définir l'architecture globale",
+      "type": "can"
+    },
+    {
+      "id": "create_adr",
+      "name": "Créer des ADR",
+      "description": "Documenter les décisions architecturales",
+      "type": "can"
+    },
+    {
+      "id": "define_modules",
+      "name": "Définir les modules",
+      "description": "Définir le découpage applicatif",
+      "type": "can"
+    }
+  ]
 }

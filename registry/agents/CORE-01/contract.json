@@ -15,5 +15,21 @@
     "Ne pas décider seul des choix métier"
   ],
   "dependencies": [],
-  "capabilities": []
+  "capabilities": [],
+  "raci": {
+    "R": [
+      "CORE-01"
+    ],
+    "A": [
+      "GOV-01"
+    ],
+    "C": [
+      "CORE-02",
+      "CORE-03"
+    ],
+    "I": [
+      "GOV-01",
+      "GOV-02"
+    ]
+  }
 }

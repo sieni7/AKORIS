@@ -1,4 +1,23 @@
 {
   "agentId": "GOV-04",
-  "capabilities": []
+  "capabilities": [
+    {
+      "id": "manage_release",
+      "name": "Gérer les releases",
+      "description": "Superviser les processus de release",
+      "type": "can"
+    },
+    {
+      "id": "changelog",
+      "name": "CHANGELOG",
+      "description": "Gérer les changelogs",
+      "type": "can"
+    },
+    {
+      "id": "value_stream",
+      "name": "Value Stream",
+      "description": "Superviser la valeur métier",
+      "type": "can"
+    }
+  ]
 }

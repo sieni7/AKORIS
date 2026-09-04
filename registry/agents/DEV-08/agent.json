@@ -15,5 +15,37 @@
   "limits": [
     "Ne pas définir le modèle de données principal",
     "Ne pas valider la conformité réglementaire"
+  ],
+  "dependencies": [
+    {
+      "agentId": "CORE-01",
+      "type": "mandatory",
+      "description": "Nécessite l'Orchestrator pour la coordination"
+    },
+    {
+      "agentId": "CORE-02",
+      "type": "mandatory",
+      "description": "Nécessite l'architecture technique"
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "integrate_third_party",
+      "name": "Intégrer des services tiers",
+      "description": "Intégrer des services tiers",
+      "type": "can"
+    },
+    {
+      "id": "api_connectors",
+      "name": "Connecteurs API",
+      "description": "Créer des connecteurs API",
+      "type": "can"
+    },
+    {
+      "id": "sdk_integration",
+      "name": "SDK",
+      "description": "Intégrer des SDK",
+      "type": "can"
+    }
   ]
 }

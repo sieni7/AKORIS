@@ -1,4 +1,23 @@
 {
   "agentId": "GOV-03",
-  "capabilities": []
+  "capabilities": [
+    {
+      "id": "curate_knowledge",
+      "name": "Capitaliser les connaissances",
+      "description": "Capitaliser les connaissances",
+      "type": "can"
+    },
+    {
+      "id": "retex",
+      "name": "RETEX",
+      "description": "Capitaliser les retours d'expérience",
+      "type": "can"
+    },
+    {
+      "id": "knowledge_base",
+      "name": "Base de connaissances",
+      "description": "Maintenir la base de connaissances",
+      "type": "can"
+    }
+  ]
 }

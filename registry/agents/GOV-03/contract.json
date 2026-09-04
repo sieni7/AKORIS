@@ -15,5 +15,19 @@
     "Ne pas développer le produit"
   ],
   "dependencies": [],
-  "capabilities": []
+  "capabilities": [],
+  "raci": {
+    "R": [
+      "GOV-03"
+    ],
+    "A": [
+      "CORE-01"
+    ],
+    "C": [
+      "CORE-06"
+    ],
+    "I": [
+      "GOV-01"
+    ]
+  }
 }

@@ -1,4 +1,23 @@
 {
   "agentId": "EXP-09",
-  "capabilities": []
+  "capabilities": [
+    {
+      "id": "carbon_footprint",
+      "name": "Empreinte carbone",
+      "description": "Optimiser l'empreinte carbone",
+      "type": "can"
+    },
+    {
+      "id": "energy_metrics",
+      "name": "Métriques énergétiques",
+      "description": "Suivre les métriques énergétiques",
+      "type": "can"
+    },
+    {
+      "id": "green_optimization",
+      "name": "Optimisation verte",
+      "description": "Optimiser les ressources",
+      "type": "can"
+    }
+  ]
 }

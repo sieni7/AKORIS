@@ -1,4 +1,23 @@
 {
   "agentId": "DEV-06",
-  "capabilities": []
+  "capabilities": [
+    {
+      "id": "pwa",
+      "name": "PWA",
+      "description": "Développer des Progressive Web Apps",
+      "type": "can"
+    },
+    {
+      "id": "offline",
+      "name": "Offline",
+      "description": "Gérer le mode offline",
+      "type": "can"
+    },
+    {
+      "id": "notifications",
+      "name": "Notifications",
+      "description": "Gérer les notifications push",
+      "type": "can"
+    }
+  ]
 }

@@ -15,5 +15,19 @@
     "Ne pas administrer les pipelines"
   ],
   "dependencies": [],
-  "capabilities": []
+  "capabilities": [],
+  "raci": {
+    "R": [
+      "CORE-06"
+    ],
+    "A": [
+      "CORE-01"
+    ],
+    "C": [
+      "QA-06"
+    ],
+    "I": [
+      "GOV-01"
+    ]
+  }
 }

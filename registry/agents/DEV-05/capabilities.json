@@ -1,4 +1,23 @@
 {
   "agentId": "DEV-05",
-  "capabilities": []
+  "capabilities": [
+    {
+      "id": "design_ux",
+      "name": "Concevoir l'UX",
+      "description": "Concevoir l'expérience utilisateur",
+      "type": "can"
+    },
+    {
+      "id": "accessibility",
+      "name": "Accessibilité",
+      "description": "Assurer l'accessibilité",
+      "type": "can"
+    },
+    {
+      "id": "responsive_design",
+      "name": "Responsive design",
+      "description": "Concevoir des interfaces responsives",
+      "type": "can"
+    }
+  ]
 }

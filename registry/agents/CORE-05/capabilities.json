@@ -1,4 +1,23 @@
 {
   "agentId": "CORE-05",
-  "capabilities": []
+  "capabilities": [
+    {
+      "id": "define_security",
+      "name": "Définir la sécurité",
+      "description": "Définir les exigences de sécurité",
+      "type": "can"
+    },
+    {
+      "id": "audit_security",
+      "name": "Auditer la sécurité",
+      "description": "Auditer la sécurité du système",
+      "type": "can"
+    },
+    {
+      "id": "comply",
+      "name": "Assurer la conformité",
+      "description": "Assurer la conformité aux normes",
+      "type": "can"
+    }
+  ]
 }

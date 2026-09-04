@@ -15,5 +15,37 @@
   "limits": [
     "Ne pas définir l'architecture technique",
     "Ne pas réaliser l'audit de sécurité"
+  ],
+  "dependencies": [
+    {
+      "agentId": "CORE-01",
+      "type": "mandatory",
+      "description": "Nécessite l'Orchestrator pour la coordination"
+    },
+    {
+      "agentId": "CORE-02",
+      "type": "mandatory",
+      "description": "Nécessite l'architecture technique"
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "design_ux",
+      "name": "Concevoir l'UX",
+      "description": "Concevoir l'expérience utilisateur",
+      "type": "can"
+    },
+    {
+      "id": "accessibility",
+      "name": "Accessibilité",
+      "description": "Assurer l'accessibilité",
+      "type": "can"
+    },
+    {
+      "id": "responsive_design",
+      "name": "Responsive design",
+      "description": "Concevoir des interfaces responsives",
+      "type": "can"
+    }
   ]
 }

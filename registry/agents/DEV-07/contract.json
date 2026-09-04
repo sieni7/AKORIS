@@ -15,5 +15,19 @@
     "Ne pas définir la stratégie marketing"
   ],
   "dependencies": [],
-  "capabilities": []
+  "capabilities": [],
+  "raci": {
+    "R": [
+      "DEV-07"
+    ],
+    "A": [
+      "CORE-01"
+    ],
+    "C": [
+      "QA-04"
+    ],
+    "I": [
+      "GOV-01"
+    ]
+  }
 }

@@ -1,4 +1,23 @@
 {
   "agentId": "DEV-04",
-  "capabilities": []
+  "capabilities": [
+    {
+      "id": "model_domain",
+      "name": "Modéliser le domaine",
+      "description": "Modéliser le domaine métier",
+      "type": "can"
+    },
+    {
+      "id": "ddd",
+      "name": "DDD",
+      "description": "Appliquer les principes DDD",
+      "type": "can"
+    },
+    {
+      "id": "define_business_rules",
+      "name": "Définir les règles métier",
+      "description": "Définir les règles métier",
+      "type": "can"
+    }
+  ]
 }

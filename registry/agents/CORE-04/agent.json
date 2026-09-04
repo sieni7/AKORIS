@@ -15,5 +15,32 @@
   "limits": [
     "Ne pas valider la sécurité applicative",
     "Ne pas rédiger la documentation métier"
+  ],
+  "dependencies": [
+    {
+      "agentId": "CORE-01",
+      "type": "mandatory",
+      "description": "Nécessite l'Orchestrator pour la coordination"
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "design_database",
+      "name": "Concevoir la base de données",
+      "description": "Définir le modèle de données",
+      "type": "can"
+    },
+    {
+      "id": "optimize_sql",
+      "name": "Optimiser les requêtes SQL",
+      "description": "Optimiser les performances SQL",
+      "type": "can"
+    },
+    {
+      "id": "migrate_data",
+      "name": "Migrer les données",
+      "description": "Gérer les migrations de données",
+      "type": "can"
+    }
   ]
 }

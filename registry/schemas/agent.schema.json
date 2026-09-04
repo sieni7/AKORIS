@@ -30,6 +30,7 @@
         "properties": {
           "id": { "type": "string" },
           "name": { "type": "string" },
+          "description": { "type": "string" },
           "type": { "type": "string", "enum": ["can", "cannot"] }
         }
       }

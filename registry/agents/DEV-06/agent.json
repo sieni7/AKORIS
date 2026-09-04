@@ -15,5 +15,37 @@
   "limits": [
     "Ne pas gérer les données sensibles",
     "Ne pas définir l'architecture serveur"
+  ],
+  "dependencies": [
+    {
+      "agentId": "CORE-01",
+      "type": "mandatory",
+      "description": "Nécessite l'Orchestrator pour la coordination"
+    },
+    {
+      "agentId": "CORE-02",
+      "type": "mandatory",
+      "description": "Nécessite l'architecture technique"
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "pwa",
+      "name": "PWA",
+      "description": "Développer des Progressive Web Apps",
+      "type": "can"
+    },
+    {
+      "id": "offline",
+      "name": "Offline",
+      "description": "Gérer le mode offline",
+      "type": "can"
+    },
+    {
+      "id": "notifications",
+      "name": "Notifications",
+      "description": "Gérer les notifications push",
+      "type": "can"
+    }
   ]
 }

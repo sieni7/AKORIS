@@ -15,5 +15,20 @@
     "Ne pas définir la stratégie de test"
   ],
   "dependencies": [],
-  "capabilities": []
+  "capabilities": [],
+  "raci": {
+    "R": [
+      "DEV-02"
+    ],
+    "A": [
+      "CORE-01"
+    ],
+    "C": [
+      "DEV-03",
+      "DEV-04"
+    ],
+    "I": [
+      "GOV-01"
+    ]
+  }
 }

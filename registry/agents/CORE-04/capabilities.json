@@ -1,4 +1,23 @@
 {
   "agentId": "CORE-04",
-  "capabilities": []
+  "capabilities": [
+    {
+      "id": "design_database",
+      "name": "Concevoir la base de données",
+      "description": "Définir le modèle de données",
+      "type": "can"
+    },
+    {
+      "id": "optimize_sql",
+      "name": "Optimiser les requêtes SQL",
+      "description": "Optimiser les performances SQL",
+      "type": "can"
+    },
+    {
+      "id": "migrate_data",
+      "name": "Migrer les données",
+      "description": "Gérer les migrations de données",
+      "type": "can"
+    }
+  ]
 }
