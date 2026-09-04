@@ -1,0 +1,19 @@
+# AKORIS secrets
+.akoris/secrets/
+.akoris/**/secrets.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Node
+node_modules/
+dist/
+build/

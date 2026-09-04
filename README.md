@@ -173,6 +173,7 @@ akoris status
 | [00_GETTING_STARTED.md](docs/guides/00_GETTING_STARTED.md) | Guide de démarrage complet (12 étapes + exemple) |
 | [FAQ.md](docs/FAQ.md) | 20 questions fréquentes sourcées aux documents normatifs |
 | [architecture.mmd](docs/architecture.mmd) | Diagrammes officiels (hiérarchie, méthode, états, monorepo) |
+| [Exemples](examples/README.md) | 3 instances illustratives (Lite, Standard, Critical) |
 | [CHANGELOG.md](CHANGELOG.md) | Historique des versions et modifications |
 
 ---
@@ -186,6 +187,8 @@ AKORIS adapte sa profondeur de gouvernance au niveau de risque du projet (source
 | **Lite** | Prototype / Solo | E1 | Essentiels | Différé | Optionnel |
 | **Standard** | Projet professionnel | E1 + E2 | Cycle complet | Planifié | Obligatoire |
 | **Critical** | Sensible / Finance / Sécurité | E1 + E2 + E3 | Cycle complet + renforcés | Obligatoire + externe | Obligatoire + multiple |
+
+> **Exemples :** [`scripts-prototype`](examples/scripts-prototype/README.md) (Lite), [`todo-api`](examples/todo-api/README.md) (Standard), [`fintech-core`](examples/fintech-core/README.md) (Critical).
 
 ---
 

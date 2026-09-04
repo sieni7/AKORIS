@@ -1,0 +1,11 @@
+{
+  "projectName": "Noyau de services financiers",
+  "projectId": "fintech-core",
+  "akorisVersion": "1.0.1",
+  "profile": "critical",
+  "registryPath": "./registry/",
+  "agents": ["all-critical"],
+  "domain": "fintech",
+  "createdAt": "2026-09-04",
+  "updatedAt": "2026-09-04"
+}

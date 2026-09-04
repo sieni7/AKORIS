@@ -1,0 +1,11 @@
+{
+  "projectName": "API de gestion de tâches",
+  "projectId": "todo-api",
+  "akorisVersion": "1.0.1",
+  "profile": "standard",
+  "registryPath": "./registry/",
+  "agents": ["CORE-01", "CORE-03", "DEV-01", "DEV-02", "QA-01", "QA-03"],
+  "domain": "software",
+  "createdAt": "2026-09-04",
+  "updatedAt": "2026-09-04"
+}
