@@ -174,6 +174,7 @@ akoris status
 | [FAQ.md](docs/FAQ.md) | 20 questions fréquentes sourcées aux documents normatifs |
 | [architecture.mmd](docs/architecture.mmd) | Diagrammes officiels (hiérarchie, méthode, états, monorepo) |
 | [Exemples](examples/README.md) | 3 instances illustratives (Lite, Standard, Critical) |
+| [Présentation exécutive](docs/presentations/executive.md) | Slide deck (14 slides, convertible Marp/Slidev) |
 | [CHANGELOG.md](CHANGELOG.md) | Historique des versions et modifications |
 
 ---
