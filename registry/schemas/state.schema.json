@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AKORIS State Schema",
+  "type": "object",
+  "required": ["currentState"],
+  "properties": {
+    "currentState": { "type": "string", "enum": ["PROPOSITION", "DRAFT", "PLANNED", "ACTIVE", "AUDIT", "VALIDATED", "RELEASED", "ARCHIVED", "BLOCKED", "REJECTED", "SUPERSEDED"] },
+    "history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "from": { "type": "string" },
+          "to": { "type": "string" },
+          "at": { "type": "string", "format": "date-time" },
+          "authorizedBy": { "type": "string" },
+          "comment": { "type": "string" }
+        }
+      }
+    },
+    "lastTransition": { "type": ["string", "null"], "format": "date-time" }
+  }
+}
