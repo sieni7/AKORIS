@@ -21,3 +21,7 @@ build/
 # Turborepo
 .turbo/
 *.tsbuildinfo
+
+# Mermaid rendering (machine-specific puppet config)
+puppeteer.config.json
+puppeteer.config.cjs
