@@ -2,6 +2,11 @@
 
 > **Build software with method, not with chance.**
 
+[![Version (méthode)](https://img.shields.io/badge/méthode-v1.0.1-4B32C3)](https://github.com/sieni7/AKORIS)
+[![Version (code)](https://img.shields.io/badge/code-v0.1.0--dev-845EF7)](https://github.com/sieni7/AKORIS/tree/impl)
+[![Licence](https://img.shields.io/badge/license-MIT-green)](constitution/04_LICENSING.md)
+[![Branche impl](https://img.shields.io/badge/branche-impl-informational)](https://github.com/sieni7/AKORIS/tree/impl)
+
 > **⚠️ Branche `impl` — développement de l'écosystème AKORIS**
 >
 > La méthode AKORIS est gelée en `v1.0.1` sur la branche `main`.
