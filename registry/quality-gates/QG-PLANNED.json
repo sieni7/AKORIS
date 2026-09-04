@@ -1,0 +1,34 @@
+{
+  "$schema": "../schemas/quality-gate.schema.json",
+  "id": "QG-PLANNED",
+  "name": "Validation du planning",
+  "description": "Vérifie que le planning est réaliste et que les ressources sont allouées.",
+  "severity": "majeure",
+  "owner": "CORE-03",
+  "criteria": [
+    {
+      "id": "CRIT-001",
+      "name": "Planning détaillé",
+      "evaluator": "field_exists",
+      "params": { "field": "planning" },
+      "weight": 0.4
+    },
+    {
+      "id": "CRIT-002",
+      "name": "Ressources allouées",
+      "evaluator": "field_exists",
+      "params": { "field": "resources" },
+      "weight": 0.3
+    },
+    {
+      "id": "CRIT-003",
+      "name": "Risques évalués",
+      "evaluator": "field_exists",
+      "params": { "field": "risks" },
+      "weight": 0.3
+    }
+  ],
+  "threshold": 0.7,
+  "controls": ["TRN-003"],
+  "tags": ["planning", "validation"]
+}

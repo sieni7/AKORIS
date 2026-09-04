@@ -1,0 +1,27 @@
+{
+  "$schema": "../schemas/quality-gate.schema.json",
+  "id": "QG-DRAFT",
+  "name": "Validation de spécification",
+  "description": "Vérifie qu'une spécification est exhaustive et cohérente.",
+  "severity": "bloquante",
+  "owner": "CORE-02",
+  "criteria": [
+    {
+      "id": "CRIT-001",
+      "name": "Exhaustivité des spécifications",
+      "evaluator": "field_exists",
+      "params": { "field": "specification" },
+      "weight": 0.5
+    },
+    {
+      "id": "CRIT-002",
+      "name": "Cohérence sémantique",
+      "evaluator": "semantic_analysis",
+      "params": { "minScore": 0.8 },
+      "weight": 0.5
+    }
+  ],
+  "threshold": 0.8,
+  "controls": ["TRN-002"],
+  "tags": ["validation", "specification"]
+}

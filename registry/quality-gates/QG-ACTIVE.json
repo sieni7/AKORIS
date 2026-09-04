@@ -1,0 +1,34 @@
+{
+  "$schema": "../schemas/quality-gate.schema.json",
+  "id": "QG-ACTIVE",
+  "name": "Validation d'implémentation",
+  "description": "Vérifie que l'implémentation respecte les spécifications et les standards de qualité.",
+  "severity": "bloquante",
+  "owner": "CORE-08",
+  "criteria": [
+    {
+      "id": "CRIT-001",
+      "name": "Conformité aux spécifications",
+      "evaluator": "semantic_analysis",
+      "params": { "minScore": 0.9 },
+      "weight": 0.5
+    },
+    {
+      "id": "CRIT-002",
+      "name": "Standards de qualité",
+      "evaluator": "quality_standards",
+      "params": {},
+      "weight": 0.3
+    },
+    {
+      "id": "CRIT-003",
+      "name": "Tests unitaires passants",
+      "evaluator": "tests_pass",
+      "params": { "min": 0.95 },
+      "weight": 0.2
+    }
+  ],
+  "threshold": 0.8,
+  "controls": ["TRN-004"],
+  "tags": ["implementation", "quality"]
+}

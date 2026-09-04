@@ -1,0 +1,41 @@
+{
+  "$schema": "../schemas/quality-gate.schema.json",
+  "id": "QG-AUDIT",
+  "name": "Validation d'audit",
+  "description": "Vérifie que l'audit qualité complet a été passé avec succès.",
+  "severity": "bloquante",
+  "owner": "QA-01",
+  "criteria": [
+    {
+      "id": "CRIT-001",
+      "name": "Sécurité validée",
+      "evaluator": "field_exists",
+      "params": { "field": "security_audit" },
+      "weight": 0.3
+    },
+    {
+      "id": "CRIT-002",
+      "name": "Performances validées",
+      "evaluator": "field_exists",
+      "params": { "field": "performance_audit" },
+      "weight": 0.2
+    },
+    {
+      "id": "CRIT-003",
+      "name": "Documentation validée",
+      "evaluator": "field_exists",
+      "params": { "field": "documentation_audit" },
+      "weight": 0.25
+    },
+    {
+      "id": "CRIT-004",
+      "name": "Accessibilité validée",
+      "evaluator": "field_exists",
+      "params": { "field": "accessibility_audit" },
+      "weight": 0.25
+    }
+  ],
+  "threshold": 0.8,
+  "controls": ["TRN-005"],
+  "tags": ["audit", "quality"]
+}

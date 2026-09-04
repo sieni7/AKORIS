@@ -1,0 +1,34 @@
+{
+  "$schema": "../schemas/quality-gate.schema.json",
+  "id": "QG-PROPOSITION",
+  "name": "Validation de proposition",
+  "description": "Vérifie qu'une proposition contient le contexte, la justification et une ébauche de solution.",
+  "severity": "bloquante",
+  "owner": "CORE-03",
+  "criteria": [
+    {
+      "id": "CRIT-001",
+      "name": "Contexte présent",
+      "evaluator": "field_exists",
+      "params": { "field": "context" },
+      "weight": 0.4
+    },
+    {
+      "id": "CRIT-002",
+      "name": "Justification présente",
+      "evaluator": "field_exists",
+      "params": { "field": "justification" },
+      "weight": 0.3
+    },
+    {
+      "id": "CRIT-003",
+      "name": "Ébauche de solution",
+      "evaluator": "field_exists",
+      "params": { "field": "solution" },
+      "weight": 0.3
+    }
+  ],
+  "threshold": 0.7,
+  "controls": ["TRN-001"],
+  "tags": ["validation", "proposition"]
+}
