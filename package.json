@@ -10,6 +10,7 @@
     "test:core": "pnpm --filter @akoris/core test",
     "test:cli": "pnpm --filter @akoris/cli test",
     "dev": "pnpm -r dev",
+    "validate:registry": "node scripts/validate-registry.js",
     "lint": "eslint . --ext .ts,.tsx",
     "clean": "pnpm -r exec rm -rf dist"
   },
