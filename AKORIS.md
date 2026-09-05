@@ -1,14 +1,10 @@
 # AKORIS
 
-> **🔵 Statut actuel : Spécification uniquement**
+> **Statut actuel : spécification uniquement.** AKORIS est actuellement un dépôt de méthode, de gouvernance et de schémas de référence. Il ne fournit pas encore de CLI installable, de moteur d’exécution, de dashboard, d’API ou d’instance `.akoris/` complète. Les commandes et composants annoncés comme « prévus » appartiennent à la roadmap de l’écosystème.
 >
-> AKORIS est actuellement un dépôt de **méthode, de gouvernance et de schémas de référence**. Il ne fournit pas encore de CLI installable, de moteur d'exécution, de dashboard, d'API ou d'instance `.akoris/` complète.
+> **Architecture status:** Proposed / Architecture Draft. L’implémentation du Core Engine et les outils associés sont en cours de spécification ; ils ne doivent pas être considérés comme disponibles tant qu’ils ne sont pas présents dans le dépôt et couverts par des tests.
 >
-> Les commandes et composants annoncés comme « prévus » appartiennent à la roadmap de l'écosystème.
->
-> **Architecture status:** Proposed / Architecture Draft. L'implémentation du Core Engine et les outils associés sont en cours de spécification ; ils ne doivent pas être considérés comme disponibles tant qu'ils ne sont pas présents dans le dépôt et couverts par des tests.
->
-> **Dépôt :** [Licence MIT](LICENSE) · [Politique de sécurité](SECURITY.md) · [Contribuer](CONTRIBUTING.md) · [Présentation de la méthode](AKORIS.md)
+> **Dépôt :** [Licence MIT](LICENSE) · [Politique de sécurité](SECURITY.md) · [Contribuer](CONTRIBUTING.md)
 
 > **Build software with method, not with chance.**
 
@@ -118,31 +114,23 @@ IMPLEMENTATION (écosystème)
 
 ```
 AKORIS/
-├── AKORIS.md                # Présentation de la méthode
-├── README.md                # Présentation du dépôt
-├── LICENSE                  # Licence MIT
-├── SECURITY.md              # Politique de sécurité
-├── CONTRIBUTING.md          # Guide de contribution
-├── CHANGELOG.md             # Historique des versions
-├── .gitignore               # Règles d'ignorance
-├── constitution/            # Documents constitutionnels
-│   ├── 00_AKORIS.md         # Manifeste constitutionnel
-│   ├── 01_CONSTITUTION.md   # Mission, vision, 10 principes
-│   ├── 02_GOVERNANCE.md     # Règles, rôles, cycle de vie
-│   ├── 03_TERMINOLOGY.md    # Glossaire normatif
-│   └── 04_LICENSING.md      # Licence MIT et contribution
-├── registry/                # Référentiel de gouvernance
-│   ├── state-machine.json   # Machine à états (11 états)
-│   ├── policies/            # Politiques de gouvernance
-│   ├── profiles/            # Profils Lite/Standard/Critical
-│   ├── schemas/             # Schémas JSON de validation
-│   └── contracts/           # Contrats des agents (à venir)
-├── docs/                    # Documentation utilisateur
+├── constitution/               # Documents normatifs fondamentaux
+│   ├── 00_AKORIS.md            # Manifeste de la méthode
+│   ├── 01_CONSTITUTION.md      # Mission, vision, 10 principes, amendements
+│   ├── 02_GOVERNANCE.md        # Règles, rôles, cycle de vie, Quality Gates
+│   ├── 03_TERMINOLOGY.md       # Glossaire normatif
+│   └── 04_LICENSING.md         # Licence MIT (exclusivement)
+├── registry/                   # Référentiel de gouvernance d'une instance
+│   ├── state-machine.json      # Machine à états exécutable (11 états)
+│   ├── policies/               # Politiques de gouvernance
+│   │   └── POL-SEC-01-PROMPT-DATA.md  # Sécurité des données et prompts
+│   ├── profiles/               # Profils de gouvernance (Lite/Standard/Critical)
+│   ├── schemas/                # Schémas JSON de validation
+│   └── contracts/              # Contrats des agents
+├── docs/                       # Documentation utilisateur
 │   └── guides/
-│       └── 00_GETTING_STARTED.md
-├── packages/                # Code source (futur)
-│   └── core/                # Core Engine (en spécification)
-└── .akoris/                 # Instance de référence (à venir)
+│       └── 00_GETTING_STARTED.md  # Guide de démarrage complet (12 étapes)
+└── CHANGELOG.md               # Historique des versions (v1.0.0 → v1.0.1)
 ```
 
 **Règle de frontière** (source : `constitution/00_AKORIS.md` §8.1) :
@@ -160,7 +148,7 @@ AKORIS/
 npm install -g akoris
 ```
 
-> **Note :** Le CLI est un outil de l'**écosystème AKORIS** (prévu à terme). Il implémente la méthode, il ne la définit pas. Ce dépôt est actuellement un dépôt de spécification/méthodologie.
+> **Note :** Le CLI est un outil de l'**écosystème AKORIS** (prévu à terme). Il implémente la méthode, il ne la définit pas. Ce dépôt est un dépôt de spécification/méthodologie.
 
 ---
 
@@ -172,25 +160,19 @@ cd mon-projet
 akoris status
 ```
 
-> **⚠️ Ces commandes sont prévues pour l'écosystème futur.** Elles ne sont pas encore exécutables dans ce dépôt.
-
 ---
 
 ## 10. Documentation
 
 | Document | Contenu |
 |---|---|
-| [AKORIS.md](AKORIS.md) | Présentation générale de la méthode |
-| [00_AKORIS.md](constitution/00_AKORIS.md) | Manifeste constitutionnel |
+| [00_AKORIS.md](constitution/00_AKORIS.md) | Manifeste : définition, problème, solution, promesse |
 | [01_CONSTITUTION.md](constitution/01_CONSTITUTION.md) | Mission, vision, 10 principes, amendements |
-| [02_GOVERNANCE.md](constitution/02_GOVERNANCE.md) | Règles, rôles, cycle de vie, Quality Gates |
+| [02_GOVERNANCE.md](constitution/02_GOVERNANCE.md) | Règles, rôles, cycle de vie, Quality Gates, Evidence |
 | [03_TERMINOLOGY.md](constitution/03_TERMINOLOGY.md) | Glossaire normatif (60+ entrées) |
 | [04_LICENSING.md](constitution/04_LICENSING.md) | Licence MIT et conditions de contribution |
-| [00_GETTING_STARTED.md](docs/guides/00_GETTING_STARTED.md) | Guide de démarrage complet |
-| [CHANGELOG.md](CHANGELOG.md) | Historique des versions |
-| [CONTRIBUTING.md](CONTRIBUTING.md) | Guide de contribution |
-| [SECURITY.md](SECURITY.md) | Politique de sécurité |
-| [Core Engine Specification](docs/specifications/CORE-ENGINE-SPECIFICATION.md) | Architecture Draft du Core Engine |
+| [00_GETTING_STARTED.md](docs/guides/00_GETTING_STARTED.md) | Guide de démarrage complet (12 étapes + exemple) |
+| [CHANGELOG.md](CHANGELOG.md) | Historique des versions et modifications |
 
 ---
 
@@ -250,4 +232,4 @@ SOFTWARE.
 
 ---
 
-*AKORIS v1.0.1 — 2026-09-05*
+*AKORIS v1.0.1 — 2026-09-04*
