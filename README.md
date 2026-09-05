@@ -12,6 +12,16 @@
 
 > **Build software with method, not with chance.**
 
+## 📌 Versioning
+
+| Artefact | Version | Statut |
+|---|---|---|
+| **Méthode AKORIS** (Constitution, Gouvernance) | v1.0.1 | ✅ Figée |
+| **Registry** (schémas, agents, profils) | v1.0.1 | ✅ Figée |
+| **Core Engine** (`@akoris/core`) | v0.1.0 (Seed) | 🔄 En développement |
+| **CLI** (`@akoris/cli`) | v0.1.0 (prévu) | ⏳ Planifié |
+| **Dashboard** | v0.1.0 (prévu) | ⏳ Planifié |
+
 ---
 
 ## 1. Qu'est-ce qu'AKORIS ?
@@ -151,16 +161,15 @@ AKORIS/
 
 ---
 
-## 8. Installation
+## 8. Installation (prévue)
 
-### Prérequis
-- Node.js >= 20
+Le CLI AKORIS est en développement. La commande d'installation sera :
 
 ```bash
 npm install -g akoris
 ```
 
-> **Note :** Le CLI est un outil de l'**écosystème AKORIS** (prévu à terme). Il implémente la méthode, il ne la définit pas. Ce dépôt est actuellement un dépôt de spécification/méthodologie.
+> ⚠️ **Cette commande n'est pas encore disponible.** Le dépôt est actuellement une spécification de méthode.
 
 ---
 
@@ -223,7 +232,7 @@ Les commandes suivantes sont documentées comme des **jalons** de l'écosystème
 AKORIS est distribué sous licence **MIT** exclusivement (source : `constitution/04_LICENSING.md` §1.1).
 
 ```text
-Copyright (c) 2026 AKORIS Core Team
+Copyright (c) 2026 OULAÏ SIÉNI (sieni7@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

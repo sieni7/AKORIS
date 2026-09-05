@@ -26,7 +26,7 @@ Recommandation IA : Ce document s'applique à toute utilisation d'AKORIS, que tu
 AKORIS est distribué sous la licence **MIT** :
 
 ```text
-Copyright (c) 2026 AKORIS Core Team
+Copyright (c) 2026 OULAÏ SIÉNI (sieni7@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -68,6 +68,8 @@ Recommandation IA : Ces éléments sont la base commune d'AKORIS. Ils peuvent ê
 ### 2.1. Copyright
 
 Le code source et la documentation d'AKORIS sont protégés par le droit d'auteur. La licence MIT s'applique à l'ensemble du dépôt, sauf mention contraire.
+
+**Copyright © 2026 OULAÏ SIÉNI** — AKORIS Core Team est une désignation de gouvernance du projet, non une entité juridique. Les droits sont détenus par le créateur du projet.
 
 ### 2.2. Marque AKORIS
 

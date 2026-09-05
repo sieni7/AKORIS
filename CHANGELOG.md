@@ -6,6 +6,18 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/) et ce pr
 
 ---
 
+## [1.0.1-hotfix] — 2026-09-05
+
+### Urgences U1-U6
+- U1 — Copyright : mise à jour des fichiers LICENSE, 04_LICENSING.md, README.md
+- U2 — Placeholder npm percutant : `akoris@0.0.1` publié (logo ASCII, bin `akoris`)
+- U3 — README : `npm install -g akoris` marqué comme "prévu"
+- U4 — README : ajout du tableau de versioning (méthode vs écosystème)
+- U5 — Nommage agents : vérifié, pattern `{DOMAINE}-{NN}` déjà en place
+- U6 — Name availability : `docs/legal/name-availability.md` créé
+
+---
+
 ## [N3 — Core Engine] — 2026-09-05 (Sprint 0 — Architectural Foundation)
 
 ### Ajouté

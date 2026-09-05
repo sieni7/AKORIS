@@ -205,7 +205,7 @@ Les commandes suivantes sont documentées comme des **jalons** de l'écosystème
 AKORIS est distribué sous licence **MIT** exclusivement (source : `constitution/04_LICENSING.md` §1.1).
 
 ```text
-Copyright (c) 2026 AKORIS Core Team
+Copyright (c) 2026 OULAÏ SIÉNI (sieni7@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
