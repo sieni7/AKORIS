@@ -210,6 +210,17 @@ Les commandes suivantes sont documentées comme des **jalons** de l'écosystème
 
 ---
 
+## Niveau 3 — Core Engine (en cours)
+
+La spécification du Core Engine est disponible :
+
+- [CORE ENGINE SPECIFICATION](docs/specifications/CORE-ENGINE-SPECIFICATION.md)
+- [CORE ENGINE IMPLEMENTATION PLAN](docs/specifications/CORE-ENGINE-IMPLEMENTATION-PLAN.md)
+
+Le Core Engine est le **noyau logique** d'AKORIS. Il contient la logique de gouvernance pure, sans aucune I/O.
+
+---
+
 ## 13. Licence
 
 AKORIS est distribué sous licence **MIT** exclusivement (source : `constitution/04_LICENSING.md` §1.1).

@@ -6,6 +6,17 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/) et ce pr
 
 ---
 
+## [N3 — Core Engine] — 2026-09-05 (Sprint 0 — Architectural Foundation)
+
+### Ajouté
+- `docs/specifications/CORE-ENGINE-SPECIFICATION.md` — Spécification v0.1 du Core Engine (statut **Proposed / Architecture Draft**, GO Sprint 1, Sprint 3 verrouillé par les invariants)
+- `docs/specifications/CORE-ENGINE-IMPLEMENTATION-PLAN.md` — Plan d'implémentation v0.1 (7 sprints, 0 dépendance runtime, contrats corrigés)
+
+### Modifié
+- `README.md` — Ajout de la section N3 Core Engine
+
+---
+
 ## [0.1.0-dev] — 2026-09-04
 
 ### Statut
