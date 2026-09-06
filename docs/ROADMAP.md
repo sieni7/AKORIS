@@ -30,17 +30,17 @@
 
 ## 🟡 Moyen terme
 
-| # | Action | Effort |
-|---|---|---|
-| M1 | Templates d'issues GitHub | 30 min |
-| M2 | Template PR | 20 min |
-| M3 | CI (lint, validation JSON) | 1h30 |
-| M4 | Glossaire enrichi | 1h |
-| M5 | Politique de versioning | 30 min |
-| M6 | README en anglais | 1h30 |
-| M7 | CHANGELOG enrichi | 30 min |
-| M8 | Schéma d'architecture globale | 1h |
-| M9 | Exemple de projet réel | 2h |
+| # | Action | Effort | Statut |
+|---|---|---|---|
+| M1 | Templates d'issues GitHub | 30 min | ✅ |
+| M2 | Template PR | 20 min | ✅ |
+| M3 | CI (lint, validation JSON) | 1h30 | ✅ |
+| M4 | Glossaire enrichi | 1h | ✅ |
+| M5 | Politique de versioning | 30 min | ✅ |
+| M6 | README en anglais | 1h30 | ✅ |
+| M7 | CHANGELOG enrichi | 30 min | ✅ |
+| M8 | Schéma d'architecture globale | 1h | ✅ (déjà existant, référence README ajoutée) |
+| M9 | Exemple de projet réel | 2h | ✅ (dogfooding — état courant, pas cas conclu) |
 
 ---
 

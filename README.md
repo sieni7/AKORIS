@@ -208,7 +208,13 @@ akoris status
 
 ---
 
-## 11. Gouvernance proportionnelle
+## 11. Architecture
+
+Voir [docs/architecture.mmd](docs/architecture.mmd) pour les diagrammes détaillés (hiérarchie, méthode, machine à états, structure monorepo).
+
+---
+
+## 12. Gouvernance proportionnelle
 
 AKORIS adapte sa profondeur de gouvernance au niveau de risque du projet (source : `registry/profiles/`) :
 
@@ -220,7 +226,7 @@ AKORIS adapte sa profondeur de gouvernance au niveau de risque du projet (source
 
 ---
 
-## 12. Écosystème prévu (futur)
+## 13. Écosystème prévu (futur)
 
 Les commandes suivantes sont documentées comme des **jalons** de l'écosystème AKORIS (source : `constitution/02_GOVERNANCE.md` §11) :
 
@@ -232,7 +238,7 @@ Les commandes suivantes sont documentées comme des **jalons** de l'écosystème
 
 ---
 
-## 13. Licence
+## 14. Licence
 
 AKORIS est distribué sous licence **MIT** exclusivement (source : `constitution/04_LICENSING.md` §1.1).
 
