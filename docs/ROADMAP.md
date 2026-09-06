@@ -13,18 +13,20 @@
 
 ---
 
-## 🟠 Court terme (En cours)
+## 🟠 Court terme — Complété ✅
 
 | # | Action | Effort | Statut |
 |---|---|---|---|
+| I1 | Diagramme du cycle de vie | 1h | ✅ |
+| I2 | Section "avant/après" | 1h30 | ✅ |
+| I3 | CONTRIBUTING.md | — | ✅ (déjà existante) |
+| I4 | CODE_OF_CONDUCT.md | 15 min | ✅ |
+| I5 | SECURITY.md | — | ✅ (déjà existante) |
 | I6 | Badges README | 15 min | ✅ |
-| I4 | CODE_OF_CONDUCT.md | 15 min | ⏳ |
-| I9 | Exemple annoté state-machine.json | 30 min | ⏳ |
-| I1 | Diagramme du cycle de vie | 1h | ⏳ |
-| I8 | Roadmap publique | 1h | ⏳ |
-| I7 | FAQ | — | ✅ (déjà existante) |
-| I10 | Tableau positionnement comparatif | 1h | ⏳ |
-| I2 | Section "avant/après" | 1h30 | ⏳ |
+| I7 | FAQ.md | — | ✅ (déjà existante) |
+| I8 | Roadmap publique | 1h | ✅ |
+| I9 | Exemple annoté state-machine.json | 30 min | ✅ |
+| I10 | Tableau positionnement comparatif | 1h | ✅ |
 
 ---
 
@@ -46,7 +48,9 @@
 
 ## 🟢 Long terme
 
-- Site web / landing page
-- Vidéo de présentation
-- Études de cas
-- Reconnaissance externe
+| # | Action | Nature | Statut |
+|---|---|---|---|
+| L1 | Site web / landing page | Livrable technique (React/Vite/Netlify) | ◻️ Prêt à lancer (sprint dédié) |
+| L2 | Vidéo de présentation | Production externe | ✍️ Script rédigé — 🎥 production requise |
+| L3 | Étude de cas | Analyse d'un cycle complet | 🔒 Bloqué — attend un cycle Core Engine réel |
+| L4 | Reconnaissance externe | Action continue | ♾️ Action continue (hors commit) |

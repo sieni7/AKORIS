@@ -24,9 +24,15 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/) et ce pr
 - M9 — `docs/examples/real-project-case.md` : dogfooding de l'instance AKORIS (état courant)
 
 ### Notes
-- `docs/FAQ.md` existante (v1.0.1) conservée — I7 retiré de la liste (déjà couvert)
+- I3/I5/I7 déjà couverts en amont (CONTRIBUTING.md, SECURITY.md, FAQ.md)
 - Schéma d'architecture déjà présent (`architecture.mmd`) — M8 = référencement dans README + coche roadmap
 - CI minimale (`validate:registry`) — lint/test/build branchés avec le Seed toolchain (Sprint 1)
+
+### Lot L (Long terme — structuration)
+- L2 — `docs/presentations/video-script.md` : script de présentation (~3 min) rédigé, production vidéo externe requise
+- L1 (site web) : marqué « prêt à lancer » (sprint dédié), non scaffoldé
+- L3 (étude de cas) : **bloqué** — attend un cycle Core Engine réel (pas de cas conclu à documenter, principe anti-fabulation)
+- L4 (reconnaissance externe) : action continue, hors commit
 
 ---
 
