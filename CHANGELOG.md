@@ -6,6 +6,30 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/) et ce pr
 
 ---
 
+## [1.0.2] — 2026-09-06
+
+### Lot I (Important) — Assainissement de la vitrine
+- I6 — README : ajout des badges (license, npm, node, statut)
+- I4 — `CODE_OF_CONDUCT.md` : ajout du code de conduite (racine)
+- I9 — `docs/examples/state-machine-annotated.md` : exemple annoté de la machine à états
+- I1 — `docs/diagrams/lifecycle.md` : diagramme Mermaid du cycle de vie
+- I8 — `docs/ROADMAP.md` : roadmap publique
+- I10 — `docs/comparison.md` : comparatif vs Scrum/ITIL/OWASP
+- I2 — `docs/examples/before-after.md` : cas avant/après (exemple illustratif)
+
+### Lot M (Moyen terme)
+- M4 — `03_TERMINOLOGY.md` : enrichissement du glossaire (Decision Gate, Profil, DCO) — v1.0.2
+- M5 — `docs/versioning-policy.md` : politique de versioning consolidée
+- M6 — `README.en.md` : traduction anglaise du README
+- M9 — `docs/examples/real-project-case.md` : dogfooding de l'instance AKORIS (état courant)
+
+### Notes
+- `docs/FAQ.md` existante (v1.0.1) conservée — I7 retiré de la liste (déjà couvert)
+- Schéma d'architecture déjà présent (`architecture.mmd`) — M8 = référencement dans README + coche roadmap
+- CI minimale (`validate:registry`) — lint/test/build branchés avec le Seed toolchain (Sprint 1)
+
+---
+
 ## [1.0.1-hotfix] — 2026-09-05
 
 ### Urgences U1-U6
