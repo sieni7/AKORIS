@@ -1,5 +1,10 @@
 # AKORIS
 
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![npm version](https://img.shields.io/npm/v/akoris.svg)
+![Node](https://img.shields.io/badge/node-%3E%3D20-green.svg)
+![Status](https://img.shields.io/badge/status-specification-orange.svg)
+
 > **🔵 Statut actuel : Spécification uniquement**
 >
 > AKORIS est actuellement un dépôt de **méthode, de gouvernance et de schémas de référence**. Il ne fournit pas encore de CLI installable, de moteur d'exécution, de dashboard, d'API ou d'instance `.akoris/` complète.
