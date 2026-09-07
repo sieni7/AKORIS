@@ -1,64 +1,71 @@
 # Guide de démarrage AKORIS
 
-> **Version** : 1.0.1
-> **Statut** : Guide officiel
-> **Date** : 2026-09-04
-> **Temps estimé** : < 1h pour un projet fonctionnel
+> **⚠️ Statut du document**
+>
+> Ce guide décrit la **méthode AKORIS** (Adaptive Knowledge & Orchestrated Review for Intelligent Software) — son architecture, ses principes et son cycle de gouvernance.
+>
+> **État actuel de l'implémentation :**
+> - La méthode est spécifiée et documentée.
+> - Le CLI `akoris` est en cours de développement (Sprint 1 — Core Engine v0.1.0 Seed).
+> - Les commandes présentées dans ce guide sont **illustratives** — elles décrivent le comportement final prévu, mais ne sont pas encore implémentées.
+> - La version publiée sur npm (`akoris@0.0.1`) est un placeholder (logo ASCII + menu interactif).
+>
+> Pour l'état réel, consultez le [README](../../README.md) et le [CHANGELOG](../../CHANGELOG.md).
 
 ---
 
 ## Introduction
 
-Ce guide vous accompagne de zéro à un projet AKORIS fonctionnel. Il décrit les **12 étapes** du démarrage, de l'installation à la capitalisation.
+Ce guide vous accompagne dans la découverte d'AKORIS. Il décrit les **12 étapes** du démarrage, de l'installation à la capitalisation.
+
+> **Temps estimé** : moins d'une heure pour initialiser et comprendre une instance AKORIS. La durée du développement dépend ensuite de votre projet.
 
 ---
 
-## Les 12 étapes
+## Étape 1 — Structure du dépôt AKORIS
 
-### Étape 1 — Installation
+Avant de commencer, distinguez trois espaces :
+
+| Espace | Rôle | Exemple |
+|---|---|---|
+| **Dépôt méthode** | Contient la spécification (constitution, gouvernance, terminologie, registry). | `sieni7/AKORIS` (ce dépôt) |
+| **Instance projet** | Contient la configuration et les artefacts propres à votre projet. | `mon-projet/.akoris/` |
+| **Documentation projet** | Explique l'application concrète dans votre projet. | `mon-projet/docs/` |
+
+> **Règle** : la Constitution appartient au dépôt méthode. Une fois votre instance créée, la gouvernance appliquée à votre projet vit dans `.akoris/`.
+
+---
+
+## Étape 2 — Installation
 
 ```bash
 npm install -g akoris
 ```
 
-Vérifiez l'installation :
-
-```bash
-akoris --version
-```
+> **Statut : planifié.** Le CLI est en cours de développement (Sprint 1). Cette commande sera fonctionnelle une fois la v0.1.0 du CLI publiée.
 
 ---
 
-### Étape 2 — Initialisation de l'instance
+## Étape 3 — Initialisation de l'instance (avec choix du profil)
 
 ```bash
-akoris init mon-projet
+akoris init mon-projet --profile lite
 cd mon-projet
 ```
 
-Cette commande crée la structure minimale :
+> **Statut : planifié.**
+
+Cette commande créera la structure minimale :
 
 ```
 mon-projet/
 ├── .akoris/
-│   ├── manifest.json      (identité du projet)
-│   ├── state.json         (état initial : PROPOSITION)
-│   ├── registry/          (contrats, règles, décisions)
-│   └── policies/          (règles applicables)
-└── .gitignore             (exclusion des secrets)
+│   ├── manifest.json # identité du projet, profil choisi
+│   ├── state.json # état initial : PROPOSITION
+│   ├── registry/ # contrats, règles, décisions
+│   └── policies/ # règles applicables
+└── .gitignore # exclusion des secrets
 ```
-
----
-
-### Étape 3 — Lire la Constitution
-
-Le manifeste AKORIS se trouve dans `constitution/00_AKORIS.md`. Il définit la mission, les 4 piliers et les principes fondamentaux.
-
-> **Règle** : La gouvernance est le premier artefact à définir dans tout projet AKORIS.
-
----
-
-### Étape 4 — Choisir un profil
 
 AKORIS définit 3 profils de gouvernance, proportionnés au niveau de risque :
 
@@ -68,49 +75,47 @@ AKORIS définit 3 profils de gouvernance, proportionnés au niveau de risque :
 | **Standard** | E1 + E2 | Cycle complet (8) | Projets professionnels |
 | **Critical** | E1 + E2 + E3 | Cycle complet + renforcés | Projets sensibles |
 
-```bash
-akoris init mon-projet --profile lite
-```
-
-Le profil est documenté dans le `manifest.json`.
-
 ---
 
-### Étape 5 — Choisir son playbook
+## Étape 4 — Le Registry d'agents (40 agents, 5 domaines)
 
-Sélectionnez le playbook correspondant à votre type de projet :
-- App web
-- API backend
-- Mobile
-- CLI / outil
+AKORIS définit **40 agents de référence**, répartis en 5 domaines :
 
----
+| Domaine | Nombre | Rôle général |
+|---|---|---|
+| **CORE** | 8 | Gouvernance et coordination du cycle de vie |
+| **DEV** | 10 | Implémentation |
+| **QA** | 8 | Qualité, tests, vérification |
+| **EXP** | 10 | Expertise spécialisée |
+| **GOV** | 4 | Gouvernance normative (constitution, politiques) |
 
-### Étape 6 — Activer les agents
-
-Chaque projet active les agents nécessaires à son contexte, parmi les **40 agents de référence**.
+Chaque agent est défini dans `registry/agents/{DOMAINE}-{NN}/` avec un contrat (`agent.json`, `contract.json`, `mission.md`, `prompt.md`).
 
 ```bash
+akoris agent list
 akoris agent activate CORE-01
 akoris agent activate DEV-01
 akoris agent activate QA-01
 ```
 
+> **Statut : planifié.**
+
 ---
 
-### Étape 7 — Créer une proposition (PROPOSITION)
+## Étape 5 — Créer une proposition (PROPOSITION)
 
-Chaque travail commence par une proposition formelle :
+Chaque travail commence par une proposition formelle, contenant **contexte**, **justification** et **ébauche de solution** :
 
 ```bash
-akoris state set PROPOSITION --context "Besoin : API de gestion de tâches"
+akoris proposal create --title "API de gestion de tâches" \
+  --context "..." --justification "..." --solution "..."
 ```
 
-Contenu requis : **contexte**, **justification**, **ébauche de solution**.
+> **Statut : planifié.** Notez que l'instance démarre déjà dans l'état `PROPOSITION` (créée à l'étape 3) — cette commande crée l'artefact de proposition, pas une transition d'état.
 
 ---
 
-### Étape 8 — Passer les Quality Gates
+## Étape 6 — Passer les Quality Gates
 
 Chaque transition d'état est protégée par un Quality Gate :
 
@@ -123,75 +128,87 @@ Chaque transition d'état est protégée par un Quality Gate :
 | AUDIT → VALIDATED | QG-AUDIT |
 | VALIDATED → RELEASED | QG-VALIDATED + **Decision Gate humain** |
 
----
+```bash
+akoris gate run QG-PROPOSITION
+akoris gate show QG-PROPOSITION
+akoris state transition DRAFT
+```
 
-### Étape 9 — Développer (ACTIVE)
+> **Statut : planifié.**
 
-Pendant l'implémentation :
-- Tracez vos modifications.
-- Documentez en continu.
-- Produisez les rapports d'avancement.
-
-> **Règle** : Une tâche avec des prompts explicites bénéficie du cadre AKORIS.
-
----
-
-### Étape 10 — Auditer (AUDIT)
-
-L'audit vérifie : sécurité, performances, documentation, conformité.
-
-L'auditeur est **indépendant** du porteur et du validateur.
+Trois états exceptionnels existent en dehors de ce parcours nominal : `BLOCKED`, `REJECTED`, `SUPERSEDED` — voir [state-machine.json](../../registry/state-machine.json).
 
 ---
 
-### Étape 11 — Decision Gate (verification humaine)
+## Étape 7 — Développer (ACTIVE)
 
-Contrairement aux Quality Gates (automatisables), la **decision de release est toujours humaine** :
+Pendant l'implémentation : tracez vos modifications, documentez en continu, produisez les rapports d'avancement.
+
+---
+
+## Étape 8 — Auditer (AUDIT)
+
+L'audit vérifie sécurité, performances, documentation et conformité. L'auditeur est **indépendant** du porteur et du validateur.
+
+---
+
+## Étape 9 — Decision Gate (vérification humaine)
+
+Contrairement aux Quality Gates (automatisables), la **décision de release est toujours humaine** :
 
 ```
 Quality Gate (PASS/FAIL)
-    ↓
-Human Decision Gate (GO / NO-GO / CONDITIONAL GO)
-    ↓
+↓
+Decision Gate humain (GO / NO-GO / CONDITIONAL GO)
+↓
 Transition autorisée
 ```
 
 ---
 
-### Étape 12 — Release et capitalisation
+## Étape 10 — Release et capitalisation
 
 Après la mise en production :
 - Mettez à jour le CHANGELOG.
 - Documentez le plan de rollback.
 - Réalisez le post-mortem.
-- Archivez l'artefact (ARCHIVED) pour capitaliser la connaissance.
+- Archivez l'artefact (`ARCHIVED`) pour capitaliser la connaissance.
 
 ---
 
-## Exemple de projet minimal
+## Exemple illustratif — "API de gestion de tâches" en 5 jours
 
-### "API de gestion de tâches" en 5 jours
+> *Scénario type, non issu d'un projet réel documenté — à des fins pédagogiques.*
 
-| Jour | Étape | Action |
+| Jour | Étapes | Action |
 |---|---|---|
-| **J1** | 1-6 | Installation, init, profil Lite, agents, proposition |
-| **J2** | 7-8 | Draft, spécifications, QG-PROPOSITION |
-| **J3** | 9 | Implémentation (ACTIVE) |
-| **J4** | 10-11 | Audit + Decision Gate |
-| **J5** | 12 | Release + capitalisation |
+| **J1** | 1-4 | Installation, init, profil Lite, agents |
+| **J2** | 5-6 | Proposition, Draft, QG-PROPOSITION |
+| **J3** | 7 | Implémentation (ACTIVE) |
+| **J4** | 8-9 | Audit + Decision Gate |
+| **J5** | 10 | Release + capitalisation |
 
 ---
 
-## Commandes utiles
+## Commandes utiles (planifiées)
 
 | Commande | Description |
 |---|---|
 | `akoris status` | État courant de l'instance |
 | `akoris state show` | État d'un artefact |
 | `akoris search <terme>` | Recherche dans le Registry |
-| `akoris agent list` | Liste des agents activés |
+| `akoris agent list` | Liste des 40 agents disponibles |
 | `akoris alias --set <nom> <cmd>` | Créer un alias |
 
 ---
 
-*Guide de démarrage AKORIS v1.0.1*
+## Prochaines étapes
+
+- Consultez la [Roadmap](../ROADMAP.md) pour l'état d'avancement réel.
+- Explorez le [Registry des agents](../../registry/agents/) (40 agents, 5 domaines).
+- Lisez la [FAQ](../FAQ.md) et le [Glossaire](../../constitution/03_TERMINOLOGY.md).
+- Suivez l'avancement du Core Engine : le Sprint 1 (v0.1.0 Seed) est en cours.
+
+---
+
+*Guide de démarrage AKORIS v1.0.2*
