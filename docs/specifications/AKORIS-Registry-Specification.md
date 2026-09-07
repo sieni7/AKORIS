@@ -53,12 +53,24 @@ registry/
 ├── profiles/           # Profils d'exécution (lite, standard, critical)
 ├── policies/           # Politiques applicables
 ├── state-machine.json  # Machine à états
-└── metrics/            # Métriques de mesure
+└── metrics/            # Métriques de mesure  [FUTURE / EXTENSIBLE — non encore enregistrées]
 ```
+
+> **Note CURRENT / FUTURE** : les répertoires non listés ci-dessus à ce jour
+> (`rules/`, `events/`, `workflows/`) sont des catégories **FUTURE /
+> EXTENSIBLE**. Le répertoire `metrics/` est **FUTURE / EXTENSIBLE** : aucun
+> artefact métrique n'est enregistré pour l'instant, bien que le schéma
+> `metric.schema.json` soit déjà fourni (§8, contrat préparatoire).
 
 ### 3.2 Manifest du registry (`registry.json`)
 
-Le fichier `registry.json` décrit le Registry lui-même.
+Le fichier `registry.json` décrit le Registry lui-même. Il s'agit d'une **métadonnée descriptive** : il ne constitue ni une seconde source de vérité, ni une liste déclarative faisant autorité sur les artefacts effectivement enregistrés. Le Registry réel reste constitué des artefacts présents dans `registry/`.
+
+> **Distinction CURRENT / FUTURE** : les quantités ci-dessous distinguent
+> **CURRENT** (*artefacts réellement enregistrés dans le Registry*) de
+> **FUTURE / EXTENSIBLE** (*catégories prévues ou extensibles, non encore
+> enregistrées*). Une catégorie future ne doit jamais être présentée comme
+> actuellement enregistrée.
 
 ```json
 {
@@ -71,18 +83,25 @@ Le fichier `registry.json` décrit le Registry lui-même.
   "license": "MIT",
   "createdAt": "2026-09-04",
   "updatedAt": "2026-09-04",
-  "agentCount": 40,
-  "ruleCount": 150,
-  "deliverableCount": 45,
-  "eventCount": 25,
-  "workflowCount": 12,
-  "policyCount": 18,
-  "qualityGateCount": 30,
+  "current": {
+    "agentCount": 40,
+    "policyCount": 1,
+    "qualityGateCount": 6
+  },
+  "futureExtensible": {
+    "ruleCount": 150,
+    "deliverableCount": 45,
+    "eventCount": 25,
+    "workflowCount": 12
+  },
   "compatibleCLIVersions": ["^1.0.0"],
   "ontologyVersion": "1.0.0",
   "stateMachineVersion": "1.0.0"
 }
 ```
+
+**Valeurs CURRENT (état réel vérifié)** : 40 agents, 1 policy, 6 quality gates.
+**Valeurs FUTURE / EXTENSIBLE (cibles architecturale, non enregistrées à ce jour)** : 150 rules, 45 deliverables, 25 events, 12 workflows. Ces valeurs expriment des extensions prévues et ne reflètent **pas** l'état courant du Registry.
 
 ---
 

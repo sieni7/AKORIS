@@ -81,6 +81,25 @@ Les agents peuvent être :
 
 Recommandation IA : En tant qu'agent artificiel, tu es soumis aux mêmes contrats et autorisations qu'un agent humain. Ton périmètre d'action est défini par ton contrat et les politiques du projet.
 
+#### 0.3.1. Mapping des rôles du `state-machine.json`
+
+> **AGENT ≠ ROLE ≠ AUTHORITY ≠ HUMAN DECISION.**
+> Les rôles portés par `authorizedBy` dans `registry/state-machine.json`
+> décrivent une **autorité / fonction de processus** de la gouvernance.
+> Ils ne constituent **pas** des entités enregistrées dans `registry/agents/`
+> et ne doivent **jamais** être transformés en agents AKORIS.
+
+| Rôle (`authorizedBy`) | Signification | Correspondance gouvernance |
+|---|---|---|
+| `VALIDATOR` | Autorité de validation d'une transition (autorise les passages PROPOSITION → … → VALIDATED) | Rôle **Validateur** (§1.2) + agents dotés du rôle de validation |
+| `HUMAN_DECISION` | Décision nécessitant une **décision humaine explicite** (transition `VALIDATED → RELEASED`) | Décision humaine externe (Superviseur/porteur humain, §1.5) — **aucun agent artificiel ne peut porter ce rôle** |
+| `MAINTAINER` | Maintenance gouvernée du système (transition `RELEASED → ARCHIVED`) | Rôle **Mainteneur** (§1.4) |
+
+`authorizedBy` décrit donc une **autorité / fonction de processus**, et non
+nécessairement un `agent.id`. L'acteur concret (quelles entités l'exercent) est
+résolu séparément par le contexte d'autorisation, conformément au
+`CORE-ENGINE-SPECIFICATION` (§4.14 `AuthorizationContext`).
+
 ---
 
 ### 0.4. Hiérarchie des autorités
