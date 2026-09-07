@@ -16,7 +16,7 @@
 
 ## Introduction
 
-Ce guide vous accompagne dans la découverte d'AKORIS. Il décrit les **12 étapes** du démarrage, de l'installation à la capitalisation.
+Ce guide vous accompagne dans la découverte d'AKORIS. Il décrit les **10 étapes** du démarrage, de l'installation à la capitalisation.
 
 > **Temps estimé** : moins d'une heure pour initialiser et comprendre une instance AKORIS. La durée du développement dépend ensuite de votre projet.
 
