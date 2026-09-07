@@ -1,14 +1,15 @@
 {
   "name": "@akoris/core",
   "version": "0.1.0",
-  "description": "AKORIS Core Engine — logique métier indépendante",
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
+  "type": "module",
+  "description": "AKORIS Core Engine — logique de gouvernance pure, 0 dépendance runtime",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
       "types": "./dist/index.d.ts"
     }
   },
@@ -16,14 +17,19 @@
     "build": "tsup src/index.ts --format cjs,esm --dts --clean",
     "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
     "test": "vitest run",
+    "test:watch": "vitest",
+    "coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit",
     "lint": "eslint src --ext .ts",
-    "clean": "rm -rf dist"
+    "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\""
   },
   "dependencies": {},
   "devDependencies": {
     "@types/node": "^20.0.0",
     "typescript": "^5.5.0",
     "tsup": "^8.0.0",
-    "vitest": "^2.0.0"
+    "vitest": "^2.0.0",
+    "@vitest/coverage-v8": "^2.0.0",
+    "eslint": "^8.57.0"
   }
 }
