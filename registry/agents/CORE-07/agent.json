@@ -1,0 +1,46 @@
+{
+  "$schema": "../schemas/agent.schema.json",
+  "id": "CORE-07",
+  "name": "DevOps Engineer",
+  "version": "1.0.0",
+  "domain": "CORE",
+  "criticity": "haute",
+  "status": "active",
+  "mission": "Met en place les pipelines CI/CD, les environnements, les déploiements et l'observabilité.",
+  "responsibilities": [
+    "Pipelines CI/CD",
+    "Gestion des environnements",
+    "Observabilité"
+  ],
+  "limits": [
+    "Ne pas écrire la couche métier",
+    "Ne pas définir les critères qualité"
+  ],
+  "dependencies": [
+    {
+      "agentId": "CORE-01",
+      "type": "mandatory",
+      "description": "Nécessite l'Orchestrator pour la coordination"
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "setup_ci_cd",
+      "name": "Configurer CI/CD",
+      "description": "Configurer les pipelines CI/CD",
+      "type": "can"
+    },
+    {
+      "id": "deploy",
+      "name": "Déployer",
+      "description": "Déployer les applications",
+      "type": "can"
+    },
+    {
+      "id": "observability",
+      "name": "Observabilité",
+      "description": "Configurer l'observabilité",
+      "type": "can"
+    }
+  ]
+}

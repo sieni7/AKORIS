@@ -1,0 +1,34 @@
+{
+  "$schema": "../schemas/quality-gate.schema.json",
+  "id": "QG-VALIDATED",
+  "name": "Validation finale (pré-release)",
+  "description": "Vérifie que tous les critères de validation sont remplis avant la mise en production.",
+  "severity": "bloquante",
+  "owner": "GOV-02",
+  "criteria": [
+    {
+      "id": "CRIT-001",
+      "name": "Tous les gates sont PASS",
+      "evaluator": "all_gates_pass",
+      "params": {},
+      "weight": 0.5
+    },
+    {
+      "id": "CRIT-002",
+      "name": "Approbation du Superviseur",
+      "evaluator": "field_exists",
+      "params": { "field": "supervisor_approval" },
+      "weight": 0.3
+    },
+    {
+      "id": "CRIT-003",
+      "name": "CHANGELOG mis à jour",
+      "evaluator": "field_exists",
+      "params": { "field": "changelog" },
+      "weight": 0.2
+    }
+  ],
+  "threshold": 0.9,
+  "controls": ["TRN-006"],
+  "tags": ["release", "validation"]
+}

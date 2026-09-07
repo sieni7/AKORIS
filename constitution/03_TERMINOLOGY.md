@@ -1,8 +1,8 @@
 # Terminologie AKORIS
 
-> **Version** : 1.0.1  
-> **Statut** : Normatif  
-> **Date** : 2026-09-04  
+> **Version** : 1.0.2
+> **Statut** : Normatif
+> **Date** : 2026-09-06
 > **Approbation** : AKORIS Core Team
 
 ---
@@ -187,6 +187,17 @@ Recommandation IA : Tu dois distinguer ce qui relève de la méthode (AKORIS) de
 
 ---
 
+### DCO (Developer Certificate of Origin)
+**Définition** : Déclaration d'origine liant juridiquement un contributeur à sa contribution, certifiant qu'il est son auteur ou qu'il a le droit de la soumettre.
+
+**Portée** : Méthode.
+
+**Usage** : Toute contribution doit être accompagnée d'un DCO signé (trailer `Signed-off-by`), condition obligatoire pour l'acceptation.
+
+**Relation** : Défini par la **Licence** (04_LICENSING.md §5.2) et requis par le processus de **Contribution**.
+
+---
+
 ## 3. Agents et rôles
 
 ### Agent
@@ -360,6 +371,30 @@ Recommandation IA : Si un Superviseur humain exerce son droit de veto ou d'inter
 **Relation** : Protège les **Transitions** et valide les **Artefacts**.
 
 Recommandation IA : Les Quality Gates sont un outil de rigueur, pas de rigidité. Ils sont proportionnés au risque.
+
+---
+
+### Decision Gate
+**Définition** : Décision humaine formalisée autorisant une transition vers un état de production ou de clôture. Résultat : GO, NO-GO ou CONDITIONAL GO.
+
+**Portée** : Instance.
+
+**Usage** : Un Quality Gate (PASS/FAIL) ne constitue jamais, à lui seul, une autorisation de mise en production. Toute transition vers un état de production requiert un Decision Gate humain.
+
+**Relation** : Complète les **Quality Gates** (contrôle technique) là où la décision finale reste **humaine**.
+
+Recommandation IA : L'IA produit. Les contrôles vérifient. L'humain décide.
+
+---
+
+### Profil
+**Définition** : Niveau de gouvernance proportionné au risque d'un projet, déterminant les preuves, les Quality Gates et le type d'audit applicables (Lite, Standard, Critical).
+
+**Portée** : Instance.
+
+**Usage** : Le profil est déclaré dans le manifest de l'instance et peut évoluer au fil du projet.
+
+**Relation** : Déclenche les **Preuves**, les **Quality Gates** et les **Decision Gates** applicables.
 
 ---
 

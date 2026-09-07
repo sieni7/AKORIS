@@ -1,0 +1,146 @@
+# Diagramme d'architecture — AKORIS
+
+> **Version** : 1.0.1 (méthode) / 0.1.0-dev (code)
+> **Statut** : Diagramme officiel
+> **Date** : 2026-09-04
+
+Ce fichier contient les diagrammes Mermaid officiels d'AKORIS. Ils peuvent être
+rendus directement sur GitHub ou convertis en image (PNG/SVG) via l'outil
+`@mermaid-js/mermaid-cli` (`mmdc`).
+
+---
+
+## 1. Hiérarchie normative
+
+La hiérarchie qui structure la méthode AKORIS (de la norme la plus haute à la plus concrète).
+
+```mermaid
+graph TD
+    C[CONSTITUTION<br/>01_CONSTITUTION.md]
+    G[GOUVERNANCE<br/>02_GOVERNANCE.md]
+    T[TERMINOLOGIE<br/>03_TERMINOLOGY.md]
+    R[REGISTRY<br/>registry/]
+    P[POLITIQUES<br/>registry/policies/]
+    CO[CONTRATS<br/>registry/contracts/]
+    I[IMPLEMENTATION<br/>écosystème]
+
+    C --> G
+    G --> T
+    T --> R
+    R --> P
+    P --> CO
+    CO --> I
+```
+
+---
+
+## 2. Vue d'ensemble de la méthode
+
+Topologie complète : normes, registre, instance, écosystème et frontière `.akoris/` vs `docs/`.
+
+```mermaid
+graph TD
+    A[AKORIS<br/>Méthode de gouvernance]
+    A --> B[Constitution]
+    A --> C[Gouvernance]
+    A --> D[Terminologie]
+
+    B --> E[Registry]
+    C --> E
+    D --> E
+
+    E --> F[Politiques]
+    E --> G[Contrats]
+    E --> H[Profils<br/>Lite / Standard / Critical]
+    E --> S[Schémas JSON]
+    E --> M[State Machine<br/>11 états]
+
+    F --> I[Core Engine]
+    G --> I
+    H --> I
+    S --> I
+    M --> I
+
+    subgraph eco[Écosystème AKORIS]
+        I --> J[CLI]
+        I --> K[API]
+        I --> L[Dashboard]
+    end
+
+    J --> terminal[Terminal]
+    K --> api[WebSocket / REST]
+    L --> webui[Web UI]
+
+    subgraph inst[Instance AKORIS — .akoris/]
+        J --> manifest[manifest.json]
+        J --> state[state.json]
+        J --> instReg[registry/]
+    end
+
+    subgraph docs[Documentation — docs/]
+        D --> docsDocs[docs/]
+    end
+```
+
+---
+
+## 3. Machine à états (11 états)
+
+Cycle de vie d'un artefact AKORIS — 8 états nominaux + 3 états exceptionnels.
+
+```mermaid
+graph LR
+    P[PROPOSITION] --> Q[DRAFT]
+    Q --> R[PLANNED]
+    R --> S[ACTIVE]
+    S --> T[AUDIT]
+    T --> U[VALIDATED]
+    U --> V[RELEASED]
+    V --> W[ARCHIVED]
+
+    S --> X[BLOCKED]
+    X --> S
+    X --> Y[REJECTED]
+    T --> Y
+    U --> Z[SUPERSEDED]
+
+    Y --> W
+    Z --> W
+```
+
+Légende :
+- **Nominal** : PROPOSITION → DRAFT → PLANNED → ACTIVE → AUDIT → VALIDATED → RELEASED → ARCHIVED
+- **Exceptionnel** : BLOCKED, REJECTED, SUPERSEDED
+- Chaque transition est déterministe et porte `required: true/false` (`registry/state-machine.json`).
+
+---
+
+## 4. Architecture monorepo
+
+Structure du dépôt d'implémentation de référence (branche `impl`).
+
+```mermaid
+graph TD
+    subgraph repo[Dépôt AKORIS]
+        subgraph spe[Spécification — main]
+            constitution[constitution/]
+            registry[registry/]
+            docs[docs/]
+        end
+
+        subgraph code[Implémentation — impl]
+            packages["packages/"]
+            apps["apps/"]
+            scripts["scripts/"]
+            selfhosting["self-hosting .akoris/"]
+        end
+    end
+
+    packages --> core["@akoris/core"]
+    packages --> cli["@akoris/cli"]
+    apps --> dashboard["dashboard"]
+```
+
+---
+
+*AKORIS v1.0.1 (méthode) — v0.1.0-dev (code)*

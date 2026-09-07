@@ -1,0 +1,46 @@
+{
+  "$schema": "../schemas/agent.schema.json",
+  "id": "EXP-06",
+  "name": "Ops Specialist",
+  "version": "1.0.0",
+  "domain": "EXP",
+  "criticity": "moyenne",
+  "status": "active",
+  "mission": "Supervision, alerting, observabilité, runbooks et gestion des incidents.",
+  "responsibilities": [
+    "Supervision",
+    "Alerting",
+    "Gestion des incidents"
+  ],
+  "limits": [
+    "Ne pas développer la couche métier",
+    "Ne pas définir les critères de release"
+  ],
+  "dependencies": [
+    {
+      "agentId": "CORE-01",
+      "type": "mandatory",
+      "description": "Nécessite l'Orchestrator pour la coordination"
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "monitoring",
+      "name": "Supervision",
+      "description": "Superviser les applications",
+      "type": "can"
+    },
+    {
+      "id": "alerting",
+      "name": "Alerting",
+      "description": "Configurer les alertes",
+      "type": "can"
+    },
+    {
+      "id": "observability",
+      "name": "Observabilité",
+      "description": "Assurer l'observabilité",
+      "type": "can"
+    }
+  ]
+}

@@ -6,6 +6,87 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/) et ce pr
 
 ---
 
+## [1.0.2] — 2026-09-06
+
+### Lot I (Important) — Assainissement de la vitrine
+- I6 — README : ajout des badges (license, npm, node, statut)
+- I4 — `CODE_OF_CONDUCT.md` : ajout du code de conduite (racine)
+- I9 — `docs/examples/state-machine-annotated.md` : exemple annoté de la machine à états
+- I1 — `docs/diagrams/lifecycle.md` : diagramme Mermaid du cycle de vie
+- I8 — `docs/ROADMAP.md` : roadmap publique
+- I10 — `docs/comparison.md` : comparatif vs Scrum/ITIL/OWASP
+- I2 — `docs/examples/before-after.md` : cas avant/après (exemple illustratif)
+
+### Lot M (Moyen terme)
+- M4 — `03_TERMINOLOGY.md` : enrichissement du glossaire (Decision Gate, Profil, DCO) — v1.0.2
+- M5 — `docs/versioning-policy.md` : politique de versioning consolidée
+- M6 — `README.en.md` : traduction anglaise du README
+- M9 — `docs/examples/real-project-case.md` : dogfooding de l'instance AKORIS (état courant)
+
+### Notes
+- I3/I5/I7 déjà couverts en amont (CONTRIBUTING.md, SECURITY.md, FAQ.md)
+- Schéma d'architecture déjà présent (`architecture.mmd`) — M8 = référencement dans README + coche roadmap
+- CI minimale (`validate:registry`) — lint/test/build branchés avec le Seed toolchain (Sprint 1)
+
+### Lot L (Long terme — structuration)
+- L2 — `docs/presentations/video-script.md` : script de présentation (~3 min) rédigé, production vidéo externe requise
+- L1 (site web) : marqué « prêt à lancer » (sprint dédié), non scaffoldé
+- L3 (étude de cas) : **bloqué** — attend un cycle Core Engine réel (pas de cas conclu à documenter, principe anti-fabulation)
+- L4 (reconnaissance externe) : action continue, hors commit
+
+---
+
+## [1.0.1-hotfix] — 2026-09-05
+
+### Urgences U1-U6
+- U1 — Copyright : mise à jour des fichiers LICENSE, 04_LICENSING.md, README.md
+- U2 — Placeholder npm percutant : `akoris@0.0.1` publié (logo ASCII, bin `akoris`)
+- U3 — README : `npm install -g akoris` marqué comme "prévu"
+- U4 — README : ajout du tableau de versioning (méthode vs écosystème)
+- U5 — Nommage agents : vérifié, pattern `{DOMAINE}-{NN}` déjà en place
+- U6 — Name availability : `docs/legal/name-availability.md` créé
+
+---
+
+## [N3 — Core Engine] — 2026-09-05 (Sprint 0 — Architectural Foundation)
+
+### Ajouté
+- `docs/specifications/CORE-ENGINE-SPECIFICATION.md` — Spécification v0.1 du Core Engine (statut **Proposed / Architecture Draft**, GO Sprint 1, Sprint 3 verrouillé par les invariants)
+- `docs/specifications/CORE-ENGINE-IMPLEMENTATION-PLAN.md` — Plan d'implémentation v0.1 (7 sprints, 0 dépendance runtime, contrats corrigés)
+
+### Modifié
+- `README.md` — Ajout de la section N3 Core Engine
+
+---
+
+## [0.1.0-dev] — 2026-09-04
+
+### Statut
+🚧 **v0.1.0-dev — Branche `impl` initialisée**
+
+Ouverture de la branche de développement pour l'écosystème AKORIS (Core, CLI, Dashboard).
+
+### Ajouté
+- Branche `impl` pour le développement de l'écosystème AKORIS.
+- Monorepo pnpm : `packages/core/`, `packages/cli/`, `apps/dashboard/`.
+- Self-hosting `.akoris/` appliqué au dépôt (`manifest.json`, `state.json`).
+- `tsconfig.base.json` partagé, `package.json` racine avec scripts build/test/dev.
+- Placeholder `scripts/validate-registry.js`.
+
+### Enrichissement des agents (N2.3.1)
+- `enrich-agents.js` : ajoute `dependencies`, `capabilities` (achevé, réels par agent) et `raci` — écrit dans `agent.json` et `contract.json`, sans écraser les champs existants ni toucher à `capabilities.json`/`prompt.md`.
+- `enrich-prompts.js` : seul écrivain de `prompt.md`, template enrichi (variables `{{agent}}`/`{{domain}}`/`{{criticity}}`, consignes par domaine).
+- `generate-agent-files.js` : ajout du mode `--overwrite` ; retrait de `prompt.md` et `contract.json` de son périmètre (propriétés respectives enrich-agents/enrich-prompts).
+- `agent.schema.json` : ajout du champ `description` dans `capabilities`.
+- Vidage exploitable : 40 agents enrichis, 120 capacités, RACI sur 40 `contract.json`, validation verte (exit 0).
+
+### Note
+- La méthode AKORIS reste en `v1.0.1` (gelée sur `main`).
+- Le code suit son propre versionnement (`v0.1.0-dev`).
+- Versionning séparé : `@akoris/core@0.1.0`, `@akoris/cli@0.1.0`.
+
+---
+
 ## [1.0.1] — 2026-09-04
 
 ### Statut

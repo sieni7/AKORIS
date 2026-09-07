@@ -1,0 +1,34 @@
+{
+  "agentId": "EXP-10",
+  "name": "Platform Engineer",
+  "version": "1.0.0",
+  "domain": "EXP",
+  "criticity": "haute",
+  "mission": "Conception de la plateforme interne, abstraction des environnements, self-service.",
+  "responsibilities": [
+    "Plateforme interne",
+    "Abstraction des environnements",
+    "Self-service"
+  ],
+  "limits": [
+    "Ne pas développer le produit final",
+    "Ne pas définir la stratégie de sécurité"
+  ],
+  "dependencies": [],
+  "capabilities": [],
+  "raci": {
+    "R": [
+      "EXP-10"
+    ],
+    "A": [
+      "CORE-01"
+    ],
+    "C": [
+      "CORE-07",
+      "DEV-08"
+    ],
+    "I": [
+      "GOV-01"
+    ]
+  }
+}

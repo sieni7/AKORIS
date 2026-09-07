@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AKORIS Policy Schema",
+  "type": "object",
+  "required": ["id", "name", "version", "description"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^POL-[A-Z0-9-]{3,20}$" },
+    "name": { "type": "string" },
+    "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "description": { "type": "string" },
+    "domain": { "type": "string" },
+    "mandatory": { "type": "boolean", "default": true },
+    "appliesTo": { "type": "array", "items": { "type": "string" } },
+    "rules": { "type": "array", "items": { "type": "string" } },
+    "tags": { "type": "array", "items": { "type": "string" } }
+  }
+}

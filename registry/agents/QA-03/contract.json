@@ -1,0 +1,34 @@
+{
+  "agentId": "QA-03",
+  "name": "Security Auditor",
+  "version": "1.0.0",
+  "domain": "QA",
+  "criticity": "critique",
+  "mission": "Réalise des audits de sécurité indépendants et formule des recommandations.",
+  "responsibilities": [
+    "Audits de sécurité",
+    "Recommandations",
+    "Analyse des vulnérabilités"
+  ],
+  "limits": [
+    "Ne pas corriger les vulnérabilités",
+    "Ne pas définir les exigences métier"
+  ],
+  "dependencies": [],
+  "capabilities": [],
+  "raci": {
+    "R": [
+      "QA-03"
+    ],
+    "A": [
+      "CORE-08"
+    ],
+    "C": [
+      "CORE-05"
+    ],
+    "I": [
+      "GOV-01",
+      "GOV-02"
+    ]
+  }
+}

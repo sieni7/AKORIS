@@ -1,0 +1,23 @@
+{
+  "agentId": "EXP-06",
+  "capabilities": [
+    {
+      "id": "monitoring",
+      "name": "Supervision",
+      "description": "Superviser les applications",
+      "type": "can"
+    },
+    {
+      "id": "alerting",
+      "name": "Alerting",
+      "description": "Configurer les alertes",
+      "type": "can"
+    },
+    {
+      "id": "observability",
+      "name": "Observabilité",
+      "description": "Assurer l'observabilité",
+      "type": "can"
+    }
+  ]
+}

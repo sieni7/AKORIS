@@ -1,0 +1,51 @@
+{
+  "$schema": "../schemas/agent.schema.json",
+  "id": "DEV-04",
+  "name": "Domain Modeler",
+  "version": "1.0.0",
+  "domain": "DEV",
+  "criticity": "moyenne",
+  "status": "active",
+  "mission": "Modélisation métier (DDD), agrégats, entités, objets de valeur et règles métier.",
+  "responsibilities": [
+    "Modélisation DDD",
+    "Règles métier",
+    "Objets de valeur"
+  ],
+  "limits": [
+    "Ne pas concevoir l'infrastructure",
+    "Ne pas écrire les tests end-to-end"
+  ],
+  "dependencies": [
+    {
+      "agentId": "CORE-01",
+      "type": "mandatory",
+      "description": "Nécessite l'Orchestrator pour la coordination"
+    },
+    {
+      "agentId": "CORE-02",
+      "type": "mandatory",
+      "description": "Nécessite l'architecture technique"
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "model_domain",
+      "name": "Modéliser le domaine",
+      "description": "Modéliser le domaine métier",
+      "type": "can"
+    },
+    {
+      "id": "ddd",
+      "name": "DDD",
+      "description": "Appliquer les principes DDD",
+      "type": "can"
+    },
+    {
+      "id": "define_business_rules",
+      "name": "Définir les règles métier",
+      "description": "Définir les règles métier",
+      "type": "can"
+    }
+  ]
+}

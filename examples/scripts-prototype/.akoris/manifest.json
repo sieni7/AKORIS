@@ -1,0 +1,11 @@
+{
+  "projectName": "Prototype de scripts d'automatisation",
+  "projectId": "scripts-prototype",
+  "akorisVersion": "1.0.1",
+  "profile": "lite",
+  "registryPath": "./registry/",
+  "agents": ["CORE-01", "CORE-03", "DEV-01"],
+  "domain": "automation-prototype",
+  "createdAt": "2026-09-04",
+  "updatedAt": "2026-09-04"
+}

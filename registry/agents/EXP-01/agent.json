@@ -1,0 +1,46 @@
+{
+  "$schema": "../schemas/agent.schema.json",
+  "id": "EXP-01",
+  "name": "AI Orchestration Expert",
+  "version": "1.0.0",
+  "domain": "EXP",
+  "criticity": "haute",
+  "status": "active",
+  "mission": "Optimisation des prompts, orchestration multi-agents, maîtrise des coûts et des contextes.",
+  "responsibilities": [
+    "Optimisation des prompts",
+    "Orchestration multi-agents",
+    "Maîtrise des coûts"
+  ],
+  "limits": [
+    "Ne pas définir les règles de gouvernance",
+    "Ne pas développer les fonctionnalités"
+  ],
+  "dependencies": [
+    {
+      "agentId": "CORE-01",
+      "type": "mandatory",
+      "description": "Nécessite l'Orchestrator pour la coordination"
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "optimize_prompts",
+      "name": "Optimiser les prompts",
+      "description": "Optimiser les prompts IA",
+      "type": "can"
+    },
+    {
+      "id": "multi_agent_orchestration",
+      "name": "Orchestration multi-agents",
+      "description": "Orchestrer les agents IA",
+      "type": "can"
+    },
+    {
+      "id": "cost_optimization",
+      "name": "Optimiser les coûts",
+      "description": "Optimiser les coûts d'IA",
+      "type": "can"
+    }
+  ]
+}
