@@ -1,0 +1,25 @@
+{
+  "$schema": "./schemas/registry.schema.json",
+  "id": "akoris-registry",
+  "name": "Registry AKORIS",
+  "version": "1.0.4",
+  "description": "Metadonnee descriptive du Registry AKORIS. Ce fichier ne constitue ni une seconde source de verite, ni une liste declarative faisant autorite sur les artefacts effectivement enregistres.",
+  "maintainer": "AKORIS Core Team",
+  "license": "MIT",
+  "createdAt": "2026-09-04",
+  "updatedAt": "2026-09-07",
+  "current": {
+    "agentCount": 40,
+    "policyCount": 1,
+    "qualityGateCount": 6
+  },
+  "futureExtensible": {
+    "ruleCount": 150,
+    "deliverableCount": 45,
+    "eventCount": 25,
+    "workflowCount": 12
+  },
+  "compatibleCLIVersions": ["^1.0.0"],
+  "ontologyVersion": "1.0.0",
+  "stateMachineVersion": "1.0.0"
+}

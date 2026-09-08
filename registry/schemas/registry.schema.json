@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AKORIS Registry Manifest Schema",
+  "description": "Contrat de structure du manifest descriptif registry.json. Metadonnee descriptive du Registry : il ne constitue ni une seconde source de verite, ni une liste declarative faisant autorite sur les artefacts effectivement enregistres.",
+  "type": "object",
+  "required": ["id", "name", "version", "description", "current"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "name": { "type": "string" },
+    "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "description": { "type": "string" },
+    "maintainer": { "type": "string" },
+    "license": { "type": "string" },
+    "createdAt": { "type": "string", "format": "date" },
+    "updatedAt": { "type": "string", "format": "date" },
+    "current": {
+      "type": "object",
+      "description": "Artefacts reellement enregistres dans le Registry (CURRENT).",
+      "properties": {
+        "agentCount": { "type": "integer", "minimum": 0 },
+        "policyCount": { "type": "integer", "minimum": 0 },
+        "qualityGateCount": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": true
+    },
+    "futureExtensible": {
+      "type": "object",
+      "description": "Categories prevues ou extensibles, non encore enregistrees (FUTURE / EXTENSIBLE).",
+      "properties": {
+        "ruleCount": { "type": "integer", "minimum": 0 },
+        "deliverableCount": { "type": "integer", "minimum": 0 },
+        "eventCount": { "type": "integer", "minimum": 0 },
+        "workflowCount": { "type": "integer", "minimum": 0 },
+        "policyCount": { "type": "integer", "minimum": 0 },
+        "qualityGateCount": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": true
+    },
+    "compatibleCLIVersions": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "ontologyVersion": { "type": "string" },
+    "stateMachineVersion": { "type": "string" }
+  }
+}
